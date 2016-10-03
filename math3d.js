@@ -309,46 +309,91 @@ class Math3D {
     
 }
 
-Math3D.prototype.color = 'gold'
-
 class MathObject {
-    constructor(){};
+    constructor(math3d){
+        this.math3d = math3d;
+        this.mathboxGroup = undefined; //Every subclass should define this
+        
+        // Every sublcass should define updaters for data, color
+        this.settings = {}
+        var _this = this;
+        Object.defineProperties(this.settings,{
+            data: {
+                set: function(val){
+                    this._data = val;
+                    if (_this.mathboxGroup !== undefined){
+                        _this.setData(val);
+                    }
+                },
+                get: function(){return this._data;},
+            },
+            color: {
+                set: function(val){
+                    this._color = val;
+                    if (_this.mathboxGroup !== undefined){
+                        _this.setColor(val);
+                    }
+                },
+                get: function(){return this._color;},
+            }
+        });
+        
+    };
     
     serialize(){
         var metaObj = {
             type: this.constructor.name,
-            obj: this
+            settings: this.settings
         }
+        // Our object setters store values in properties prefixed with '_'. Let's remove the underscores.
         return JSON.stringify(metaObj).replace(new RegExp(/_/, 'g'), '');
     };
 }
 
-MathObject.deserialize = function(serializedObj){
-        var metaObj = JSON.parse(serializedObj);
-        if (metaObj.type === 'MathObject'){
-            return new MathObject(metaObj.obj)
-        }
-        if (metaObj.type === 'Point'){
-            return new Point(metaObj.obj)
-        }
-    }
+MathObject.deserialize = function(math3d, serializedObj) {
+    var metaObj = JSON.parse(serializedObj);
+    if (metaObj.type === 'MathObject'){
+        return new MathObject(math3d, metaObj.settings)
+    };
+    if (metaObj.type === 'Point'){
+        return new Point(math3d, metaObj.settings)
+    };
+}
 
 class Point extends MathObject {
-    constructor(settings){
-        super();
-        Object.defineProperties(this,{
-            x: {
-                set: function(val){this._x = val; console.log(`Setting x to value ${val}`);},
-                get: function(){return this._x;},
-            },
-            y: {
-                set: function(val){this._y = val; console.log(`Setting y to value ${val}`);},
-                get: function(){return this._y;},
-            }
+    constructor(math3d, settings){
+        super(math3d);
+        
+        this.settings.data = settings.data;
+        this.settings.color = defaultVal(settings.color,"#3090FF");
+        
+        this.mathboxGroup = this.render();
+    }
+    
+    render(){
+        var group = this.math3d.scene.group().set('classes', ['point']);
+        
+        var point = group.array({
+            data: this.settings.data,
+            live:true,
+            items: 1,
+            channels: 3,
+        }).swizzle({
+          order: this.math3d.swizzleOrder
+        }).point({
+            color: this.settings.color,
+            size: 12,
         });
         
-        this.x = settings.x;
-        this.y = settings.y;
+        return group;
+    }
+    
+    setData(val){
+        this.mathboxGroup.select("array").set("data",val);
+    }
+    
+    setColor(val){
+        this.mathboxGroup.select("point").set("color",val)
     }
     
 }
