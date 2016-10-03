@@ -7,8 +7,7 @@ function defaultVal(variable, defaultVal) {
 class Math3D {
     constructor(settings){
         this.swizzleOrder = defaultVal(settings.swizzleOrder, 'yzx');
-        this.settings = this.sanitizeSettings(settings);
-    
+        this.settings = this.setDefaults(settings);
     
         this.mathbox = this.initializeMathBox();
         this.scene = this.setupScene();
@@ -17,11 +16,12 @@ class Math3D {
         // Initial Drawing
         this.drawAxes();
         this.drawGrids();
-    
+        
+        // Add getters and setters for updating after initial rendering
         this.settings = this.makeDynamicSettings();
     }
     
-    sanitizeSettings(settings){
+    setDefaults(settings){
         this.defaultSettings = {
             containerId: null,
             range: {
@@ -312,7 +312,11 @@ class Math3D {
 class MathObject {
     constructor(math3d){
         this.math3d = math3d;
-        this.mathboxGroup = undefined; //Every subclass should define this
+        
+        //Every subclass should define these
+        this.mathboxGroup = null; 
+        this.mathboxDataType = null; // e.g., 'array'
+        this.mathboxRenderType = null; // e.g., 'point'
         
         // Every sublcass should define updaters for data, color
         this.settings = {}
@@ -321,7 +325,7 @@ class MathObject {
             data: {
                 set: function(val){
                     this._data = val;
-                    if (_this.mathboxGroup !== undefined){
+                    if (_this.mathboxGroup !== null){
                         _this.setData(val);
                     }
                 },
@@ -330,15 +334,45 @@ class MathObject {
             color: {
                 set: function(val){
                     this._color = val;
-                    if (_this.mathboxGroup !== undefined){
+                    if (_this.mathboxGroup !== null){
                         _this.setColor(val);
                     }
                 },
                 get: function(){return this._color;},
+            },
+            visible: {
+                set: function(val){
+                    this._visible = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setVisible(val);
+                    }
+                },
+                get: function(){return this._visible;},
+            },
+            size: {
+                set: function(val){
+                    this._size = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setSize(val);
+                    }
+                },
+                get: function(){return this._size;},
             }
         });
         
     };
+    
+    setData(val){
+        this.mathboxGroup.select(this.mathboxDataType).set("data",val);
+    }
+    
+    setColor(val){
+        this.mathboxGroup.select(this.mathboxRenderType).set("color",val);
+    }
+    
+    setVisible(val){
+        this.mathboxGroup.select(this.mathboxRenderType).set("visible",val);
+    }
     
     serialize(){
         var metaObj = {
@@ -349,7 +383,6 @@ class MathObject {
         return JSON.stringify(metaObj).replace(new RegExp(/_/, 'g'), '');
     };
 }
-
 MathObject.deserialize = function(math3d, serializedObj) {
     var metaObj = JSON.parse(serializedObj);
     if (metaObj.type === 'MathObject'){
@@ -363,11 +396,26 @@ MathObject.deserialize = function(math3d, serializedObj) {
 class Point extends MathObject {
     constructor(math3d, settings){
         super(math3d);
+        this.mathboxDataType = 'array';
+        this.mathboxRenderType = 'point';
         
-        this.settings.data = settings.data;
-        this.settings.color = defaultVal(settings.color,"#3090FF");
+        this.settings = this.setDefaults(settings);
         
         this.mathboxGroup = this.render();
+    }
+    
+    setDefaults(settings){
+        var defaultSettings = {
+            color: '#3090FF',
+            data: [[0,0,0]],
+            size: 12,
+            visible: true,
+        }
+        
+        _.merge(this.settings, defaultSettings, settings);
+        
+        return this.settings;
+        
     }
     
     render(){
@@ -382,18 +430,31 @@ class Point extends MathObject {
           order: this.math3d.swizzleOrder
         }).point({
             color: this.settings.color,
-            size: 12,
+            size: this.settings.size,
+            visible: this.settings.visible,
         });
         
         return group;
     }
     
-    setData(val){
-        this.mathboxGroup.select("array").set("data",val);
-    }
-    
-    setColor(val){
-        this.mathboxGroup.select("point").set("color",val)
-    }
-    
 }
+
+// Tentative structure for future math objects
+
+class Segment extends MathObject {}
+
+class Vector extends Segment {}
+
+class Curve extends MathObject {}
+
+class ParametricCurve extends Curve {}
+
+class ImplicitCurve extends Curve {}
+
+class Surface extends MathObject {}
+
+class ParametricSurface extends Surface {}
+
+class ExplicitSurface extends ParametricSurface {}
+
+class ImplicitSurface extends Surface {}
