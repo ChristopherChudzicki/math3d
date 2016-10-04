@@ -1,12 +1,94 @@
 'use strict';
 
-function defaultVal(variable, defaultVal) {
-    return typeof variable !== 'undefined' ? variable : defaultVal;
+class Utility {
+    static defaultVal(variable, defaultVal) {
+        return typeof variable !== 'undefined' ? variable : defaultVal;
+    }
+    
+    static detectObjectDifferences(a,b){
+        // Returns keys that appear in the difference a - b
+        // http://stackoverflow.com/a/31686152/2747370
+        var diffKeys = _.reduce(a, function(result, value, key) {
+            return _.isEqual(value, b[key]) ? result : result.concat(key);
+        }, []);
+        return diffKeys
+    }
+
+    static isPureObject(arg){
+        // Test if something is an object. 
+        // OK, [1,2,3] is an object in JS. I mean test if something is an object like {a:1,b:[1,2,3],c:{aa:5}}.
+        return arg !== null && typeof arg === 'object' && !Array.isArray(arg)
+    }
+
+    static deepObjectDiff(a, b){
+        var diff = {};
+        var keys = Utility.detectObjectDifferences(a,b);
+        for (var j=0; j < keys.length; j++){
+            var key = keys[j];
+            var aValue = a[key];
+            var bValue = b[key];
+            if ( Utility.isPureObject(aValue) && Utility.isPureObject(bValue) ){
+                diff[key] = Utility.deepObjectDiff(aValue, bValue);
+            }
+            else {
+                diff[key] = aValue;
+            }
+        }
+        return diff
+    }
+
+    static deepCopyValuesOnly(obj){
+        //Intended to help serialize objects with a getter named KEY that stores values in _KEY. 
+        var deepCopy = {};
+        for (var key in obj){
+            if (key[0]=='_'){
+                //In this case, the object should have a getter, but let's check
+                var subkey = key.substring(1)
+                if (obj[subkey] !== undefined && typeof Object.getOwnPropertyDescriptor(obj,subkey).get === 'function'){
+                    key = subkey
+                }
+            }
+            if ( deepCopy.hasOwnProperty(key) ){
+                throw `Error: Input Object has both ${key} and _${key} properties.`
+            }
+            if (Utility.isPureObject(obj[key])){
+                deepCopy[key] = Utility.deepCopyValuesOnly(obj[key]);
+            } else {
+                deepCopy[key] = obj[key];
+            }
+        }
+        return deepCopy;
+    }
+
+    static getQueryString() {
+        // modified from http://stackoverflow.com/a/979995/2747370
+        var query_string = {};
+        var query = window.location.search.substring(1);
+        if (query === ""){
+            return query_string
+        }
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+            var pair = vars[i].split("=");
+            // If first entry with this name
+            if (typeof query_string[pair[0]] === "undefined") {
+                query_string[pair[0]] = decodeURIComponent(pair[1]);
+                // If second entry with this name
+            } else if (typeof query_string[pair[0]] === "string") {
+                var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+                query_string[pair[0]] = arr;
+                // If third or later entry with this name
+            } else {
+                query_string[pair[0]].push(decodeURIComponent(pair[1]));
+            }
+        }
+        return query_string;
+    }
 }
 
 class Math3D {
     constructor(settings){
-        this.swizzleOrder = defaultVal(settings.swizzleOrder, 'yzx');
+        this.swizzleOrder = Utility.defaultVal(settings.swizzleOrder, 'yzx');
         this.settings = this.setDefaults(settings);
     
         this.mathbox = this.initializeMathBox();
@@ -19,6 +101,18 @@ class Math3D {
         
         // Add getters and setters for updating after initial rendering
         this.settings = this.makeDynamicSettings();
+        
+        // create math scope
+        this.mathScope = new WatchedScope(this.settings.mathScope)
+        this.mathObjects = [] //onVariableChange checks mathObjects, so define it as empty for now.
+        var onVariableChange = this.onVariableChange.bind(this);
+        for (let key in this.settings.mathScope){
+            let val = this.settings.mathScope[key];
+            this.mathScope.addVariable(key, val, onVariableChange)
+        }
+        
+        //Render math objects
+        this.mathObjects = this.renderMathObjects();
     }
     
     setDefaults(settings){
@@ -45,7 +139,9 @@ class Math3D {
                 'x': genDefaultAxisSettings.call(this,'x', 'x'),
                 'y': genDefaultAxisSettings.call(this,'y', 'y'),
                 'z': genDefaultAxisSettings.call(this,'z', 'z'),
-            }
+            },
+            mathScope:{},
+            wrappedMathObjects: []
         }
     
         function genDefaultAxisSettings(axisId, axisLabel) {        
@@ -133,7 +229,7 @@ class Math3D {
     swizzle(arg, swizzleOrder){
         // similar to mathbox swizzle operator, but for regular arrays and objects.
         // Example: swizzle([1,2,3], 'zyx') = [3,2,1]
-        swizzleOrder = defaultVal(swizzleOrder, this.swizzleOrder);
+        swizzleOrder = Utility.defaultVal(swizzleOrder, this.swizzleOrder);
         if (Array.isArray(arg)){
             return swizzleArray(arg, swizzleOrder)
         }
@@ -307,10 +403,127 @@ class Math3D {
     
     }
     
+    renderMathObjects(){
+        var mathObjects = [];
+        while (this.settings.wrappedMathObjects.length>0){
+            // shift pops and returns first value
+            var metaObj = this.settings.wrappedMathObjects.shift();
+            var mathObj = MathObject.renderNewObject(this,metaObj);
+            mathObjects.push(mathObj);
+        }
+        return mathObjects;
+    }
+    
+    onVariableChange(varName){
+        var updated = [];
+        _.forEach( this.mathObjects, function(obj, idx){
+            if ( _.contains( obj.parsedExpression.variables, varName) ||  _.contains( obj.parsedExpression.functions, varName) ){
+                obj.recalculateData();
+                updated.push(idx);
+            }
+        })
+        console.log(`Objects ${updated} need updates.`)
+    }
+    
+    serialize(settings){
+        settings = Utility.defaultVal(settings, this.settings);
+        // copy settings values, no setters and getters
+        var rawSettings = Utility.deepCopyValuesOnly(this.settings)
+        // camera is a THREE js Vec3 object
+        var camera = this.mathbox.three.camera.position;
+        // Round camera positions to keep encoded settings small.
+        rawSettings.camera.position = [camera.x, camera.y, camera.z].map( function(x){return Math.round(x*1000)/1000; } );
+        rawSettings.camera.position = this.swizzle(this.swizzle(rawSettings.camera.position));
+        // add math objects
+        _.forEach(this.mathObjects, function(mathObj){
+            rawSettings.wrappedMathObjects.push( mathObj.serialize() )
+        })
+        return JSON.stringify(Utility.deepObjectDiff(rawSettings,this.defaultSettings));
+    }
+    
+    saveSettingsAsURL(settings){
+        settings = Utility.defaultVal(settings, this.settings);
+        var settingsDiff64 = window.btoa( this.serialize(settings) );
+        var url = window.location.href.split('?')[0] + "?settings=" + settingsDiff64;
+        console.log(url)
+        return url
+    }
+    
+    static decodeSettingsAsURL64(encodedSettings){
+        var settings = JSON.parse(window.atob(encodedSettings))
+        
+        _.forEach(settings.wrappedMathObjects, function(wrappedMathObj, idx){
+            settings.wrappedMathObjects[idx] = JSON.parse(wrappedMathObj);
+        })
+        
+        return settings
+    }
+}
+
+class WatchedScope{
+    //An object where each property is watched for change
+    constructor(){
+    }
+    
+    addVariable(key, val, onChangeFunction){
+        // onChangeFunction = Utility.defaultVal(onChangeFunction, function(a, b){console.log(`Variable ${a} now has value ${b}`)})
+        Object.defineProperty(this, key, {
+            get: function(){return this['_'+key];},
+            set: function(val){
+                this['_'+key] = val;
+                onChangeFunction(key, val);
+            }
+        })
+        this[key] = val
+    }
+    
+    removeVariable(key){
+        delete this["_"+key];
+        delete this[key];
+    }
+
+    serialize(){
+        var rawSettings = Utility.deepCopyValuesOnly(this)
+        return JSON.parse(rawSettings);
+    }
+
+}
+
+class MathExpression {
+    // Holds data for math expressions.
+    constructor(expression, scope){
+        // store initial representation
+        this.expression = expression;
+        this.variables = []
+        this.functions = []
+        
+        var parsed = math.parse(expression);
+        parsed.traverse(function(node){
+            if (node.type === 'SymbolNode'){ this.variables.push(node.name); }
+            if (node.type === 'FunctionNode'){ this.functions.push(node.name); }
+        }.bind(this))
+        
+        
+        if (expression[0]=="["){
+            this.eval = function(){
+                return parsed.compile().eval(scope).toArray();
+            }
+        } else {
+            this.eval = function(){
+                return parsed.compile().eval(scope);
+            }
+        }
+
+    }
 }
 
 class MathObject {
     constructor(math3d){
+        /*Guidelines:
+            this.settings: 
+                should only contain information intended for serialization.
+                if MEOW is a getter/setter, store associated value in _MEOW
+        */
         this.math3d = math3d;
         
         //Every subclass should define these
@@ -318,18 +531,16 @@ class MathObject {
         this.mathboxDataType = null; // e.g., 'array'
         this.mathboxRenderType = null; // e.g., 'point'
         
-        // Every sublcass should define updaters for data, color
-        this.settings = {}
+        this.settings = {};
+        this.defaultSettings ={};
         var _this = this;
         Object.defineProperties(this.settings,{
-            data: {
+            rawExpression: {
                 set: function(val){
-                    this._data = val;
-                    if (_this.mathboxGroup !== null){
-                        _this.setData(val);
-                    }
+                    _this.parsedExpression = _this.parseRawExpression(val);
+                    _this._data = _this.parsedExpression.eval();
                 },
-                get: function(){return this._data;},
+                get: function(){return this._userData;},
             },
             color: {
                 set: function(val){
@@ -362,6 +573,22 @@ class MathObject {
         
     };
     
+    parseRawExpression(expr){
+        return new MathExpression(expr, this.math3d.mathScope);
+    }
+    
+    recalculateData(){
+        this.data = this.parsedExpression.eval();
+    }
+    
+    get data() {return this._data;}
+    set data(val) {
+        this._data = val; 
+        if (this.mathboxGroup !== null){
+            this.setData(val);
+        };
+    }
+    
     setData(val){
         this.mathboxGroup.select(this.mathboxDataType).set("data",val);
     }
@@ -375,22 +602,24 @@ class MathObject {
     }
     
     serialize(){
+        // copy settings values, no setters and getters
+        var rawSettings = Utility.deepCopyValuesOnly(this.settings)
         var metaObj = {
             type: this.constructor.name,
-            settings: this.settings
+            settings: Utility.deepObjectDiff(rawSettings, this.defaultSettings)
         }
         // Our object setters store values in properties prefixed with '_'. Let's remove the underscores.
-        return JSON.stringify(metaObj).replace(new RegExp(/_/, 'g'), '');
+        return JSON.stringify(metaObj);
     };
-}
-MathObject.deserialize = function(math3d, serializedObj) {
-    var metaObj = JSON.parse(serializedObj);
-    if (metaObj.type === 'MathObject'){
-        return new MathObject(math3d, metaObj.settings)
-    };
-    if (metaObj.type === 'Point'){
-        return new Point(math3d, metaObj.settings)
-    };
+    
+    static renderNewObject(math3d, metaObj) {
+        if (metaObj.type === 'MathObject'){
+            return new MathObject(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'Point'){
+            return new Point(math3d, metaObj.settings)
+        };
+    }
 }
 
 class Point extends MathObject {
@@ -399,30 +628,27 @@ class Point extends MathObject {
         this.mathboxDataType = 'array';
         this.mathboxRenderType = 'point';
         
+        this.defaultSettings = {
+            color: '#3090FF',
+            rawExpression: "[[0,0,0]]",
+            size: 12,
+            visible: true,
+        }
         this.settings = this.setDefaults(settings);
         
         this.mathboxGroup = this.render();
     }
     
     setDefaults(settings){
-        var defaultSettings = {
-            color: '#3090FF',
-            data: [[0,0,0]],
-            size: 12,
-            visible: true,
-        }
-        
-        _.merge(this.settings, defaultSettings, settings);
-        
+        _.merge(this.settings, this.defaultSettings, settings);
         return this.settings;
-        
     }
     
     render(){
         var group = this.math3d.scene.group().set('classes', ['point']);
         
         var point = group.array({
-            data: this.settings.data,
+            data: this.data,
             live:true,
             items: 1,
             channels: 3,
@@ -438,23 +664,3 @@ class Point extends MathObject {
     }
     
 }
-
-// Tentative structure for future math objects
-
-class Segment extends MathObject {}
-
-class Vector extends Segment {}
-
-class Curve extends MathObject {}
-
-class ParametricCurve extends Curve {}
-
-class ImplicitCurve extends Curve {}
-
-class Surface extends MathObject {}
-
-class ParametricSurface extends Surface {}
-
-class ExplicitSurface extends ParametricSurface {}
-
-class ImplicitSurface extends Surface {}

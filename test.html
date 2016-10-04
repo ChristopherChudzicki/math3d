@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Projection from 3D to 2D Plane</title>
+    <title>Math 3D</title>
     
     <script src="resources/mathbox-bundle.js"></script>
     <link rel="stylesheet" href="resources/mathbox.css">
@@ -11,13 +11,40 @@
     <link rel="stylesheet" href="math3d.css">
     
     <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="
+    https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
 
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
 <div id="my-math-box"></div>
 <script>
-var math3d = new Math3D({});
+
+var queryString = Utility.getQueryString();
+var encodedUserSettings = queryString['settings'];
+var authorSettings = {
+    containerId:'my-math-box',
+    mathScope: {a:2,b:-2,c:1,d:3},
+    wrappedMathObjects:[
+        {
+            type: 'Point',
+            settings: {rawExpression: "[[a,b,c]]"}
+        },
+        {
+            type: 'Point',
+            settings: {rawExpression: "[[-a,c,d]]", color:'red'}
+        }
+    ]
+};
+
+var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
+
+var math3d = new Math3D(settings);
+
+// testScope = new WatchedScope({a:1.2,b:-0.5,c:1.5})
+// testExpr = new MathExpression("[a,b,c]", testScope)
+// testScope.a = 1.2
+// testScope.b = -0.4
 </script>
 
 </body>
