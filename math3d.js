@@ -140,7 +140,10 @@ class Math3D {
                 'y': genDefaultAxisSettings.call(this,'y', 'y'),
                 'z': genDefaultAxisSettings.call(this,'z', 'z'),
             },
-            mathScope:{},
+            mathScope:{
+                'pi': Math.PI,
+                'e': Math.E
+            },
             wrappedMathObjects: []
         }
     
@@ -408,21 +411,19 @@ class Math3D {
         while (this.settings.wrappedMathObjects.length>0){
             // shift pops and returns first value
             var metaObj = this.settings.wrappedMathObjects.shift();
-            var mathObj = MathObject.renderNewObject(this,metaObj);
+            var mathObj = MathObject.renderNewObject(this, metaObj);
             mathObjects.push(mathObj);
         }
         return mathObjects;
     }
     
     onVariableChange(varName){
-        var updated = [];
+        // update objects where the variables have changed
         _.forEach( this.mathObjects, function(obj, idx){
             if ( _.contains( obj.parsedExpression.variables, varName) ||  _.contains( obj.parsedExpression.functions, varName) ){
                 obj.recalculateData();
-                updated.push(idx);
             }
         })
-        console.log(`Objects ${updated} need updates.`)
     }
     
     serialize(settings){
@@ -505,11 +506,13 @@ class MathExpression {
         
         
         if (expression[0]=="["){
-            this.eval = function(){
-                return parsed.compile().eval(scope).toArray();
+            this.eval = function(customScope){
+                customScope = Utility.defaultVal(customScope, scope);
+                return parsed.compile().eval(customScope).toArray();
             }
         } else {
-            this.eval = function(){
+            this.eval() = function(customScope){
+                customScope = Utility.defaultVal(customScope, scope);
                 return parsed.compile().eval(scope);
             }
         }
@@ -517,8 +520,9 @@ class MathExpression {
     }
 }
 
+// Abstract
 class MathObject {
-    constructor(math3d){
+    constructor(math3d, settings){
         /*Guidelines:
             this.settings: 
                 should only contain information intended for serialization.
@@ -526,19 +530,23 @@ class MathObject {
         */
         this.math3d = math3d;
         
-        //Every subclass should define these
+        //Every abstract sublcass should define these
         this.mathboxGroup = null; 
         this.mathboxDataType = null; // e.g., 'array'
         this.mathboxRenderType = null; // e.g., 'point'
         
         this.settings = {};
-        this.defaultSettings ={};
+        this.defaultSettings = {
+            visible: true,
+            color: '#3090FF',
+        };
+        
         var _this = this;
         Object.defineProperties(this.settings,{
             rawExpression: {
                 set: function(val){
                     _this.parsedExpression = _this.parseRawExpression(val);
-                    _this._data = _this.parsedExpression.eval();
+                    _this.recalculateData();
                 },
                 get: function(){return this._userData;},
             },
@@ -568,18 +576,45 @@ class MathObject {
                     }
                 },
                 get: function(){return this._size;},
-            }
+            },
+            width: {
+                set: function(val){
+                    this._width = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setWidth(val);
+                    }
+                },
+                get: function(){return this._width;},
+            },
+            range: {
+                set: function(val){
+                    this._range = val;
+                    _this.setRange(val);
+                },
+                get: function(){return this._range;},
+            },
+            samples: {
+                set: function(val){
+                    this._samples = val;
+                    _this.setSamples(val);
+                },
+                get: function(){return this._samples;},
+            },
         });
         
     };
+    
+    setDefaults(settings){
+        _.merge(this.settings, this.defaultSettings, settings);
+        return this.settings;
+    }
     
     parseRawExpression(expr){
         return new MathExpression(expr, this.math3d.mathScope);
     }
     
-    recalculateData(){
-        this.data = this.parsedExpression.eval();
-    }
+    //Define this for every subclass
+    recalculateData(){}
     
     get data() {return this._data;}
     set data(val) {
@@ -601,6 +636,19 @@ class MathObject {
         this.mathboxGroup.select(this.mathboxRenderType).set("visible",val);
     }
     
+    setWidth(val){
+        this.mathboxGroup.select(this.mathboxRenderType).set("width",val);
+    }
+    
+    setRange(val){
+        this.range = this.parseRawExpression(val).eval();
+        this.recalculateData();
+    }
+    
+    setSamples(val){
+        this.recalculateData();
+    }
+    
     serialize(){
         // copy settings values, no setters and getters
         var rawSettings = Utility.deepCopyValuesOnly(this.settings)
@@ -619,29 +667,32 @@ class MathObject {
         if (metaObj.type === 'Point'){
             return new Point(math3d, metaObj.settings)
         };
+        if (metaObj.type === 'Line'){
+            return new Line(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'ParametricCurve'){
+            return new ParametricCurve(math3d, metaObj.settings)
+        };
     }
 }
 
 class Point extends MathObject {
     constructor(math3d, settings){
-        super(math3d);
+        super(math3d, settings);
         this.mathboxDataType = 'array';
         this.mathboxRenderType = 'point';
         
-        this.defaultSettings = {
-            color: '#3090FF',
+        _.merge(this.defaultSettings, {
             rawExpression: "[[0,0,0]]",
             size: 12,
-            visible: true,
-        }
+        });
         this.settings = this.setDefaults(settings);
         
         this.mathboxGroup = this.render();
     }
     
-    setDefaults(settings){
-        _.merge(this.settings, this.defaultSettings, settings);
-        return this.settings;
+    recalculateData(){
+        this.data = this.parsedExpression.eval();
     }
     
     render(){
@@ -664,3 +715,114 @@ class Point extends MathObject {
     }
     
 }
+
+class AbstractCurve extends MathObject {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        this.mathboxDataType = 'array';
+        this.mathboxRenderType = 'line';
+        
+        _.merge(this.defaultSettings,{
+            width: 4,
+            start: false,
+            end: false
+        })
+        
+    }
+    
+    recalculateData(){
+        this.data = this.parsedExpression.eval();
+    }
+    
+    render(){
+        var group = this.math3d.scene.group().set('classes', ['curve']);
+        
+        group.array({
+            data: this.data,
+            live:true,
+            items: 1,
+            channels: 3,
+        }).swizzle({
+          order: this.math3d.swizzleOrder
+        }).line({
+            color: this.settings.color,
+            width: this.settings.width,
+            visible: this.settings.visible,
+            start: this.settings.start,
+            end: this.settings.end,
+            size: this.settings.size,
+        });
+        
+        return group;
+    }
+    
+}
+
+class Line extends AbstractCurve {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        _.merge(this.defaultSettings, {
+            rawExpression: "[[0,0,0],[pi,0,0],[pi,pi,0],[0,pi,0]]",
+        })
+        this.settings = this.setDefaults(settings);
+        
+        this.mathboxGroup = this.render();
+    }
+}
+
+class Vector extends AbstractCurve {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        _.merge(this.defaultSettings, {
+            rawExpression: "[[0,0,0],[pi,0,0],[pi,pi,0],[0,pi,0]]",
+            end:true,
+            size:6,
+        })
+        this.settings = this.setDefaults(settings);
+        
+        this.mathboxGroup = this.render();
+    }
+}
+
+class ParametricCurve extends AbstractCurve{
+    constructor(math3d, settings){
+        super(math3d, settings);
+        
+        _.merge(this.defaultSettings, {
+            parameter:'t',
+            rawExpression: "[cos(t),sin(t),t]",
+            range: "[-2*pi,2*pi]",
+            samples:64,
+        });
+        
+        this.settings = this.setDefaults(settings);
+        
+        this.mathboxGroup = this.render();
+    }
+    
+    recalculateData(){
+        if (this.settings.samples === undefined || this.range === undefined){
+            return
+        }
+        // TODO This is probably slow, we're evaluating every variable in the parametric function. Can we get a single-variable function first?
+        
+        var scope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
+        var t = this.settings.parameter;
+        
+        var t1 = this.range[0];
+        var dt = (this.range[1] - this.range[0])/(this.settings.samples);
+        var expr = this.parsedExpression;
+        
+        this.data = Array(this.settings.samples).fill(0).map(function(val, idx){
+            scope[t] = t1 + idx*dt;
+            return expr.eval(scope);
+        })
+        
+        var t_old = scope[t];
+        
+        // this.data = [[0,0,0],[1,0,0]]
+    }
+    
+}
+
+// TODO: Rewrite parametric curve grapher to generate array by evaluating a single-variable function.

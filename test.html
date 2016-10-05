@@ -24,7 +24,7 @@ var queryString = Utility.getQueryString();
 var encodedUserSettings = queryString['settings'];
 var authorSettings = {
     containerId:'my-math-box',
-    mathScope: {a:2,b:-2,c:1,d:3},
+    mathScope: {a:2,b:-2,c:1,d:3,r:1.5},
     wrappedMathObjects:[
         {
             type: 'Point',
@@ -33,6 +33,10 @@ var authorSettings = {
         {
             type: 'Point',
             settings: {rawExpression: "[[-a,c,d]]", color:'red'}
+        },
+        {
+            type: 'ParametricCurve',
+            settings: {rawExpression:'[r*cos(t),r*sin(t),t]'}
         }
     ]
 };
