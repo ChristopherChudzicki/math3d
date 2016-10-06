@@ -84,6 +84,43 @@ class Utility {
         }
         return query_string;
     }
+    
+    static lightenColor(color, amt){
+    //color should be hex or named. First get hex color if it is named
+    if (color[0] != "#"){
+        //http://www.w3schools.com/colors/colors_names.asp
+        color = color.toLowerCase();
+        var namedColors = {
+            aliceblue: '#F0F8FF', antiquewhite: '#FAEBD7', aqua: '#00FFFF', aquamarine: '#7FFFD4', azure: '#F0FFFF', beige: '#F5F5DC', bisque: '#FFE4C4', black: '#000000', blanchedalmond: '#FFEBCD', blue: '#0000FF', blueviolet: '#8A2BE2', brown: '#A52A2A', burlywood: '#DEB887', cadetblue: '#5F9EA0', chartreuse: '#7FFF00', chocolate: '#D2691E', coral: '#FF7F50', cornflowerblue: '#6495ED', cornsilk: '#FFF8DC', crimson: '#DC143C', cyan: '#00FFFF', darkblue: '#00008B', darkcyan: '#008B8B', darkgoldenrod: '#B8860B', darkgray: '#A9A9A9', darkgrey: '#A9A9A9', darkgreen: '#006400', darkkhaki: '#BDB76B', darkmagenta: '#8B008B', darkolivegreen: '#556B2F', darkorange: '#FF8C00', darkorchid: '#9932CC', darkred: '#8B0000', darksalmon: '#E9967A', darkseagreen: '#8FBC8F', darkslateblue: '#483D8B', darkslategray: '#2F4F4F', darkslategrey: '#2F4F4F', darkturquoise: '#00CED1', darkviolet: '#9400D3', deeppink: '#FF1493', deepskyblue: '#00BFFF', dimgray: '#696969', dimgrey: '#696969', dodgerblue: '#1E90FF', firebrick: '#B22222', floralwhite: '#FFFAF0', forestgreen: '#228B22', fuchsia: '#FF00FF', gainsboro: '#DCDCDC', ghostwhite: '#F8F8FF', gold: '#FFD700', goldenrod: '#DAA520', gray: '#808080', grey: '#808080', green: '#008000', greenyellow: '#ADFF2F', honeydew: '#F0FFF0', hotpink: '#FF69B4', indianred: '#CD5C5C', indigo: '#4B0082', ivory: '#FFFFF0', khaki: '#F0E68C', lavender: '#E6E6FA', lavenderblush: '#FFF0F5', lawngreen: '#7CFC00', lemonchiffon: '#FFFACD', lightblue: '#ADD8E6', lightcoral: '#F08080', lightcyan: '#E0FFFF', lightgoldenrodyellow: '#FAFAD2', lightgray: '#D3D3D3', lightgrey: '#D3D3D3', lightgreen: '#90EE90', lightpink: '#FFB6C1', lightsalmon: '#FFA07A', lightseagreen: '#20B2AA', lightskyblue: '#87CEFA', lightslategray: '#778899', lightslategrey: '#778899', lightsteelblue: '#B0C4DE', lightyellow: '#FFFFE0', lime: '#00FF00', limegreen: '#32CD32', linen: '#FAF0E6', magenta: '#FF00FF', maroon: '#800000', mediumaquamarine: '#66CDAA', mediumblue: '#0000CD', mediumorchid: '#BA55D3', mediumpurple: '#9370DB', mediumseagreen: '#3CB371', mediumslateblue: '#7B68EE', mediumspringgreen: '#00FA9A', mediumturquoise: '#48D1CC', mediumvioletred: '#C71585', midnightblue: '#191970', mintcream: '#F5FFFA', mistyrose: '#FFE4E1', moccasin: '#FFE4B5', navajowhite: '#FFDEAD', navy: '#000080', oldlace: '#FDF5E6', olive: '#808000', olivedrab: '#6B8E23', orange: '#FFA500', orangered: '#FF4500', orchid: '#DA70D6', palegoldenrod: '#EEE8AA', palegreen: '#98FB98', paleturquoise: '#AFEEEE', palevioletred: '#DB7093', papayawhip: '#FFEFD5', peachpuff: '#FFDAB9', peru: '#CD853F', pink: '#FFC0CB', plum: '#DDA0DD', powderblue: '#B0E0E6', purple: '#800080', rebeccapurple: '#663399', red: '#FF0000', rosybrown: '#BC8F8F', royalblue: '#4169E1', saddlebrown: '#8B4513', salmon: '#FA8072', sandybrown: '#F4A460', seagreen: '#2E8B57', seashell: '#FFF5EE', sienna: '#A0522D', silver: '#C0C0C0', skyblue: '#87CEEB', slateblue: '#6A5ACD', slategray: '#708090', slategrey: '#708090', snow: '#FFFAFA', springgreen: '#00FF7F', steelblue: '#4682B4', tan: '#D2B48C', teal: '#008080', thistle: '#D8BFD8', tomato: '#FF6347', turquoise: '#40E0D0', violet: '#EE82EE', wheat: '#F5DEB3', white: '#FFFFFF', whitesmoke: '#F5F5F5', yellow: '#FFFF00', yellowgreen: '#9ACD32'
+        };
+        color = namedColors[color];
+    }
+    
+    if (color === undefined){
+        return false
+    }
+    
+    //Now that we have hex, let's lighten it
+    //http://stackoverflow.com/a/13532993/2747370
+    var R = parseInt(color.substring(1,3),16),
+        G = parseInt(color.substring(3,5),16),
+        B = parseInt(color.substring(5,7),16);
+
+    R = parseInt(R * (1 + amt) );
+    G = parseInt(G * (1 + amt) );
+    B = parseInt(B * (1 + amt) );
+
+    R = (R<255)?R:255;  
+    G = (G<255)?G:255;  
+    B = (B<255)?B:255;  
+
+    var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
+    var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
+    var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
+
+    return "#"+RR+GG+BB;
+    }
+
 }
 
 class Math3D {
@@ -511,7 +548,7 @@ class MathExpression {
                 return parsed.compile().eval(customScope).toArray();
             }
         } else {
-            this.eval() = function(customScope){
+            this.eval = function(customScope){
                 customScope = Utility.defaultVal(customScope, scope);
                 return parsed.compile().eval(scope);
             }
@@ -539,16 +576,18 @@ class MathObject {
         this.defaultSettings = {
             visible: true,
             color: '#3090FF',
+            zBias: 0,
         };
         
         var _this = this;
         Object.defineProperties(this.settings,{
             rawExpression: {
                 set: function(val){
+                    this._rawExpression = val;
                     _this.parsedExpression = _this.parseRawExpression(val);
                     _this.recalculateData();
                 },
-                get: function(){return this._userData;},
+                get: function(){return this._rawExpression;},
             },
             color: {
                 set: function(val){
@@ -558,6 +597,15 @@ class MathObject {
                     }
                 },
                 get: function(){return this._color;},
+            },
+            zIndex: {
+                set: function(val){
+                    this._zIndex = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setzIndex(val);
+                    }
+                },
+                get: function(){return this._zIndex;},
             },
             visible: {
                 set: function(val){
@@ -632,6 +680,14 @@ class MathObject {
         this.mathboxGroup.select(this.mathboxRenderType).set("color",val);
     }
     
+    setZIndex(val){
+        this.mathboxGroup.select(this.mathboxRenderType).set("zIndex",val);
+    }
+    
+    setSize(val){
+        this.mathboxGroup.select(this.mathboxRenderType).set("size",val);
+    }
+    
     setVisible(val){
         this.mathboxGroup.select(this.mathboxRenderType).set("visible",val);
     }
@@ -670,8 +726,14 @@ class MathObject {
         if (metaObj.type === 'Line'){
             return new Line(math3d, metaObj.settings)
         };
+        if (metaObj.type === 'Vector'){
+            return new Vector(math3d, metaObj.settings)
+        };
         if (metaObj.type === 'ParametricCurve'){
             return new ParametricCurve(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'ParametricSurface'){
+            return new ParametricSurface(math3d, metaObj.settings)
         };
     }
 }
@@ -684,7 +746,7 @@ class Point extends MathObject {
         
         _.merge(this.defaultSettings, {
             rawExpression: "[[0,0,0]]",
-            size: 12,
+            size: 14,
         });
         this.settings = this.setDefaults(settings);
         
@@ -700,7 +762,7 @@ class Point extends MathObject {
         
         var point = group.array({
             data: this.data,
-            live:true,
+            live:false,
             items: 1,
             channels: 3,
         }).swizzle({
@@ -709,6 +771,7 @@ class Point extends MathObject {
             color: this.settings.color,
             size: this.settings.size,
             visible: this.settings.visible,
+            zIndex: this.settings.zIndex,
         });
         
         return group;
@@ -739,7 +802,7 @@ class AbstractCurve extends MathObject {
         
         group.array({
             data: this.data,
-            live:true,
+            live:false,
             items: 1,
             channels: 3,
         }).swizzle({
@@ -751,6 +814,7 @@ class AbstractCurve extends MathObject {
             start: this.settings.start,
             end: this.settings.end,
             size: this.settings.size,
+            zIndex: this.settings.zIndex
         });
         
         return group;
@@ -789,7 +853,7 @@ class ParametricCurve extends AbstractCurve{
         super(math3d, settings);
         
         _.merge(this.defaultSettings, {
-            parameter:'t',
+            parameter: 't',
             rawExpression: "[cos(t),sin(t),t]",
             range: "[-2*pi,2*pi]",
             samples:64,
@@ -797,6 +861,7 @@ class ParametricCurve extends AbstractCurve{
         
         this.settings = this.setDefaults(settings);
         
+        this.recalculateData();
         this.mathboxGroup = this.render();
     }
     
@@ -804,10 +869,11 @@ class ParametricCurve extends AbstractCurve{
         if (this.settings.samples === undefined || this.range === undefined){
             return
         }
-        // TODO This is probably slow, we're evaluating every variable in the parametric function. Can we get a single-variable function first?
         
         var scope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         var t = this.settings.parameter;
+        
+        console.log(t)
         
         var t1 = this.range[0];
         var dt = (this.range[1] - this.range[0])/(this.settings.samples);
@@ -825,4 +891,83 @@ class ParametricCurve extends AbstractCurve{
     
 }
 
-// TODO: Rewrite parametric curve grapher to generate array by evaluating a single-variable function.
+class AbstractSurface extends MathObject {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        this.mathboxDataType = 'matrix';
+        this.mathboxRenderType = 'surface';
+        
+        _.merge(this.defaultSettings,{
+            opacity: 0.66,
+            gridX: 8,
+            gridY: 8,
+            gridOpacity:0.75,
+        })
+        
+    }
+}
+
+// FIXME: This implementation means surface range is static.
+class ParametricSurface extends AbstractSurface {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        
+        _.merge(this.defaultSettings, {
+            rawExpression: "",
+            func: function(u,v){return [Math.sin(u), Math.cos(u), v]},
+            range: "[[-2*pi,2*pi],[-1,1]]",
+            samples: [64, 64],
+        });
+        
+        this.settings = this.setDefaults(settings);
+        this.mathboxGroup = this.render();
+        
+    }
+    
+    render(){
+        var group = this.math3d.scene.group().set('classes', ['curve']);
+        var func = this.settings.func;
+        
+        var gridColor = Utility.defaultVal(this.settings.gridColor, Utility.lightenColor(this.settings.color,-0.5) );
+        
+        group.area({
+            width: this.settings.samples[0],
+            height: this.settings.samples[1],
+            rangeX: this.range[0],
+            rangeY: this.range[1],
+            expr: function (emit, u, v, i, j, time) {
+                var values = func(u,v);
+                emit( values[0], values[1], values[2] );
+            },
+            live:false,
+            items: 1,
+            channels: 3,
+        }).swizzle({
+          order: this.math3d.swizzleOrder
+        }).surface({
+            color: this.settings.color,
+            visible: this.settings.visible,
+            opacity: this.settings.opacity
+        }).group()
+            .resample({height:this.settings.gridY})
+            .line({
+                color:gridColor,
+                opacity:this.settings.gridOpacity
+            })
+        .end()
+        .group()
+            .resample({width:this.settings.gridX})
+            .transpose({order:'yx'})
+            .line({
+                color:gridColor,
+                opacity:this.settings.gridOpacity
+            })
+        .end();;
+        
+        return group;
+    }
+    
+}
+
+
+// FIXME: 1: Rewrite parametric curve grapher to generate array by evaluating a single-variable function. E.g., if the curve is [r*cos(t), r*sin(t), t], then r should be fixed while drawing.  Probably I can fix this by evaluating each math expression node that is of type symbol / function.

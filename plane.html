@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Math 3D</title>
+    
+    <script src="resources/mathbox-bundle.js"></script>
+    <link rel="stylesheet" href="resources/mathbox.css">
+    
+    <script src="math3d.js"></script>
+    <link rel="stylesheet" href="math3d.css">
+    
+    <script src="resources/dat.gui.js"></script>
+    <link rel="stylesheet" href="resources/dat-gui-custom.css">
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="
+    https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+<div id="my-math-box"></div>
+<script>
+
+var queryString = Utility.getQueryString();
+var encodedUserSettings = queryString['settings'];
+
+var P0 = [1,-1,2];
+var n = [-1,-2,8];
+var nhat = math.multiply( n, 1/math.norm(n) );
+
+var planeFunc = function(x,y){
+    var z = ( math.dot(n,P0) - math.dot([x,y,0], n) )/n[2];
+    return [x,y,z];
+}
+
+var P1 = planeFunc(P0[0]+1, P0[1])
+var P2 = planeFunc(P0[0], P0[1]+1)
+
+var u = math.subtract(P1,P0);
+var v = math.subtract(P2,P0);
+var uhat = math.multiply(u, 1/math.norm(u));
+var vhat = math.multiply(v, 1/math.norm(v));
+
+
+var point0 = math.add(P0,[0,0,0.1])
+var O = [0,0,0];
+
+// generic point
+var P = `[${P0}]+u*cos(v)*[${uhat}]+u*sin(v)*[${vhat}]`;
+var nhatTip = math.add(P0,nhat);
+
+var authorSettings = {
+    containerId:'my-math-box',
+    mathScope: {u:2, v:2.5},
+    scale: [1,1,1],
+    wrappedMathObjects:[
+        {
+            type: 'Point',
+            settings: {rawExpression: `[${P0}]`, color:'black', zIndex:1}
+        },
+        {
+            type: 'Vector',
+            settings: {rawExpression: `[${O},${P0}]`, color:'black', visible:false}
+        },
+        {
+            type: 'Point',
+            settings: {rawExpression: `[${P}]`, color:'#001a66', zIndex:1}
+        },
+        {
+            type: 'Vector',
+            settings: {rawExpression: `[[${O}], ${P}]`, color:'#0033cc', zIndex:1, visible:false}
+        },
+        {
+            type: 'Vector',
+            settings: {rawExpression: `[[${P0}], ${P}]`, color:'orange', zIndex:1, visible:false}
+        },
+        {
+            type: 'Vector',
+            settings: {rawExpression: `[[${P0}], [${nhatTip}]]`, color:'red', zIndex:1}
+        },
+        {
+            type: 'ParametricSurface',
+            settings: {func:planeFunc, range: '[[-3,3], [-3,3]]', gridX:2, gridY:2 }
+        },  
+    ]
+};
+
+var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
+
+var math3d = new Math3D(settings);
+
+var gui = new dat.GUI();
+
+gui.add(math3d.mathObjects[1].settings, 'visible').name("Given Point")
+gui.add(math3d.mathObjects[3].settings, 'visible').name("Generic Point")
+gui.add(math3d.mathObjects[4].settings, 'visible')
+
+gui.add(math3d.mathScope, "u")
+            .min(0)
+            .max(3)
+            .step(0.01);
+gui.add(math3d.mathScope, "v")
+            .min(0)
+            .max(6.28)
+            .step(0.01);
+
+// testScope = new WatchedScope({a:1.2,b:-0.5,c:1.5})
+// testExpr = new MathExpression("[a,b,c]", testScope)
+// testScope.a = 1.2
+// testScope.b = -0.4
+</script>
+
+</body>
+</html>
