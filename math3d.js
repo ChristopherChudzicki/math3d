@@ -529,7 +529,7 @@ class WatchedScope{
 
 class MathExpression {
     // Holds data for math expressions.
-    constructor(expression, scope){
+    constructor(expression){
         // store initial representation
         this.expression = expression;
         this.variables = []
@@ -541,16 +541,15 @@ class MathExpression {
             if (node.type === 'FunctionNode'){ this.functions.push(node.name); }
         }.bind(this))
         
+        var compiled = parsed.compile();
         
         if (expression[0]=="["){
-            this.eval = function(customScope){
-                customScope = Utility.defaultVal(customScope, scope);
-                return parsed.compile().eval(customScope).toArray();
+            this.eval = function(scope){
+                return compiled.eval(scope).toArray();
             }
         } else {
-            this.eval = function(customScope){
-                customScope = Utility.defaultVal(customScope, scope);
-                return parsed.compile().eval(scope);
+            this.eval = function(scope){
+                return compiled.eval(scope);
             }
         }
 
@@ -658,7 +657,7 @@ class MathObject {
     }
     
     parseRawExpression(expr){
-        return new MathExpression(expr, this.math3d.mathScope);
+        return new MathExpression(expr);
     }
     
     //Define this for every subclass
@@ -697,7 +696,7 @@ class MathObject {
     }
     
     setRange(val){
-        this.range = this.parseRawExpression(val).eval();
+        this.range = this.parseRawExpression(val).eval(this.math3d.mathScope);
         this.recalculateData();
     }
     
@@ -754,7 +753,7 @@ class Point extends MathObject {
     }
     
     recalculateData(){
-        this.data = this.parsedExpression.eval();
+        this.data = this.parsedExpression.eval(this.math3d.mathScope);
     }
     
     render(){
@@ -794,7 +793,7 @@ class AbstractCurve extends MathObject {
     }
     
     recalculateData(){
-        this.data = this.parsedExpression.eval();
+        this.data = this.parsedExpression.eval(this.math3d.mathScope);
     }
     
     render(){
@@ -861,32 +860,62 @@ class ParametricCurve extends AbstractCurve{
         
         this.settings = this.setDefaults(settings);
         
-        this.recalculateData();
         this.mathboxGroup = this.render();
     }
     
     recalculateData(){
-        if (this.settings.samples === undefined || this.range === undefined){
-            return
+        if (this.mathboxGroup !== null){
+            this.mathboxGroup.select("cartesian").set("range",[this.range, [0,1]]);
+            var expr = this.parsedExpression;
+            var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
+            var param = this.settings.parameter;
+
+            this.mathboxGroup.select("interval").set("expr", function (emit, t, i, j, time) {
+                localMathScope[param] = t;
+                var xyz = expr.eval(localMathScope);
+                emit( ... xyz );
+            } );
         }
-        
-        var scope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
-        var t = this.settings.parameter;
-        
-        console.log(t)
-        
-        var t1 = this.range[0];
-        var dt = (this.range[1] - this.range[0])/(this.settings.samples);
+        return
+    }
+    
+    render(){
+        // NOTE: Updating an <area>'s range does not work. However, it does work to make range a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
+        var group = this.math3d.scene.group().set('classes', ['curve','parametric']);
         var expr = this.parsedExpression;
+        var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
+        var param = this.settings.parameter[0];
         
-        this.data = Array(this.settings.samples).fill(0).map(function(val, idx){
-            scope[t] = t1 + idx*dt;
-            return expr.eval(scope);
-        })
+        var gridColor = Utility.defaultVal(this.settings.gridColor, Utility.lightenColor(this.settings.color,-0.5) );
         
-        var t_old = scope[t];
+        var data = group.cartesian({
+            range: [this.range, [0,1]]
+        }).interval({
+            width:this.settings.samples,
+            expr: function (emit, t, i, j, time) {
+                localMathScope[param] = t;
+                var xyz = expr.eval(localMathScope);
+                emit( ... xyz );
+            },
+            channels:3,
+            axis:1,
+            live:false,
+        }).swizzle({
+            order: this.math3d.swizzleOrder
+        });
         
-        // this.data = [[0,0,0],[1,0,0]]
+        group.line({
+            points: data,
+            color: this.settings.color,
+            width: this.settings.width,
+            visible: this.settings.visible,
+            start: this.settings.start,
+            end: this.settings.end,
+            size: this.settings.size,
+            zIndex: this.settings.zIndex
+        });
+        
+        return group;
     }
     
 }
@@ -907,16 +936,15 @@ class AbstractSurface extends MathObject {
     }
 }
 
-// FIXME: This implementation means surface range is static.
 class ParametricSurface extends AbstractSurface {
     constructor(math3d, settings){
         super(math3d, settings);
         
         _.merge(this.defaultSettings, {
-            rawExpression: "",
-            func: function(u,v){return [Math.sin(u), Math.cos(u), v]},
-            range: "[[-2*pi,2*pi],[-1,1]]",
-            samples: [64, 64],
+            parameters: ['u','v'],
+            rawExpression: "[v*cos(u),v*sin(u),v]",
+            range: "[[-pi,pi],[-1,1]]",
+            samples: [32,32],
         });
         
         this.settings = this.setDefaults(settings);
@@ -924,45 +952,74 @@ class ParametricSurface extends AbstractSurface {
         
     }
     
+    recalculateData(){
+        if (this.mathboxGroup !== null){
+            this.mathboxGroup.select("cartesian").set("range",this.range);
+
+            var expr = this.parsedExpression;
+            var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
+            var param0 = this.settings.parameters[0];
+            var param1 = this.settings.parameters[1];
+
+            this.mathboxGroup.select("area").set("expr", function (emit, u, v, i, j, time) {
+                localMathScope[param0] = u;
+                localMathScope[param1] = v;
+                var xyz = expr.eval(localMathScope);
+                emit( ... xyz );
+            } );
+        }
+        return
+    }
+    
     render(){
-        var group = this.math3d.scene.group().set('classes', ['curve']);
-        var func = this.settings.func;
+        // NOTE: Updating an <area>'s range does not work. However, it does work to make range a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
+        var group = this.math3d.scene.group().set('classes', ['surface','parametric']);
+        var expr = this.parsedExpression;
+        var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
+        var param0 = this.settings.parameters[0];
+        var param1 = this.settings.parameters[1];
         
         var gridColor = Utility.defaultVal(this.settings.gridColor, Utility.lightenColor(this.settings.color,-0.5) );
         
-        group.area({
-            width: this.settings.samples[0],
-            height: this.settings.samples[1],
-            rangeX: this.range[0],
-            rangeY: this.range[1],
+        var data = group.cartesian({
+            range: this.range
+        }).area({
+            width:this.settings.samples[0],
+            height:this.settings.samples[1],
             expr: function (emit, u, v, i, j, time) {
-                var values = func(u,v);
-                emit( values[0], values[1], values[2] );
+                localMathScope[param0] = u;
+                localMathScope[param1] = v;
+                var xyz = expr.eval(localMathScope);
+                emit( ... xyz );
             },
+            channels:3,
+            axes:[1,2],
             live:false,
-            items: 1,
-            channels: 3,
         }).swizzle({
-          order: this.math3d.swizzleOrder
-        }).surface({
+            id:'temporary',
+            order: this.math3d.swizzleOrder
+        })
+        
+        var surface = group.surface({
+            points:data,
             color: this.settings.color,
             visible: this.settings.visible,
-            opacity: this.settings.opacity
+            opacity: this.settings.opacity,
         }).group()
-            .resample({height:this.settings.gridY})
+            .resample({height:this.settings.gridY,source:data})
             .line({
                 color:gridColor,
                 opacity:this.settings.gridOpacity
             })
         .end()
         .group()
-            .resample({width:this.settings.gridX})
+            .resample({width:this.settings.gridX, source:data,})
             .transpose({order:'yx'})
             .line({
                 color:gridColor,
                 opacity:this.settings.gridOpacity
             })
-        .end();;
+        .end();
         
         return group;
     }
@@ -971,3 +1028,6 @@ class ParametricSurface extends AbstractSurface {
 
 
 // FIXME: 1: Rewrite parametric curve grapher to generate array by evaluating a single-variable function. E.g., if the curve is [r*cos(t), r*sin(t), t], then r should be fixed while drawing.  Probably I can fix this by evaluating each math expression node that is of type symbol / function.
+
+// Data in a matrix
+// https://groups.google.com/d/topic/mathbox/fOH6FPs3RHw/discussion

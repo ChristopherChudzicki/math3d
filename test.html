@@ -7,6 +7,9 @@
     <script src="resources/mathbox-bundle.js"></script>
     <link rel="stylesheet" href="resources/mathbox.css">
     
+    <script src="resources/dat.gui.js"></script>
+    <link rel="stylesheet" href="resources/dat-gui-custom.css">
+    
     <script src="math3d.js"></script>
     <link rel="stylesheet" href="math3d.css">
     
@@ -24,7 +27,7 @@ var queryString = Utility.getQueryString();
 var encodedUserSettings = queryString['settings'];
 var authorSettings = {
     containerId:'my-math-box',
-    mathScope: {a:2,b:-2,c:1,d:3,r:1.5},
+    mathScope: {a:2,b:-2,c:1,d:3,r:3},
     wrappedMathObjects:[
         {
             type: 'Point',
@@ -40,7 +43,7 @@ var authorSettings = {
         },
         {
             type: 'ParametricSurface',
-            settings: {func: function(u,v){return [v*Math.sin(u), v*Math.cos(u), v]}, color:'lightcoral'}
+            settings: {rawExpression: '[r*cos(u),r*sin(u),v]', color:'lightcoral'}
         }
     ]
 };
@@ -49,10 +52,19 @@ var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeS
 
 var math3d = new Math3D(settings);
 
-// testScope = new WatchedScope({a:1.2,b:-0.5,c:1.5})
-// testExpr = new MathExpression("[a,b,c]", testScope)
-// testScope.a = 1.2
-// testScope.b = -0.4
+var gui = new dat.GUI();
+gui.add(math3d.mathScope, "r")
+            .min(0)
+            .max(3)
+            .step(0.01);
+            
+var iterations = 100;
+console.time('Function #1');
+for(var i = 0; i < iterations; i++ ){
+    math3d.mathObjects[2].recalculateData()
+};
+console.timeEnd('Function #1')
+
 </script>
 
 </body>
