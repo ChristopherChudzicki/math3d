@@ -31,19 +31,19 @@ var authorSettings = {
     wrappedMathObjects:[
         {
             type: 'Point',
-            settings: {rawExpression: "[[a,b,c]]"}
+            settings: {rawExpression: "[[a,b,+d]]"}
         },
         {
             type: 'Point',
-            settings: {rawExpression: "[[-a,c,d]]", color:'red'}
+            settings: {rawExpression: "[[-a,c,-d]]", color:'red'}
         },
         {
             type: 'ParametricCurve',
-            settings: {rawExpression:'[r*cos(t),r*sin(t),t]'}
+            settings: {rawExpression:'[r*cos(pi*t),r*sin(pi*t),t]', range:"[-d,d]"}
         },
         {
             type: 'ParametricSurface',
-            settings: {rawExpression: '[r*cos(u),r*sin(u),v]', color:'lightcoral'}
+            settings: {rawExpression: '[r*cos(u),r*sin(u),v]', range:"[[-pi,pi],[-d,d]]", color:'lightcoral'}
         }
     ]
 };
@@ -56,6 +56,10 @@ var gui = new dat.GUI();
 gui.add(math3d.mathScope, "r")
             .min(0)
             .max(3)
+            .step(0.01);
+gui.add(math3d.mathScope, "d")
+            .min(0)
+            .max(5)
             .step(0.01);
             
 var iterations = 100;

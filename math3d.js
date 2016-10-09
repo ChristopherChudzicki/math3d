@@ -457,7 +457,7 @@ class Math3D {
     onVariableChange(varName){
         // update objects where the variables have changed
         _.forEach( this.mathObjects, function(obj, idx){
-            if ( _.contains( obj.parsedExpression.variables, varName) ||  _.contains( obj.parsedExpression.functions, varName) ){
+            if ( _.contains( obj.variables, varName) ){
                 obj.recalculateData();
             }
         })
@@ -571,6 +571,10 @@ class MathObject {
         this.mathboxDataType = null; // e.g., 'array'
         this.mathboxRenderType = null; // e.g., 'point'
         
+        this.parsedExpression = null;
+        this.parsedRange = null;
+        this.variables = [];
+        
         this.settings = {};
         this.defaultSettings = {
             visible: true,
@@ -584,6 +588,7 @@ class MathObject {
                 set: function(val){
                     this._rawExpression = val;
                     _this.parsedExpression = _this.parseRawExpression(val);
+                    _this.updateVariablesList();
                     _this.recalculateData();
                 },
                 get: function(){return this._rawExpression;},
@@ -660,6 +665,19 @@ class MathObject {
         return new MathExpression(expr);
     }
     
+    updateVariablesList(){
+        this.variables = []
+        if (this.parsedExpression !== null){
+            this.variables = this.variables.concat( this.parsedExpression.variables );
+            this.variables = this.variables.concat( this.parsedExpression.functions );
+        }
+        
+        if (this.parsedRange !== null){
+            this.variables = this.variables.concat( this.parsedRange.variables );
+            this.variables = this.variables.concat( this.parsedRange.functions );
+        }
+    }
+    
     //Define this for every subclass
     recalculateData(){}
     
@@ -696,7 +714,9 @@ class MathObject {
     }
     
     setRange(val){
-        this.range = this.parseRawExpression(val).eval(this.math3d.mathScope);
+        this.parsedRange = this.parseRawExpression(val);
+        this.range = this.parsedRange.eval(this.math3d.mathScope);
+        this.updateVariablesList();
         this.recalculateData();
     }
     
@@ -869,7 +889,10 @@ class ParametricCurve extends AbstractCurve{
             var expr = this.parsedExpression;
             var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
             var param = this.settings.parameter;
-
+            
+            this.range = this.parsedRange.eval(this.math3d.mathScope);
+            this.mathboxGroup.select("cartesian").set("range",[this.range, [0,1]]);
+            
             this.mathboxGroup.select("interval").set("expr", function (emit, t, i, j, time) {
                 localMathScope[param] = t;
                 var xyz = expr.eval(localMathScope);
@@ -960,7 +983,9 @@ class ParametricSurface extends AbstractSurface {
             var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
             var param0 = this.settings.parameters[0];
             var param1 = this.settings.parameters[1];
-
+            
+            this.range = this.parsedRange.eval(this.math3d.mathScope);
+            this.mathboxGroup.select("cartesian").set("range",this.range);
             this.mathboxGroup.select("area").set("expr", function (emit, u, v, i, j, time) {
                 localMathScope[param0] = u;
                 localMathScope[param1] = v;
@@ -996,7 +1021,6 @@ class ParametricSurface extends AbstractSurface {
             axes:[1,2],
             live:false,
         }).swizzle({
-            id:'temporary',
             order: this.math3d.swizzleOrder
         })
         
@@ -1025,9 +1049,6 @@ class ParametricSurface extends AbstractSurface {
     }
     
 }
-
-
-// FIXME: 1: Rewrite parametric curve grapher to generate array by evaluating a single-variable function. E.g., if the curve is [r*cos(t), r*sin(t), t], then r should be fixed while drawing.  Probably I can fix this by evaluating each math expression node that is of type symbol / function.
 
 // Data in a matrix
 // https://groups.google.com/d/topic/mathbox/fOH6FPs3RHw/discussion
