@@ -811,6 +811,12 @@ class AbstractCurve extends MathObject {
         })
         
     }
+}
+
+class AbstractCurveFromData extends AbstractCurve {
+    constructor(math3d, settings){
+        super(math3d, settings);
+    }
     
     recalculateData(){
         this.data = this.parsedExpression.eval(this.math3d.mathScope);
@@ -838,10 +844,9 @@ class AbstractCurve extends MathObject {
         
         return group;
     }
-    
 }
 
-class Line extends AbstractCurve {
+class Line extends AbstractCurveFromData {
     constructor(math3d, settings){
         super(math3d, settings);
         _.merge(this.defaultSettings, {
@@ -853,7 +858,7 @@ class Line extends AbstractCurve {
     }
 }
 
-class Vector extends AbstractCurve {
+class Vector extends AbstractCurveFromData {
     constructor(math3d, settings){
         super(math3d, settings);
         _.merge(this.defaultSettings, {
