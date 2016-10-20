@@ -532,15 +532,17 @@ class MathExpression {
     constructor(expression){
         // store initial representation
         this.expression = expression;
+        
+        var parsed = this.parse();
+        
         this.variables = []
         this.functions = []
         
-        var parsed = math.parse(expression);
         parsed.traverse(function(node){
             if (node.type === 'SymbolNode'){ this.variables.push(node.name); }
             if (node.type === 'FunctionNode'){ this.functions.push(node.name); }
         }.bind(this))
-        
+
         var compiled = parsed.compile();
         
         if (expression[0]=="["){
@@ -553,6 +555,25 @@ class MathExpression {
             }
         }
 
+    }
+    
+    parse(){
+        // Cross and dot products are not built into mathjs express. Let's replace "cross" and "dot" by mathjs operators that we probably won't use. Then we'll reassign functionality to these operators.
+        this.expression = this.expression.replace(/dot/g, '|');
+        this.expression = this.expression.replace(/cross/g, '&');
+        var parsed = math.parse(this.expression);
+
+        parsed.traverse(function(node){
+            if (node.type === 'OperatorNode' && node.op === '|'){
+                node.fn = 'dot';
+            } 
+            if (node.type === 'OperatorNode' && node.op === '&'){
+                node.fn = 'cross';
+            }
+        }.bind(this))
+        this.expression = this.expression.replace(/:/,'dot')
+        this.expression = this.expression.replace(/&/,'cross')
+        return parsed
     }
 }
 
