@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Math 3D</title>
+    
+    <script src="resources/mathbox-bundle.js"></script>
+    <link rel="stylesheet" href="resources/mathbox.css">
+    
+    <script src="math3d.js"></script>
+    <link rel="stylesheet" href="math3d.css">
+    
+    <script src="resources/dat.gui.js"></script>
+    <link rel="stylesheet" href="resources/dat-gui-custom.css">
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="
+    https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+<div id="my-math-box"></div>
+<script>
+
+var queryString = Utility.getQueryString();
+var encodedUserSettings = queryString['settings'];
+
+var rangeMin = 0;
+var rangeMax = 3;
+var radius = 2;
+var pos_expr = `[${radius}*cos(t^2),${radius}*sin(t^2),t^2]`
+var pos_compiled = math.parse(pos_expr).compile()
+var pos = t => pos_compiled.eval({t:t}).toArray();
+function derivative(func, h){
+    var h = Utility.defaultVal(h,0.01);
+    return t => math.divide( math.subtract( func(t+0.5*h) , func(t-0.5*h) ), h )
+}
+var vel = t => derivative(pos)(t);
+var acc = t => derivative(vel)(t);
+var T = t => math.divide( vel(t) , math.norm(vel(t)) );
+var Tdiff = t => derivative(T)(t);
+var N = t => math.divide( Tdiff(t) , math.norm(Tdiff(t)) );
+var B = t => math.cross(T(t),N(t));
+
+// var vel_vector =
+
+var authorSettings = {
+    containerId:'my-math-box',
+    mathScope: {t:1, pos:pos, vel:vel, acc:acc, T:T, N:N, B:B, i:[1,0,0], j:[0,1,0], k:[0,0,1]},
+    scale: [1,1,1],
+    wrappedMathObjects:[
+        {
+            type: 'ParametricCurve',
+            settings: {rawExpression: pos_expr, range:`[${rangeMin},${rangeMax}]`}
+        },
+        {
+            type: 'ParametricCurve', //Decoration 3
+            settings: {rawExpression:'pos(t)+0.25*sin(48*t)*N(t)', range:`[${rangeMin},${rangeMax}]`, color:'black', opacity:0.5, samples:512, visible:false}
+        },
+        {
+            type: 'ParametricCurve', //Decoration 1
+            settings: {rawExpression:'pos(t)+0.25*sin(48*t)*j', range:`[${rangeMin},${rangeMax}]`, color:'black', opacity:0.5, samples:512, visible:false}
+        },
+        {
+            type: 'ParametricCurve', //Decoration 4
+            settings: {rawExpression:'pos(t)+0.25*sin(48*t)^2*N(t)', range:`[${rangeMin},${rangeMax}]`, color:'black', opacity:0.5, samples:512, visible:false}
+        },
+        {
+            type: 'ParametricCurve', //Decoration 5
+            settings: {rawExpression:'pos(t)-0.25*sin(48*t)^2*N(t)', range:`[${rangeMin},${rangeMax}]`, color:'black', opacity:0.5, samples:512, visible:false}
+        },
+        {
+            type: 'ParametricCurve', //Decoration 2
+            settings: {rawExpression:'pos(t)+0.25*sin(48*t)*i', range:`[${rangeMin},${rangeMax}]`, color:'black', opacity:0.5, samples:512, visible:false}
+        },
+        {
+            type: 'ParametricCurve', //Decoration 6
+            settings: {rawExpression:'pos(t)+0.6*cos(48*t)*N(t)+0.2*sin(48*t)*B(t)', range:`[${rangeMin},${rangeMax}]`, color:'black', opacity:0.5, samples:512, visible:false}
+        },
+    ]
+};
+
+var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
+
+var math3d = new Math3D(settings);
+
+var gui = new dat.GUI();
+
+gui.add(math3d.mathObjects[1].settings, 'visible').name("Decoration 1")
+gui.add(math3d.mathObjects[2].settings, 'visible').name("Decoration 2")
+gui.add(math3d.mathObjects[3].settings, 'visible').name("Decoration 3")
+gui.add(math3d.mathObjects[4].settings, 'visible').name("Decoration 4")
+gui.add(math3d.mathObjects[5].settings, 'visible').name("Decoration 5")
+gui.add(math3d.mathObjects[6].settings, 'visible').name("Decoration 6")
+gui.add(math3d.mathObjects[7].settings, 'visible').name("Decoration 7")
+
+
+</script>
+
+</body>
+</html>
