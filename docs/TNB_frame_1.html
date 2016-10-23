@@ -80,15 +80,15 @@ var authorSettings = {
         },
         {
             type: 'Vector', // unit tangent
-            settings: {rawExpression: `[pos(t),pos(t)+T(t)]`, color:'red', zIndex:1, visible: false}
+            settings: {rawExpression: `[pos(t),pos(t)+T(t)]`, color:'red', zIndex:1, visible: true}
         },
         {
             type: 'Vector', // unit normal
-            settings: {rawExpression: `[pos(t),pos(t)+N(t)]`, color:'purple', zIndex:1, visible: false}
+            settings: {rawExpression: `[pos(t),pos(t)+N(t)]`, color:'purple', zIndex:1, visible: true}
         },
         {
             type: 'Vector', // unit binormal
-            settings: {rawExpression: `[pos(t),pos(t)+B(t)]`, color:'darkgreen', zIndex:1, visible: false}
+            settings: {rawExpression: `[pos(t),pos(t)+B(t)]`, color:'darkgreen', zIndex:1, visible: true}
         },
         {
             type: 'ParametricSurface', //normal plane
