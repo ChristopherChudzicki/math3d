@@ -127,13 +127,12 @@ var slider = gui.add(math3d.mathScope, "t")
             .max(rangeMax)
             .step(0.01);
 
-settings.animate = false;
+settings.animate = true;
 function beginAnimation(settings){
     var intervalId = setInterval( function(){
     if (!settings.animate){
         clearInterval(intervalId);
     }
-    console.log("Hello")
     if (math3d.mathScope.t > rangeMax){
         math3d.mathScope.t = rangeMin;
     } else {
@@ -156,7 +155,7 @@ $('body').on('keydown', function(evt){
     }
 })
 
-// beginAnimation();
+beginAnimation();
 
 </script>
 
