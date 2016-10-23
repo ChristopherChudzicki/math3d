@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Math 3D</title>
+    
+    <script src="resources/mathbox-bundle.js"></script>
+    <link rel="stylesheet" href="resources/mathbox.css">
+    
+    <script src="math3d.js"></script>
+    <link rel="stylesheet" href="math3d.css">
+    
+    <script src="resources/dat.gui.js"></script>
+    <link rel="stylesheet" href="resources/dat-gui-custom.css">
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="
+    https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+<div id="my-math-box"></div>
+<script>
+
+var queryString = Utility.getQueryString();
+var encodedUserSettings = queryString['settings'];
+
+var rangeMin = -2;
+var rangeMax = 2;
+var radius = 2;
+// var pos_expr = '[r*cos(t^2),r*sin(t^2),t^2]'
+var pos_expr = '[t,t^3,t^2]'
+var pos_compiled = math.parse(pos_expr).compile()
+var pos = t => pos_compiled.eval({t:t, r:radius}).toArray();
+function derivative(func, h){
+    var h = Utility.defaultVal(h,0.01);
+    return t => math.divide( math.subtract( func(t+0.5*h) , func(t-0.5*h) ), h )
+}
+var vel = t => derivative(pos)(t);
+var acc = t => derivative(vel)(t);
+var T = t => math.divide( vel(t) , math.norm(vel(t)) );
+var Tdiff = t => derivative(T)(t);
+var N = t => math.divide( Tdiff(t) , math.norm(Tdiff(t)) );
+var B = t => math.cross(T(t),N(t));
+
+// var vel_vector =
+
+var authorSettings = {
+    containerId:'my-math-box',
+    mathScope: {r:radius,t:1, pos:pos, vel:vel, acc:acc, T:T, N:N, B:B},
+    scale: [1,1,1],
+    wrappedMathObjects:[
+        {
+            type: 'ParametricCurve',
+            settings: {rawExpression: pos_expr, range:`[${rangeMin},${rangeMax}]`}
+        },
+        {
+            type: 'Point',
+            settings: {rawExpression: pos_expr}
+        },
+        {
+            type: 'Vector',
+            settings: {rawExpression:'[pos(t), pos(t)+0.25*cos(8*pi*t)*N(t)+0.25*sin(8*pi*t)*B(t)]', color:'black', size:4, visible:false}
+        },
+        {
+            type: 'ParametricCurve',
+            settings: {rawExpression:'pos(t)+0.25*cos(8*pi*t)*N(t)+0.25*sin(8*pi*t)*B(t)', range:`[${rangeMin},${rangeMax}]`, color:'black', opacity:0.5, samples:512, visible:false}
+        },
+        {
+            type: 'Vector', //position
+            settings: {rawExpression: `[[0,0,0],pos(t)]`, zIndex:1, visible: false}
+        },
+        {
+            type: 'Vector', //velocity
+            settings: {rawExpression: `[pos(t),pos(t)+vel(t)]`, color:'red', zIndex:1, visible: false}
+        },
+        {
+            type: 'Vector', //acceleration
+            settings: {rawExpression: `[pos(t),pos(t)+acc(t)]`, color:'purple', zIndex:1, visible: false}
+        },
+        {
+            type: 'Vector', // unit tangent
+            settings: {rawExpression: `[pos(t),pos(t)+T(t)]`, color:'red', zIndex:1, visible: false}
+        },
+        {
+            type: 'Vector', // unit normal
+            settings: {rawExpression: `[pos(t),pos(t)+N(t)]`, color:'purple', zIndex:1, visible: false}
+        },
+        {
+            type: 'Vector', // unit binormal
+            settings: {rawExpression: `[pos(t),pos(t)+B(t)]`, color:'darkgreen', zIndex:1, visible: false}
+        },
+        {
+            type: 'ParametricSurface', //normal plane
+            settings: {rawExpression: 'pos(t) + u*N(t) + v*B(t)', range:"[[-1.25,1.25], [-1.25, 1.25]]", color:'lightcoral', samples:[2,2], gridX:0, gridY:0, visible: false}
+        },
+        {
+            type: 'ParametricSurface', //osculating plane
+            settings: {rawExpression: 'pos(t) + u*T(t) + v*N(t)', range:"[[-1.25,1.25], [-1.25, 1.25]]", color:'lightcoral', samples:[2,2], gridX:0, gridY:0, visible: false}
+        },
+    ]
+};
+
+var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
+
+var math3d = new Math3D(settings);
+
+var gui = new dat.GUI();
+
+gui.add(math3d.mathObjects[4].settings, 'visible').name("Position")
+gui.add(math3d.mathObjects[5].settings, 'visible').name("Velocity")
+gui.add(math3d.mathObjects[6].settings, 'visible').name("Acceleration")
+gui.add(math3d.mathObjects[7].settings, 'visible').name("Unit Tangent, T")
+gui.add(math3d.mathObjects[8].settings, 'visible').name("Unit Normal, N")
+gui.add(math3d.mathObjects[9].settings, 'visible').name("Unit Binormal, B")
+gui.add(math3d.mathObjects[10].settings, 'visible').name("Normal Plane")
+gui.add(math3d.mathObjects[11].settings, 'visible').name("Osculating Plane")
+gui.add(math3d.mathObjects[2].settings, 'visible').name("Decorate (Vec)")
+gui.add(math3d.mathObjects[3].settings, 'visible').name("Decorate (Curve)")
+
+
+
+// time slider and animation ... need to make this reusable.
+
+var slider = gui.add(math3d.mathScope, "t")
+            .min(rangeMin)
+            .max(rangeMax)
+            .step(0.01);
+
+settings.animate = false;
+function beginAnimation(settings){
+    var intervalId = setInterval( function(){
+    if (!settings.animate){
+        clearInterval(intervalId);
+    }
+    console.log("Hello")
+    if (math3d.mathScope.t > rangeMax){
+        math3d.mathScope.t = rangeMin;
+    } else {
+        math3d.mathScope.t += 0.05
+    }
+    slider.updateDisplay();
+    }, 200 )
+}
+
+var animateToggle = gui.add(settings, 'animate').name("Animate").onChange(
+    function(){
+        if (settings.animate){
+            beginAnimation(settings)
+        }
+    }
+)
+$('body').on('keydown', function(evt){
+    if (evt.which===32){ //spacebar key
+        animateToggle.setValue( !settings.animate )
+    }
+})
+
+// beginAnimation();
+
+</script>
+
+</body>
+</html>

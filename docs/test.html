@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Math 3D</title>
+    
+    <script src="resources/mathbox-bundle.js"></script>
+    <link rel="stylesheet" href="resources/mathbox.css">
+    
+    <script src="resources/dat.gui.js"></script>
+    <link rel="stylesheet" href="resources/dat-gui-custom.css">
+    
+    <script src="math3d.js"></script>
+    <link rel="stylesheet" href="math3d.css">
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="
+    https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+<div id="my-math-box"></div>
+<script>
+
+var queryString = Utility.getQueryString();
+var encodedUserSettings = queryString['settings'];
+var authorSettings = {
+    containerId:'my-math-box',
+    mathScope: {a:2,b:-2,c:1,d:3,r:3},
+    wrappedMathObjects:[
+        {
+            type: 'Point',
+            settings: {rawExpression: "[[a,b,+d]]"}
+        },
+        {
+            type: 'Point',
+            settings: {rawExpression: "[[-a,c,-d]]", color:'red'}
+        },
+        {
+            type: 'ParametricCurve',
+            settings: {rawExpression:'[r*cos(pi*t),r*sin(pi*t),t]', range:"[-d,d]"}
+        },
+        {
+            type: 'ParametricSurface',
+            settings: {rawExpression: '[r*cos(u),r*sin(u),v]', range:"[[-pi,pi],[-d,d]]", color:'lightcoral'}
+        }
+    ]
+};
+
+var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
+
+var math3d = new Math3D(settings);
+
+var gui = new dat.GUI();
+gui.add(math3d.mathScope, "r")
+            .min(0)
+            .max(3)
+            .step(0.01);
+gui.add(math3d.mathScope, "d")
+            .min(0)
+            .max(5)
+            .step(0.01);
+            
+var iterations = 100;
+console.time('Function #1');
+for(var i = 0; i < iterations; i++ ){
+    math3d.mathObjects[2].recalculateData()
+};
+console.timeEnd('Function #1')
+
+</script>
+
+</body>
+</html>
