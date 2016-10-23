@@ -623,6 +623,15 @@ class MathObject {
                 },
                 get: function(){return this._color;},
             },
+            opacity: {
+                set: function(val){
+                    this._opacity = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setOpacity(val);
+                    }
+                },
+                get: function(){return this._opacity;},
+            },
             zIndex: {
                 set: function(val){
                     this._zIndex = val;
@@ -716,6 +725,10 @@ class MathObject {
     
     setColor(val){
         this.mathboxGroup.select(this.mathboxRenderType).set("color",val);
+    }
+    
+    setOpacity(val){
+        this.mathboxGroup.select(this.mathboxRenderType).set("opacity",val);
     }
     
     setZIndex(val){
@@ -956,6 +969,7 @@ class ParametricCurve extends AbstractCurve{
         group.line({
             points: data,
             color: this.settings.color,
+            opacity: this.settings.opacity,
             width: this.settings.width,
             visible: this.settings.visible,
             start: this.settings.start,
