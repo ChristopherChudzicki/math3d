@@ -47,7 +47,7 @@ var B = t => math.cross(T(t),N(t));
 
 var authorSettings = {
     containerId:'my-math-box',
-    mathScope: {t:1, pos:pos, vel:vel, acc:acc, T:T, N:N, B:B},
+    mathScope: {t:1, pos:pos, vel:vel, acc:acc, T:T, N:N, B:B, i:[1,0,0]},
     scale: [1,1,1],
     wrappedMathObjects:[
         {
@@ -98,6 +98,22 @@ var authorSettings = {
             type: 'ParametricSurface', //osculating plane
             settings: {rawExpression: 'pos(t) + u*T(t) + v*N(t)', range:"[[-1.25,1.25], [-1.25, 1.25]]", color:'lightcoral', samples:[2,2], gridX:0, gridY:0, visible: false}
         },
+        {
+            type: 'Vector',
+            settings: {rawExpression:'[pos(t), pos(t)+0.25*cos(8*pi*t)*i]', color:'black', size:4, visible:false}
+        },
+        {
+            type: 'ParametricCurve',
+            settings: {rawExpression:'pos(t)+0.25*cos(8*pi*t)*i', range:`[${rangeMin},${rangeMax}]`, color:'black', opacity:0.5, samples:512, visible:false}
+        },
+        {
+            type: 'Vector',
+            settings: {rawExpression:'[pos(t), pos(t)+0.25*cos(8*pi*t)*N(t)]', color:'black', size:4, visible:false}
+        },
+        {
+            type: 'ParametricCurve',
+            settings: {rawExpression:'pos(t)+0.25*cos(8*pi*t)*N(t)', range:`[${rangeMin},${rangeMax}]`, color:'black', opacity:0.5, samples:512, visible:false}
+        },
     ]
 };
 
@@ -115,8 +131,12 @@ gui.add(math3d.mathObjects[8].settings, 'visible').name("Unit Normal, N")
 gui.add(math3d.mathObjects[9].settings, 'visible').name("Unit Binormal, B")
 gui.add(math3d.mathObjects[10].settings, 'visible').name("Normal Plane")
 gui.add(math3d.mathObjects[11].settings, 'visible').name("Osculating Plane")
-gui.add(math3d.mathObjects[2].settings, 'visible').name("Decorate (Vec)")
-gui.add(math3d.mathObjects[3].settings, 'visible').name("Decorate (Curve)")
+gui.add(math3d.mathObjects[12].settings, 'visible').name("Decorate 1 (Vec)")
+gui.add(math3d.mathObjects[13].settings, 'visible').name("Decorate 1 (Curve)")
+gui.add(math3d.mathObjects[14].settings, 'visible').name("Decorate 2 (Vec)")
+gui.add(math3d.mathObjects[15].settings, 'visible').name("Decorate 2 (Curve)")
+gui.add(math3d.mathObjects[2].settings, 'visible').name("Decorate 3 (Vec)")
+gui.add(math3d.mathObjects[3].settings, 'visible').name("Decorate 3 (Curve)")
 
 
 
@@ -136,10 +156,10 @@ function beginAnimation(settings){
     if (math3d.mathScope.t > rangeMax){
         math3d.mathScope.t = rangeMin;
     } else {
-        math3d.mathScope.t += 0.05
+        math3d.mathScope.t += 0.02
     }
     slider.updateDisplay();
-    }, 200 )
+    }, 25 )
 }
 
 var animateToggle = gui.add(settings, 'animate').name("Animate").onChange(

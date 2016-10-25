@@ -137,10 +137,10 @@ function beginAnimation(settings){
     if (math3d.mathScope.t > rangeMax){
         math3d.mathScope.t = rangeMin;
     } else {
-        math3d.mathScope.t += 0.05
+        math3d.mathScope.t += 0.02
     }
     slider.updateDisplay();
-    }, 200 )
+    }, 25 )
 }
 
 var animateToggle = gui.add(settings, 'animate').name("Animate").onChange(
