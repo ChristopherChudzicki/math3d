@@ -9,3 +9,4 @@
 - [TNB 1](https://christopherchudzicki.github.io/math3d/TNB_frame_1.html)
 - [TNB 2](https://christopherchudzicki.github.io/math3d/TNB_frame_2.html)
 - [TNB Decorations](https://christopherchudzicki.github.io/math3d/TNB_decorations.html)
+- [Napkin Ring](https://christopherchudzicki.github.io/math3d/napkin_ring.html)
