@@ -139,6 +139,7 @@ class Math3D {
         // Add getters and setters for updating after initial rendering
         this.settings = this.makeDynamicSettings();
         
+        
         // create math scope
         this.mathScope = new WatchedScope(this.settings.mathScope)
         this.mathObjects = [] //onVariableChange checks mathObjects, so define it as empty for now.
@@ -208,8 +209,7 @@ class Math3D {
             return defaultAxisSettings
         }
     
-        settings = _.merge({}, this.defaultSettings, settings);
-    
+        settings = _.merge({},this.defaultSettings, settings);
         return settings
     }
 
