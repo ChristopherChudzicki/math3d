@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Math 3D</title>
+    
+    <script src="resources/mathbox-bundle.js"></script>
+    <link rel="stylesheet" href="resources/mathbox.css">
+    
+    <script src="math3d.js"></script>
+    <link rel="stylesheet" href="math3d.css">
+    
+    <script src="resources/dat.gui.js"></script>
+    <link rel="stylesheet" href="resources/dat-gui-custom.css">
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="
+    https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
+
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+<div id="my-math-box"></div>
+<script>
+
+var queryString = Utility.getQueryString();
+var encodedUserSettings = queryString['settings'];
+
+var X = (r,q) => r*Math.cos(q);
+var Y = (r,q) => r*Math.sin(q);
+var f = (r,q) => r*r*Math.cos(3*q);
+
+// var vel_vector =
+
+
+var authorSettings = {
+    containerId:'my-math-box',
+    mathScope: {X:X,Y:Y,f:f},
+    scale: [1,1,0.5],
+    range: {
+        zMin:-20,
+        zMax:20,
+    },
+    wrappedMathObjects:[
+        {
+            type: 'ParametricSurface',
+            settings: {rawExpression: '[X(u,v), Y(u,v), f(u,v)]', range:`[[0,3],[0,2*pi]]`,color:'lightcoral',opacity:1, samples:[128,128], shaded:true, gridX:7, gridY:13}
+        },
+        {
+            type: 'ParametricSurface',
+            settings: {rawExpression: '[X(u,v), Y(u,v), 0]', color:'gray', range:`[[0,3],[0,2*pi]]`,opacity:0.5, gridX:0, gridY:0, visible:false}
+        },
+    ]
+};
+
+var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
+
+var math3d = new Math3D(settings);
+
+var gui = new dat.GUI();
+
+gui.add(math3d.mathObjects[1].settings, "visible");
+
+
+</script>
+
+</body>
+</html>
