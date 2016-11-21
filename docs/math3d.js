@@ -597,11 +597,11 @@ class MathObject {
         this.variables = [];
         
         this.settings = {};
-        this.defaultSettings = {
-            visible: true,
-            color: '#3090FF',
-            zBias: 0,
-        };
+        // this.defaultSettings = {
+        //     visible: true,
+        //     color: '#3090FF',
+        //     zBias: 0,
+        // };
         
         var _this = this;
         Object.defineProperties(this.settings,{
@@ -694,6 +694,15 @@ class MathObject {
         });
         
     };
+    
+    get defaultSettings(){
+        var defaults = {
+            visible: true,
+            color: '#3090FF',
+            zBias: 0,
+        }
+        return defaults
+    }
     
     setDefaults(settings){
         _.merge(this.settings, this.defaultSettings, settings);
@@ -809,14 +818,18 @@ class Point extends MathObject {
         super(math3d, settings);
         this.mathboxDataType = 'array';
         this.mathboxRenderType = 'point';
-        
-        _.merge(this.defaultSettings, {
-            rawExpression: "[[0,0,0]]",
-            size: 14,
-        });
+
         this.settings = this.setDefaults(settings);
         
         this.mathboxGroup = this.render();
+    }
+    
+    get defaultSettings(){
+        var defaults = _.merge(super.defaultSettings, {
+            rawExpression: "[[0,0,0]]",
+            size: 14,
+        });
+        return defaults
     }
     
     recalculateData(){
@@ -851,12 +864,15 @@ class AbstractCurve extends MathObject {
         this.mathboxDataType = 'interval';
         this.mathboxRenderType = 'line';
         
-        _.merge(this.defaultSettings,{
+    }
+    
+    get defaultSettings(){
+        var defaults = _.merge(super.defaultSettings, {
             width: 4,
             start: false,
             end: false
-        })
-        
+        });
+        return defaults
     }
 }
 
@@ -897,26 +913,34 @@ class AbstractCurveFromData extends AbstractCurve {
 class Line extends AbstractCurveFromData {
     constructor(math3d, settings){
         super(math3d, settings);
-        _.merge(this.defaultSettings, {
-            rawExpression: "[[0,0,0],[pi,0,0],[pi,pi,0],[0,pi,0]]",
-        })
+
         this.settings = this.setDefaults(settings);
         
         this.mathboxGroup = this.render();
+    }
+    get defaultSettings(){
+        var defaults = _.merge(super.defaultSettings, {
+            rawExpression: "[[0,0,0],[pi,0,0],[pi,pi,0],[0,pi,0]]",
+        });
+        return defaults
     }
 }
 
 class Vector extends AbstractCurveFromData {
     constructor(math3d, settings){
         super(math3d, settings);
-        _.merge(this.defaultSettings, {
-            rawExpression: "[[0,0,0],[pi,0,0],[pi,pi,0],[0,pi,0]]",
-            end:true,
-            size:6,
-        })
+        
         this.settings = this.setDefaults(settings);
         
         this.mathboxGroup = this.render();
+    }
+    get defaultSettings(){
+        var defaults = _.merge(super.defaultSettings, {
+            rawExpression: "[[0,0,0],[pi,0,0],[pi,pi,0],[0,pi,0]]",
+            end:true,
+            size:6,
+        });
+        return defaults
     }
 }
 
@@ -924,16 +948,18 @@ class ParametricCurve extends AbstractCurve{
     constructor(math3d, settings){
         super(math3d, settings);
         
-        _.merge(this.defaultSettings, {
+        this.settings = this.setDefaults(settings);
+        
+        this.mathboxGroup = this.render();
+    }
+    get defaultSettings(){
+        var defaults = _.merge(super.defaultSettings, {
             parameter: 't',
             rawExpression: "[cos(t),sin(t),t]",
             range: "[-2*pi,2*pi]",
             samples:64,
         });
-        
-        this.settings = this.setDefaults(settings);
-        
-        this.mathboxGroup = this.render();
+        return defaults
     }
     
     recalculateData(){
@@ -1002,32 +1028,36 @@ class AbstractSurface extends MathObject {
         super(math3d, settings);
         this.mathboxDataType = 'area';
         this.mathboxRenderType = 'surface';
-        
-        _.merge(this.defaultSettings,{
+    }
+    get defaultSettings(){
+        var defaults = _.merge(super.defaultSettings, {
             opacity: 0.66,
             gridX: 8,
             gridY: 8,
             gridOpacity:0.75,
             shaded:false
-        })
-        
+        });
+        return defaults
     }
 }
 
 class ParametricSurface extends AbstractSurface {
     constructor(math3d, settings){
         super(math3d, settings);
+           
+        this.settings = this.setDefaults(settings);
         
-        _.merge(this.defaultSettings, {
+        this.mathboxGroup = this.render();
+    }
+
+    get defaultSettings(){
+        var defaults = _.merge(super.defaultSettings, {
             parameters: ['u','v'],
             rawExpression: "[v*cos(u),v*sin(u),v]",
             range: "[[-pi,pi],[-1,1]]",
             samples: [32,32],
         });
-        
-        this.settings = this.setDefaults(settings);
-        this.mathboxGroup = this.render();
-        
+        return defaults
     }
     
     recalculateData(){
