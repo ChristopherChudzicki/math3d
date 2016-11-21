@@ -1048,8 +1048,8 @@ class ParametricSurface extends AbstractSurface {
         this.settings = this.setDefaults(settings);
         
         this.mathboxGroup = this.render();
-        
     }
+
     get defaultSettings(){
         var defaults = _.merge(super.defaultSettings, {
             parameters: ['u','v'],
