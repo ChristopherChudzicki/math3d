@@ -68,7 +68,7 @@ class AppMath3D {
         var content = `
         <input class="jscolor hide-text" ng-model="obj.uiSettings.color" ></input>
         <input type="text" ng-model="obj.uiSettings.rawExpression"></input>
-        <button type="button" class="btn btn-xs remove-item" ng-click="removeMathObj(obj)">
+        <button type="button" class="btn btn-xs remove-item upper-right" ng-click="removeMathObj(obj)">
           <span class="glyphicon glyphicon-remove remove-item"></span>
         </button>
         `
