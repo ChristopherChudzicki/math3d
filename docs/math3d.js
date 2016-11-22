@@ -121,6 +121,16 @@ class Utility {
     return "#"+RR+GG+BB;
     }
 
+    static assert(condition, message){
+        if (!condition) {
+            var message = Utility.defaultVal(message, "Assertion Failed");
+            if (typeof Error !== "undefined") {
+                throw new Error(message);
+            }
+            throw message; // Fallback
+        }
+    }
+
 }
 
 class Math3D {
@@ -597,11 +607,6 @@ class MathObject {
         this.variables = [];
         
         this.settings = {};
-        // this.defaultSettings = {
-        //     visible: true,
-        //     color: '#3090FF',
-        //     zBias: 0,
-        // };
         
         var _this = this;
         Object.defineProperties(this.settings,{
@@ -699,9 +704,17 @@ class MathObject {
         var defaults = {
             visible: true,
             color: '#3090FF',
-            zBias: 0,
+            zIndex: 0,
         }
         return defaults
+    }
+    
+    static validateSettings(settings, scope){
+        // Validate complete or partial settings.
+        Utility.assert(typeof settings.visible === 'boolean' || typeof settings.visible === 'undefined')
+        Utility.assert(typeof settings.zIndex === 'number' || typeof settings.zIndex === 'undefined')
+        // warning: color check is not robust
+        Utility.assert(typeof settings.color === 'string' || typeof settings.color === 'undefined')
     }
     
     setDefaults(settings){
@@ -830,6 +843,17 @@ class Point extends MathObject {
             size: 14,
         });
         return defaults
+    }
+    
+    static validateSettings(settings, scope){
+        super.validateSettings(settings, scope)
+        Utility.assert(typeof settings.size === 'number' || typeof settings.size === 'undefined')
+        
+        // Now try to parse the raw expression. Should be an array [p1, p2, ...] where each p is a 3-component array
+        if (settings.rawExpression !== undefined){
+            var test = new MathExpression(settings.rawExpression)
+            test.eval(scope).every( function(elem){return elem.length===3})
+        }
     }
     
     recalculateData(){
