@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Math 3D</title>
+    
+    <script src="resources/mathbox-bundle.js"></script>
+    <link rel="stylesheet" href="resources/mathbox.css">
+    
+    <script src="math3d.js"></script>
+    <link rel="stylesheet" href="math3d.css">
+    
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
+
+    
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="math3d_app.js"></script>
+    
+    <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="resources/math3d_gui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="resources/bootstrap/js/bootstrap.js"></script>
+    <script src="resources/jscolor.js"></script>
+    
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+</head>
+<body>
+
+    <div class="container">
+
+        <div class="math3d-controller">
+            <div class="math3d-controller-header">
+                <ul class="nav nav-tabs nav-justified">
+                  <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
+                  <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
+                </ul>
+            </div>
+            
+            <div class="tab-content">
+                <div id="controller-objects" class="tab-pane fade in active">
+                    <div class="math3d-controller-header">
+                        <div class="dropdown">
+                            <button class="btn btn-xs dropdown-toggle" type="button" id="dropdownAddObject" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                New Object
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                               <li><a href="#">Point</a></li>
+                               <li><a href="#">Vector</a></li>
+                               <li><a href="#">Curve</a></li>
+                               <li><a href="#">Surface</a></li>
+                             </ul>
+                        </div>
+                    </div>
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <input type="text" ng-model="test">
+                        </div>
+                        <div compile class="list-group-item" ng-repeat="settings in objectSettingsList" ng-bind-html="$parent.addOjbectSettingsToGui(settings)">
+
+                        </div>
+                        <!-- <div class="list-group-item" ng-repeat="settings in objectSettingsList">
+                            <input type="text" ng-model="settings.color">
+                        </div> -->
+                    </div>
+                </div>
+                <div id="controller-axes" class="tab-pane fade">
+                    TODO
+                </div>
+            </div>
+        </div>
+
+        <div id="my-math-box"></div>
+
+    </div>
+
+<script>
+
+var queryString = Utility.getQueryString();
+var encodedUserSettings = queryString['settings'];
+var authorSettings = {
+    containerId:'my-math-box',
+    mathScope: {a:2,b:-2,c:1,d:3,r:3},
+    wrappedMathObjects:[
+        {
+            type: 'Point',
+            settings: {rawExpression: "[[3,1,4]]"}
+        },
+        {
+            type: 'Point',
+            settings: {rawExpression: "[[-a,c,-d]]", color:'red'}
+        },
+        {
+            type: 'ParametricCurve',
+            settings: {rawExpression:'[r*cos(pi*t),r*sin(pi*t),t]', range:"[-d,d]"}
+        },
+    ]
+};
+
+var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
+
+var math3d = new Math3D(settings);
+
+var container = $("div.container")
+var app = new AppMath3D(container,math3d);
+
+// var test = []
+// for (let j=0; j < math3d.mathObjects.length; j++){
+//     test.push(math3d.mathObjects[j].settings)
+// }
+
+</script>
+
+</body>
+</html>
