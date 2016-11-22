@@ -163,8 +163,8 @@ class Math3D {
             this.mathScope.addVariable(key, val, onVariableChange)
         }
         
-        //Render math objects
-        this.mathObjects = this.renderMathObjects();
+        //Render math objects; this will update this.mathObjects
+        this.renderMathObjects();
     }
     
     setDefaults(settings){
@@ -463,9 +463,8 @@ class Math3D {
             // shift pops and returns first value
             var metaObj = this.settings.wrappedMathObjects.shift();
             var mathObj = MathObject.renderNewObject(this, metaObj);
-            mathObjects.push(mathObj);
         }
-        return mathObjects;
+
     }
     
     onVariableChange(varName){
@@ -600,6 +599,7 @@ class MathObject {
                 if MEOW is a getter/setter, store associated value in _MEOW
         */
         this.math3d = math3d;
+        math3d.mathObjects.push(this);
         
         //Every abstract sublcass should define these
         this.mathboxGroup = null; 
@@ -808,6 +808,12 @@ class MathObject {
         // Our object setters store values in properties prefixed with '_'. Let's remove the underscores.
         return JSON.stringify(metaObj);
     };
+    
+    remove(){
+        this.mathboxGroup.remove();
+        var objIdx = this.math3d.mathObjects.indexOf(this);
+        this.math3d.mathObjects.splice(objIdx, 1);
+    }
     
     static renderNewObject(math3d, metaObj) {
         if (metaObj.type === 'MathObject'){

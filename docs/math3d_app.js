@@ -30,13 +30,19 @@ class AppMath3D {
             $scope.objectList = [];
             for (let j=0; j<math3d.mathObjects.length; j++){
                 let mathObj = math3d.mathObjects[j];
-                let uiSettings = Utility.deepCopyValuesOnly(math3d.mathObjects[j].settings);
-                $scope.objectList.push({uiSettings:uiSettings, mathSettings:mathObj.settings, type:mathObj.constructor.name})
+                let uiSettings = Utility.deepCopyValuesOnly(mathObj.settings);
+                $scope.objectList.push({uiSettings:uiSettings, mathObj:mathObj, type:mathObj.constructor.name, idx:j})
             }
             
         }]);
         
         this.app.controller('mathObjectController', function($scope){
+            $scope.removeMathObj = function(obj){
+                obj.mathObj.remove();
+                var objectList = $scope.$parent.$parent.objectList;
+                var objIdx = objectList.indexOf(this);
+                objectList.splice(obj.idx, 1);
+            }
             $scope.$watch("$parent.obj.uiSettings", function(newVal, oldVal){
                 var settingsDiff = Utility.deepObjectDiff(newVal, oldVal)
                 for (let key in settingsDiff){
@@ -47,20 +53,22 @@ class AppMath3D {
                         settingsDiff[key] = "#" + settingsDiff[key];
                     }
                 }
-                _.merge($scope.$parent.obj.mathSettings, settingsDiff);
+                console.log($scope)
+                _.merge($scope.$parent.obj.mathObj.settings, settingsDiff);
             },
             true)
+            
         })
      
     }
     
     static addOjbectToUi(obj){
-        console.log(obj.uiSettings.color)
+
         var color_id = 'color-value-' + _.uniqueId();
         var content = `
         <input class="jscolor hide-text" ng-model="obj.uiSettings.color" ></input>
         <input type="text" ng-model="obj.uiSettings.rawExpression"></input>
-        <button type="button" class="btn btn-xs remove-item">
+        <button type="button" class="btn btn-xs remove-item" ng-click="removeMathObj(obj)">
           <span class="glyphicon glyphicon-remove remove-item"></span>
         </button>
         `
@@ -75,7 +83,7 @@ class AppMath3D {
         var metaMathObj = {type:type, settings:{}}
         var mathObj = MathObject.renderNewObject(math3d, metaMathObj);
         var uiSettings = Utility.deepCopyValuesOnly(mathObj.settings);
-        objectList.push({uiSettings:uiSettings, mathSettings:mathObj.settings, type:type});
+        objectList.push({uiSettings:uiSettings, mathObj:mathObj, type:type});
     }
 }
 
