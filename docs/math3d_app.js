@@ -23,24 +23,40 @@ class AppMath3D {
 
         this.app.controller('math3dController',['$scope', '$sce', function($scope, $sce) {
             // Bind Helper Functions to $scope
-            $scope.addOjbectSettingsToGui = (settings) => $sce.trustAsHtml(AppMath3D.addOjbectSettingsToGui(settings));
+            $scope.addOjbectSettingsToUi = (settings) => $sce.trustAsHtml(AppMath3D.addOjbectSettingsToUi(settings));
             
             // Deep copy mathObject settings
             $scope.objectSettingsList = [];
             for (let j=0; j<math3d.mathObjects.length; j++){
-                $scope.objectSettingsList.push(Utility.deepCopyValuesOnly(math3d.mathObjects[j].settings))
+                let mathSettings = math3d.mathObjects[j].settings;
+                let uiSettings = Utility.deepCopyValuesOnly(math3d.mathObjects[j].settings);
+                $scope.objectSettingsList.push({ui:uiSettings, math:mathSettings})
             }
             
-            globalTest.scope = $scope;
-            
         }]);
-    
+        
+        this.app.controller('mathObjectController', function($scope){
+            $scope.$watch("$parent.settings.ui", function(newVal, oldVal){
+                var settingsDiff = Utility.deepObjectDiff(newVal, oldVal)
+                for (let key in settingsDiff){
+                    if (key[0] === '$'){
+                        delete settingsDiff[key];
+                    }
+                    if (key ==='color'){
+                        settingsDiff[key] = "#" + settingsDiff[key];
+                    }
+                }
+                _.merge($scope.$parent.settings.math, settingsDiff);
+            },
+            true)
+        })
+     
     }
     
-    static addOjbectSettingsToGui(settings){
+    static addOjbectSettingsToUi(settings){
         var content = `
-        <span>${settings.rawExpression}</span><br/>
-        <input class="jscolor" ng-model="settings.color">
+        <span>${settings.ui.rawExpression}</span><br/>
+        <input class="jscolor" ng-model="settings.ui.color">
         `
         return content
     }

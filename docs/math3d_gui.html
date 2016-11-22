@@ -55,8 +55,7 @@
                         </div>
                     </div>
                     <div class="list-group">
-                        <div compile-template class="list-group-item" ng-repeat="settings in objectSettingsList" ng-bind-html="$parent.addOjbectSettingsToGui(settings)">
-
+                        <div compile-template class="list-group-item" ng-repeat="settings in objectSettingsList" ng-bind-html="$parent.addOjbectSettingsToUi(settings)" ng-controller='mathObjectController'>
                         </div>
                     </div>
                 </div>
