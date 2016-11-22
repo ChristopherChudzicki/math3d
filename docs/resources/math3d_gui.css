@@ -9,3 +9,33 @@
 .math3d-controller-header {
     padding:4px;
 }
+
+input.jscolor {
+    width:25px;
+}
+
+.hide-text {
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+div.add-object {
+    display:inline-block;
+}
+
+li.save {
+    float:right;
+}
+
+button.upper-right {
+    background: transparent;
+    margin-top: 1px;
+    margin-right: 2px;
+    position:absolute;
+    top:0;
+    right:0;
+}
+span.remove-item {
+    color:darkgray;
+}
