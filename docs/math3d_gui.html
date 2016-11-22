@@ -55,15 +55,9 @@
                         </div>
                     </div>
                     <div class="list-group">
-                        <div class="list-group-item">
-                            <input type="text" ng-model="test">
-                        </div>
-                        <div compile class="list-group-item" ng-repeat="settings in objectSettingsList" ng-bind-html="$parent.addOjbectSettingsToGui(settings)">
+                        <div compile-template class="list-group-item" ng-repeat="settings in objectSettingsList" ng-bind-html="$parent.addOjbectSettingsToGui(settings)">
 
                         </div>
-                        <!-- <div class="list-group-item" ng-repeat="settings in objectSettingsList">
-                            <input type="text" ng-model="settings.color">
-                        </div> -->
                     </div>
                 </div>
                 <div id="controller-axes" class="tab-pane fade">
