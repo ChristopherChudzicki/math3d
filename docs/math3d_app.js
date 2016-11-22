@@ -1,4 +1,4 @@
-var globalTest = {}; 
+var globalScope = {}; 
 
 class AppMath3D {
     constructor(container, math3d) {
@@ -23,20 +23,21 @@ class AppMath3D {
 
         this.app.controller('math3dController',['$scope', '$sce', function($scope, $sce) {
             // Bind Helper Functions to $scope
-            $scope.addOjbectSettingsToUi = (settings) => $sce.trustAsHtml(AppMath3D.addOjbectSettingsToUi(settings));
+            $scope.addOjbectToUi = (settings) => $sce.trustAsHtml(AppMath3D.addOjbectToUi(settings));
+            $scope.createNewObject = AppMath3D.createNewObject
             
             // Deep copy mathObject settings
-            $scope.objectSettingsList = [];
+            $scope.objectList = [];
             for (let j=0; j<math3d.mathObjects.length; j++){
-                let mathSettings = math3d.mathObjects[j].settings;
+                let mathObj = math3d.mathObjects[j];
                 let uiSettings = Utility.deepCopyValuesOnly(math3d.mathObjects[j].settings);
-                $scope.objectSettingsList.push({ui:uiSettings, math:mathSettings})
+                $scope.objectList.push({uiSettings:uiSettings, mathSettings:mathObj.settings, type:mathObj.constructor.name})
             }
             
         }]);
         
         this.app.controller('mathObjectController', function($scope){
-            $scope.$watch("$parent.settings.ui", function(newVal, oldVal){
+            $scope.$watch("$parent.obj.uiSettings", function(newVal, oldVal){
                 var settingsDiff = Utility.deepObjectDiff(newVal, oldVal)
                 for (let key in settingsDiff){
                     if (key[0] === '$'){
@@ -46,19 +47,35 @@ class AppMath3D {
                         settingsDiff[key] = "#" + settingsDiff[key];
                     }
                 }
-                _.merge($scope.$parent.settings.math, settingsDiff);
+                _.merge($scope.$parent.obj.mathSettings, settingsDiff);
             },
             true)
         })
      
     }
     
-    static addOjbectSettingsToUi(settings){
+    static addOjbectToUi(obj){
+        console.log(obj.uiSettings.color)
+        var color_id = 'color-value-' + _.uniqueId();
         var content = `
-        <span>${settings.ui.rawExpression}</span><br/>
-        <input class="jscolor" ng-model="settings.ui.color">
+        <input class="jscolor hide-text" ng-model="obj.uiSettings.color" ></input>
+        <input type="text" ng-model="obj.uiSettings.rawExpression"></input>
+        <button type="button" class="btn btn-xs remove-item">
+          <span class="glyphicon glyphicon-remove remove-item"></span>
+        </button>
         `
+        
+        //Re-initialize jscolor palletes. This seems hacky.
+        setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
+        
         return content
+    }
+    
+    static createNewObject(objectList, type){
+        var metaMathObj = {type:type, settings:{}}
+        var mathObj = MathObject.renderNewObject(math3d, metaMathObj);
+        var uiSettings = Utility.deepCopyValuesOnly(mathObj.settings);
+        objectList.push({uiSettings:uiSettings, mathSettings:mathObj.settings, type:type});
     }
 }
 

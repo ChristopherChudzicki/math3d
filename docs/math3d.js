@@ -714,6 +714,7 @@ class MathObject {
     }
     
     static validateSettings(settings, scope){
+        // I think this validation stuff was unncessary ...
         // Validate complete or partial settings.
         Utility.assert(typeof settings.visible === 'boolean' || typeof settings.visible === 'undefined')
         Utility.assert(typeof settings.zIndex === 'number' || typeof settings.zIndex === 'undefined')
@@ -850,6 +851,7 @@ class Point extends MathObject {
     }
     
     static validateSettings(settings, scope){
+        // I think this validation stuff was unncessary ...
         super.validateSettings(settings, scope)
         Utility.assert(typeof settings.size === 'number' || typeof settings.size === 'undefined')
         
