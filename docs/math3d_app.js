@@ -25,6 +25,11 @@ class AppMath3D {
             // Bind Helper Functions to $scope
             $scope.addOjbectToUi = (settings) => $sce.trustAsHtml(AppMath3D.addOjbectToUi(settings));
             $scope.createNewObject = AppMath3D.createNewObject
+            $scope.saveURL = function(){
+                var url = math3d.saveSettingsAsURL();
+                $("#save-modal textarea").val(url);
+                $("#url-length").html(url.length);
+            }
             
             // Deep copy mathObject settings
             $scope.objectList = [];

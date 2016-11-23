@@ -28,7 +28,7 @@
 <body>
 
     <div class="container">
-
+        
         <div class="math3d-controller">
             
             <div class="row">
@@ -58,7 +58,7 @@
                                      </ul>
                                 </li>
                                 <li class="save">
-                                    <a>
+                                    <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
                                         <span class="glyphicon glyphicon-floppy-disk save"></span>
                                     </a>
                                 </li>
@@ -70,11 +70,45 @@
                         </div>
                     </div>
                     <div id="controller-axes" class="tab-pane fade">
-                        TODO
+                        <div class="math3d-controller-header">
+                            <ul class="nav nav-pills xs">
+                                <li class="save">
+                                    <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
+                                        <span class="glyphicon glyphicon-floppy-disk save"></span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-group-item">TODO</div>
+                        </div>
                     </div>
                 </div>
             </div>
             
+        </div>
+        
+        <!-- Save URL Modal -->
+        <div class="modal fade" id="save-modal" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </button>
+                        <h4 class="modal-title">Scene's URL</h4>
+                    </div>
+                    <div class="modal-body">
+                        <textarea></textarea>
+                        <p>URL length: <span id="url-length"></span></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <div id="my-math-box"></div>

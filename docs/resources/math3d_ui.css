@@ -28,6 +28,11 @@ li.save {
     float:right;
 }
 
+#save-modal textarea {
+    width:100%;
+    height:100px;
+}
+
 button.upper-right {
     background: transparent;
     margin-top: 1px;
