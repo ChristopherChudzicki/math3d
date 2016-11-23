@@ -36,7 +36,7 @@ class AppMath3D {
             for (let j=0; j<math3d.mathObjects.length; j++){
                 let mathObj = math3d.mathObjects[j];
                 let uiSettings = Utility.deepCopyValuesOnly(mathObj.settings);
-                $scope.objectList.push({uiSettings:uiSettings, mathObj:mathObj, type:mathObj.constructor.name, idx:j})
+                $scope.objectList.push({uiSettings:uiSettings, mathObj:mathObj, type:mathObj.constructor.name})
             }
             
         }]);
@@ -45,8 +45,8 @@ class AppMath3D {
             $scope.removeMathObj = function(obj){
                 obj.mathObj.remove();
                 var objectList = $scope.$parent.$parent.objectList;
-                var objIdx = objectList.indexOf(this);
-                objectList.splice(obj.idx, 1);
+                var objIdx = objectList.indexOf(obj);
+                objectList.splice(objIdx, 1);
             }
             $scope.$watch("$parent.obj.uiSettings", function(newVal, oldVal){
                 var settingsDiff = Utility.deepObjectDiff(newVal, oldVal)
@@ -58,7 +58,6 @@ class AppMath3D {
                         settingsDiff[key] = "#" + settingsDiff[key];
                     }
                 }
-                console.log($scope)
                 _.merge($scope.$parent.obj.mathObj.settings, settingsDiff);
             },
             true)
