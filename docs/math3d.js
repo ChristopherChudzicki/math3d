@@ -38,7 +38,8 @@ class Utility {
     }
 
     static deepCopyValuesOnly(obj){
-        //Intended to help serialize objects with a getter named KEY that stores values in _KEY. 
+        //Intended to help serialize objects with a getter named KEY that stores values in _KEY.
+        // FIXME I'm not 100% sure this actually copies the object ... strings, numbers, arrays, will definitely be copied.
         var deepCopy = {};
         for (var key in obj){
             if (key[0]=='_'){
@@ -53,6 +54,8 @@ class Utility {
             }
             if (Utility.isPureObject(obj[key])){
                 deepCopy[key] = Utility.deepCopyValuesOnly(obj[key]);
+            } if ( Array.isArray(obj[key]) ) {
+                deepCopy[key] = obj[key].slice(); // if array, make a new copy
             } else {
                 deepCopy[key] = obj[key];
             }
