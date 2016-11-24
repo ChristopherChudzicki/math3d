@@ -1,0 +1,46 @@
+.math3d-controller {
+    z-index:1000;
+    width:250px;
+    height:100%;
+    position:fixed;
+    padding-left:0;
+}
+
+.math3d-controller-header {
+    padding:4px;
+}
+
+input.jscolor {
+    width:25px;
+}
+
+.hide-text {
+  text-indent: 100%;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+div.add-object {
+    display:inline-block;
+}
+
+li.save {
+    float:right;
+}
+
+#save-modal textarea {
+    width:100%;
+    height:100px;
+}
+
+button.upper-right {
+    background: transparent;
+    margin-top: 1px;
+    margin-right: 2px;
+    position:absolute;
+    top:0;
+    right:0;
+}
+span.remove-item {
+    color:darkgray;
+}
