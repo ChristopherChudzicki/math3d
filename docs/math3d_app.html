@@ -15,7 +15,6 @@
 
     
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-    <script src="math3d_app.js"></script>
     
     <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="resources/math3d_ui.css">
@@ -40,7 +39,7 @@
                 </div>
             
                 <div class="tab-content">
-                    <div id="controller-objects" class="tab-pane fade in active">
+                    <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
                         <div class="math3d-controller-header">
                             <ul class="nav nav-pills xs">
                                 <li class="dropdown">
@@ -57,7 +56,7 @@
                                        <li ng-click="createNewObject(objectList,'ParametricSurface')" ><a href="">Parametric Surface</a></li>
                                      </ul>
                                 </li>
-                                <li class="save">
+                                <li ng-controller="saveCtrl" class="save">
                                     <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
                                         <span class="glyphicon glyphicon-floppy-disk save"></span>
                                     </a>
@@ -65,14 +64,14 @@
                             </ul>
                         </div>
                         <div class="list-group">
-                            <div compile-template class="list-group-item" ng-repeat="obj in objectList" ng-bind-html="$parent.addOjbectToUi(obj)" ng-controller='mathObjectController'>
+                            <div compile-template class="list-group-item" ng-repeat="obj in objectList" ng-bind-html="$parent.addOjbectToUi(obj)" ng-controller='mathObjectCtrl'>
                             </div>
                         </div>
                     </div>
                     <div id="controller-axes" class="tab-pane fade">
                         <div class="math3d-controller-header">
                             <ul class="nav nav-pills xs">
-                                <li class="save">
+                                <li ng-controller="saveCtrl" class="save">
                                     <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
                                         <span class="glyphicon glyphicon-floppy-disk save"></span>
                                     </a>
@@ -143,15 +142,9 @@ var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeS
 
 var math3d = new Math3D(settings);
 
-var container = $("div.container")
-var app = new AppMath3D(container,math3d);
-
-// var test = []
-// for (let j=0; j < math3d.mathObjects.length; j++){
-//     test.push(math3d.mathObjects[j].settings)
-// }
-
 </script>
+
+<script src="math3d_app.js"></script>
 
 </body>
 </html>
