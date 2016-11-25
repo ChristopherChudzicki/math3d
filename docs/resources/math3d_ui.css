@@ -44,3 +44,11 @@ button.upper-right {
 span.remove-item {
     color:darkgray;
 }
+
+span.settings:hover{
+    background-color:#ecf0f1;
+    border-radius:4px;
+}
+span.settings:hover span.glyphicon{
+    color:#18bc9c;
+}
