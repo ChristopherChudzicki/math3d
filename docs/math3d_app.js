@@ -55,23 +55,49 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     
     function genObjectTemplate(type){
         var common = `
-        <input class="jscolor hide-text" ng-model="obj.uiSettings.color" ></input>
-        <input type="text" ng-model="obj.uiSettings.rawExpression"></input>
-        <a>
-            <span class="glyphicon glyphicon-wrench"></span>
-        </a>
-        <button type="button" class="btn btn-xs remove-item upper-right" ng-click="removeMathObj(obj)">
-            <span class="glyphicon glyphicon-remove remove-item"></span>
-        </button> <br/>
+            <form class="form-horizontal">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-1">
+                            <input class="jscolor hide-text" ng-model="obj.uiSettings.color" ></input>
+                        </div>
+                        <div class="col-xs-9">
+                            <div class="input-group input-group-sm">
+                                <input type="text" class="form-control" ng-model="obj.uiSettings.rawExpression"></input>
+                                <span class="input-group-btn settings">
+                                    <a class="btn btn-xs" type="button">
+                                        <span class="glyphicon glyphicon-wrench"></span>
+                                    </a>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-xs remove-item upper-right" ng-click="removeMathObj(obj)">
+                        <span class="glyphicon glyphicon-remove remove-item"></span>
+                    </button>
+                </div>
+            </form>
         `
         var footer = ``
         if (type === 'ParametricCurve'){
             footer = `
-            t ∈ <input style="width:100px" type="test" ng-model="obj.uiSettings.range"></input>
+            <div class="row">
+                <div class="col-xs-9 offset-xs-1">
+                    <div class="input-group input-group-sm">
+                        t ∈ <input style="width:100px" type="test" ng-model="obj.uiSettings.range"></input>
+                    </div>
+                </div>
+            </div>
             `
         } if (type === 'ParametricSurface'){
             footer = `
-            u, v ∈ <input style="width:100px" type="test" ng-model="obj.uiSettings.range"></input>
+            <div class="row">
+                <div class="col-xs-9 offset-xs-1">
+                    <div class="input-group input-group-sm">
+                        u, v ∈ <input style="width:100px" type="test" ng-model="obj.uiSettings.range"></input>
+                    </div>
+                </div>
+            </div>
             `
         }
         return common + footer
