@@ -121,19 +121,19 @@ var encodedUserSettings = queryString['settings'];
 console.log(queryString)
 var authorSettings = {
     containerId:'my-math-box',
-    mathScope: {a:2,b:-2,c:1,d:3,r:3},
+    mathScope: {i:[1,0,0], j:[0,1,0], k:[0,0,1], R:2},
     wrappedMathObjects:[
         {
             type: 'Point',
             settings: {rawExpression: "[[3,1,4]]"}
         },
         {
-            type: 'Point',
-            settings: {rawExpression: "[[-a,c,-d]]", color:'red'}
+            type: 'Vector',
+            settings: {rawExpression: "[3k, 3i-2j]", color:'red'}
         },
         {
             type: 'ParametricCurve',
-            settings: {rawExpression:'[r*cos(pi*t),r*sin(pi*t),t]', range:"[-d,d]"}
+            settings: {rawExpression:'[R*cos(pi*t), R*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
         },
     ]
 };
