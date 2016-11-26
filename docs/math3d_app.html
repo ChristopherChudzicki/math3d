@@ -128,7 +128,6 @@ var encodedUserSettings = queryString['settings'];
 console.log(queryString)
 var authorSettings = {
     containerId:'my-math-box',
-    mathScope: {i:[1,0,0], j:[0,1,0], k:[0,0,1], R:2},
     wrappedMathObjects:[
         {
             type: 'Point',
@@ -140,7 +139,7 @@ var authorSettings = {
         },
         {
             type: 'ParametricCurve',
-            settings: {rawExpression:'[R*cos(pi*t), R*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
+            settings: {rawExpression:'[2*cos(pi*t), 2*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
         },
     ]
 };
