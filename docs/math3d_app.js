@@ -3,7 +3,7 @@ var container = $(".container")
 container.attr("ng-app", 'math3dApp')
 // container.attr("ng-controller", 'main')
 
-app = angular.module('math3dApp', []);
+app = angular.module('math3dApp', ['ui.sortable']);
 
 app.directive('compileTemplate', ["$compile", "$parse", function($compile, $parse) {
     // http://stackoverflow.com/a/25407201/2747370
