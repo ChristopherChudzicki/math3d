@@ -22,6 +22,9 @@
     <script src="resources/bootstrap/js/bootstrap.js"></script>
     <script src="resources/jscolor.js"></script>
     
+    <!-- Latest Sortable -->
+    <script src="http://rubaxa.github.io/Sortable/Sortable.js"></script>
+    
     <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
@@ -125,7 +128,7 @@
 
 var queryString = Utility.getQueryString();
 var encodedUserSettings = queryString['settings'];
-console.log(queryString)
+
 var authorSettings = {
     containerId:'my-math-box',
     wrappedMathObjects:[
