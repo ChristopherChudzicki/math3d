@@ -10,15 +10,15 @@
     <script src="math3d.js"></script>
     <link rel="stylesheet" href="math3d.css">
     
-    <script src="https://code.jquery.com/jquery-2.2.4.min.js" integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
-
-    
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="resources/jquery-ui.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+    <script src="resources/sortable.js"></script>
     
     <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.css">
     <link rel="stylesheet" href="resources/math3d_ui.css">
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    
     <script src="resources/bootstrap/js/bootstrap.js"></script>
     <script src="resources/jscolor.js"></script>
     
@@ -37,7 +37,7 @@
                       <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
                     </ul>
                 </div>
-            
+
                 <div class="tab-content">
                     <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
                         <div class="math3d-controller-header">
@@ -70,7 +70,7 @@
                                 </li>
                             </ul>
                         </div>
-                        <div class="list-group">
+                        <div ui-sortable ng-model="objectList" class="list-group">
                             <div compile-template class="list-group-item" ng-repeat="obj in objectList" ng-bind-html="$parent.addOjbectToUi(obj)" ng-controller='mathObjectCtrl'>
                             </div>
                         </div>
@@ -125,10 +125,9 @@
 
 var queryString = Utility.getQueryString();
 var encodedUserSettings = queryString['settings'];
-console.log(queryString)
+
 var authorSettings = {
     containerId:'my-math-box',
-    mathScope: {i:[1,0,0], j:[0,1,0], k:[0,0,1], R:2},
     wrappedMathObjects:[
         {
             type: 'Point',
@@ -140,7 +139,7 @@ var authorSettings = {
         },
         {
             type: 'ParametricCurve',
-            settings: {rawExpression:'[R*cos(pi*t), R*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
+            settings: {rawExpression:'[2*cos(pi*t), 2*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
         },
     ]
 };

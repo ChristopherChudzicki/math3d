@@ -197,7 +197,10 @@ class Math3D {
             },
             mathScope:{
                 'pi': Math.PI,
-                'e': Math.E
+                'e': Math.E,
+                'i': [1,0,0],
+                'j': [0,1,0],
+                'k': [0,0,1],
             },
             wrappedMathObjects: []
         }
