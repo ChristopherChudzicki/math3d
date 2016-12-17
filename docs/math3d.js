@@ -159,14 +159,19 @@ class Math3D {
         
         // create math scope
         this.mathScope = new WatchedScope(this.settings.mathScope)
-        this.mathObjects = [] //onVariableChange checks mathObjects, so define it as empty for now.
+        this.mathTree = [
+            {
+                name: "General",
+                objects: []
+            }
+        ] //onVariableChange checks mathTree, so define it as empty for now.
         var onVariableChange = this.onVariableChange.bind(this);
         for (let key in this.settings.mathScope){
             let val = this.settings.mathScope[key];
             this.mathScope.addVariable(key, val, onVariableChange)
         }
         
-        //Render math objects; this will update this.mathObjects
+        //Render math objects; this will update this.mathTree
         this.renderMathObjects();
     }
     
@@ -202,7 +207,7 @@ class Math3D {
                 'j': [0,1,0],
                 'k': [0,0,1],
             },
-            wrappedMathObjects: []
+            wrappedMathTree: []
         }
     
         function genDefaultAxisSettings(axisId, axisLabel) {        
@@ -464,26 +469,30 @@ class Math3D {
     }
     
     renderMathObjects(){
-        var mathObjects = [];
-        while (this.settings.wrappedMathObjects.length>0){
-            // shift pops and returns first value
-            var metaObj = this.settings.wrappedMathObjects.shift();
-            var mathObj = MathObject.renderNewObject(this, metaObj);
-        }
+        var _this = this;
+        _.forEach(this.settings.wrappedMathTree, function(folder, idx){
+            _.forEach(folder.objects, function(metaObj, idx){
+                MathObject.renderNewObject(_this, metaObj);
+            })
+        })
+        this.settings.wrappedMathTree = [];
 
     }
     
     onVariableChange(varName){
         // update objects where the variables have changed
-        _.forEach( this.mathObjects, function(obj, idx){
-            if ( _.contains( obj.variables, varName) ){
-                obj.recalculateData();
-            }
+        _.forEach(this.mathTree, function(folder, idx){
+            _.forEach(folder.objects, function(obj, idx){
+                if ( _.contains( obj.variables, varName) ){
+                    obj.recalculateData();
+                }
+            })
         })
     }
     
     serialize(settings){
         settings = Utility.defaultVal(settings, this.settings);
+        settings.mathScope = JSON.parse(this.mathScope.serialize()); // serialized then parsed to remove getters and setters
         // copy settings values, no setters and getters
         var rawSettings = Utility.deepCopyValuesOnly(this.settings)
         // camera is a THREE js Vec3 object
@@ -492,9 +501,13 @@ class Math3D {
         rawSettings.camera.position = [camera.x, camera.y, camera.z].map( function(x){return Math.round(x*1000)/1000; } );
         rawSettings.camera.position = this.swizzle(this.swizzle(rawSettings.camera.position));
         // add math objects
-        _.forEach(this.mathObjects, function(mathObj){
-            rawSettings.wrappedMathObjects.push( mathObj.serialize() )
-        })
+        _.forEach(this.mathTree, function(folder){
+            rawSettings.wrappedMathTree.push({name:folder.name, objects:[]});
+            var serialFolder = rawSettings.wrappedMathTree[rawSettings.wrappedMathTree.length-1];
+            _.forEach(folder.objects, function(mathObj){
+                serialFolder.objects.push( JSON.parse(mathObj.serialize()) ); // serialized then parsed to remove getters and setters
+            });
+        });
         return JSON.stringify(Utility.deepObjectDiff(rawSettings,this.defaultSettings));
     }
     
@@ -502,16 +515,16 @@ class Math3D {
         settings = Utility.defaultVal(settings, this.settings);
         var settingsDiff64 = window.btoa( this.serialize(settings) );
         var url = window.location.href.split('?')[0] + "?settings=" + settingsDiff64;
-        console.log(url)
         return url
     }
     
     static decodeSettingsAsURL64(encodedSettings){
         var settings = JSON.parse(window.atob(encodedSettings))
         
-        _.forEach(settings.wrappedMathObjects, function(wrappedMathObj, idx){
-            settings.wrappedMathObjects[idx] = JSON.parse(wrappedMathObj);
-        })
+        // What are the next 3 lines for?
+        // _.forEach(settings.wrappedMathObjects, function(wrappedMathObj, idx){
+        //     settings.wrappedMathObjects[idx] = JSON.parse(wrappedMathObj);
+        // })
         
         return settings
     }
@@ -541,7 +554,8 @@ class WatchedScope{
 
     serialize(){
         var rawSettings = Utility.deepCopyValuesOnly(this)
-        return JSON.parse(rawSettings);
+        console.log(rawSettings);
+        return JSON.stringify(rawSettings);
     }
 
 }
@@ -605,7 +619,8 @@ class MathObject {
                 if MEOW is a getter/setter, store associated value in _MEOW
         */
         this.math3d = math3d;
-        math3d.mathObjects.push(this);
+        console.log(math3d);
+        math3d.mathTree[0].objects.push(this);
         
         //Every abstract sublcass should define these
         this.mathboxGroup = null; 
@@ -817,8 +832,12 @@ class MathObject {
     
     remove(){
         this.mathboxGroup.remove();
-        var objIdx = this.math3d.mathObjects.indexOf(this);
-        this.math3d.mathObjects.splice(objIdx, 1);
+        var objIdx = -1;
+        var folderIdx = 0;
+        while (objIdx < 0){
+            var objIdx = this.math3d.mathTree[folderIdx].objects.indexOf(this);
+        }
+        this.math3d.mathTree[folderIdx].objects.splice(objIdx, 1);
     }
     
     static renderNewObject(math3d, metaObj) {
