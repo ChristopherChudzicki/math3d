@@ -1,125 +1,125 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>Math 3D</title>
-    
-    <script src="resources/mathbox-bundle.js"></script>
-    <link rel="stylesheet" href="resources/mathbox.css">
-    
-    <script src="math3d.js"></script>
-    <link rel="stylesheet" href="math3d.css">
-    
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="resources/jquery-ui.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
-    <script src="resources/sortable.js"></script>
-    
-    <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" href="resources/math3d_ui.css">
-    
-    <script src="resources/bootstrap/js/bootstrap.js"></script>
-    <script src="resources/jscolor.js"></script>
-    
-    <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <meta charset="utf-8">
+  <title>Math 3D</title>
+  
+  <script src="resources/mathbox-bundle.js"></script>
+  <link rel="stylesheet" href="resources/mathbox.css">
+  
+  <script src="math3d.js"></script>
+  <link rel="stylesheet" href="math3d.css">
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="resources/jquery-ui.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script src="resources/sortable.js"></script>
+  
+  <link rel="stylesheet" href="resources/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="resources/math3d_ui.css">
+  
+  <script src="resources/bootstrap/js/bootstrap.js"></script>
+  <script src="resources/jscolor.js"></script>
+  
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
 
-    <div class="container">
-        
-        <div class="math3d-controller">
-            
-            <div class="row">
-                <div class="math3d-controller-header">
-                    <ul class="nav nav-tabs nav-justified">
-                      <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
-                      <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
-                    </ul>
-                </div>
-
-                <div class="tab-content">
-                    <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
-                        <div class="math3d-controller-header">
-                            <ul class="nav nav-pills xs">
-                                <li class="dropdown">
-                                    <a class="dropdown-toggle" id="dropdownAddObject" data-toggle="dropdown">
-                                        <span class="glyphicon glyphicon-plus"></span>
-                                        New Object
-                                        <span class="caret"></span>
-                                    </a>
-                                    <ul class="dropdown-menu">
-                                       <li ng-click="createNewObject(objectList,'Point')" ><a href="">Point</a></li>
-                                       <li ng-click="createNewObject(objectList,'Line')" ><a href="">Line</a></li>
-                                       <li ng-click="createNewObject(objectList,'Vector')" ><a href="">Vector</a></li>
-                                       <li ng-click="createNewObject(objectList,'ParametricCurve')" ><a href="">Parametric Curve</a></li>
-                                       <li ng-click="createNewObject(objectList,'ParametricSurface')" ><a href="">Parametric Surface</a></li>
-                                       <li role="separator" class="divider"></li>
-                                       <li class="disabled">
-                                           <a href="">Constant</a>
-                                       </li>
-                                       <li class="disabled">
-                                           <a href="">Constant</a>
-                                       </li>
-                                     </ul>
-                                </li>
-                                <li ng-controller="saveCtrl" class="save">
-                                    <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
-                                        <span class="glyphicon glyphicon-floppy-disk save"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div ui-sortable ng-model="objectList" class="list-group">
-                            <div compile-template class="list-group-item" ng-repeat="obj in objectList" ng-bind-html="$parent.addOjbectToUi(obj)" ng-controller='mathObjectCtrl'>
-                            </div>
-                        </div>
-                    </div>
-                    <div id="controller-axes" class="tab-pane fade">
-                        <div class="math3d-controller-header">
-                            <ul class="nav nav-pills xs">
-                                <li ng-controller="saveCtrl" class="save">
-                                    <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
-                                        <span class="glyphicon glyphicon-floppy-disk save"></span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="list-group">
-                            <div class="list-group-item">TODO</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-        </div>
-        
-        <!-- Save URL Modal -->
-        <div class="modal fade" id="save-modal" role="dialog">
-            <div class="modal-dialog">
-                <!-- Modal content-->
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </button>
-                        <h4 class="modal-title">Scene's URL</h4>
-                    </div>
-                    <div class="modal-body">
-                        <textarea></textarea>
-                        <p>URL length: <span id="url-length"></span></p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-
-            </div>
+  <div class="container">
+    
+    <div class="math3d-controller">
+      
+      <div class="row">
+        <div class="math3d-controller-header">
+          <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
+            <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
+          </ul>
         </div>
 
-        <div id="my-math-box"></div>
-
+        <div class="tab-content">
+          <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
+            <div class="math3d-controller-header">
+              <ul class="nav nav-pills xs">
+                <li class="dropdown">
+                  <a class="dropdown-toggle" id="dropdownAddObject" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    New Object
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                     <li ng-click="createNewObject(objectList,'Point')" ><a href="">Point</a></li>
+                     <li ng-click="createNewObject(objectList,'Line')" ><a href="">Line</a></li>
+                     <li ng-click="createNewObject(objectList,'Vector')" ><a href="">Vector</a></li>
+                     <li ng-click="createNewObject(objectList,'ParametricCurve')" ><a href="">Parametric Curve</a></li>
+                     <li ng-click="createNewObject(objectList,'ParametricSurface')" ><a href="">Parametric Surface</a></li>
+                     <li role="separator" class="divider"></li>
+                     <li class="disabled">
+                       <a href="">Constant</a>
+                     </li>
+                     <li class="disabled">
+                       <a href="">Constant</a>
+                     </li>
+                   </ul>
+                </li>
+                <li ng-controller="saveCtrl" class="save">
+                  <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
+                    <span class="glyphicon glyphicon-floppy-disk save"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div ui-sortable ng-model="objectList" class="list-group">
+              <div compile-template class="list-group-item" ng-repeat="obj in objectList" ng-bind-html="$parent.addOjbectToUi(obj)" ng-controller='mathObjectCtrl'>
+              </div>
+            </div>
+          </div>
+          <div id="controller-axes" class="tab-pane fade">
+            <div class="math3d-controller-header">
+              <ul class="nav nav-pills xs">
+                <li ng-controller="saveCtrl" class="save">
+                  <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
+                    <span class="glyphicon glyphicon-floppy-disk save"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="list-group">
+              <div class="list-group-item">TODO</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
     </div>
+    
+    <!-- Save URL Modal -->
+    <div class="modal fade" id="save-modal" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <h4 class="modal-title">Scene's URL</h4>
+          </div>
+          <div class="modal-body">
+            <textarea></textarea>
+            <p>URL length: <span id="url-length"></span></p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="my-math-box"></div>
+
+  </div>
 
 <script>
 
@@ -127,21 +127,21 @@ var queryString = Utility.getQueryString();
 var encodedUserSettings = queryString['settings'];
 
 var authorSettings = {
-    containerId:'my-math-box',
-    wrappedMathObjects:[
-        {
-            type: 'Point',
-            settings: {rawExpression: "[[3,1,4]]"}
-        },
-        {
-            type: 'Vector',
-            settings: {rawExpression: "[3k, 3i-2j]", color:'red'}
-        },
-        {
-            type: 'ParametricCurve',
-            settings: {rawExpression:'[2*cos(pi*t), 2*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
-        },
-    ]
+  containerId:'my-math-box',
+  wrappedMathObjects:[
+    {
+      type: 'Point',
+      settings: {rawExpression: "[[3,1,4]]"}
+    },
+    {
+      type: 'Vector',
+      settings: {rawExpression: "[3k, 3i-2j]", color:'red'}
+    },
+    {
+      type: 'ParametricCurve',
+      settings: {rawExpression:'[2*cos(pi*t), 2*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
+    },
+  ]
 };
 
 var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
