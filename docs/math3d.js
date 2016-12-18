@@ -159,12 +159,7 @@ class Math3D {
         
         // create math scope
         this.mathScope = new WatchedScope(this.settings.mathScope)
-        this.mathTree = [
-            {
-                name: "General",
-                objects: []
-            }
-        ] //onVariableChange checks mathTree, so define it as empty for now.
+        this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
         var onVariableChange = this.onVariableChange.bind(this);
         for (let key in this.settings.mathScope){
             let val = this.settings.mathScope[key];
@@ -207,7 +202,12 @@ class Math3D {
                 'j': [0,1,0],
                 'k': [0,0,1],
             },
-            wrappedMathTree: []
+            wrappedMathTree: [
+                {
+                    name: "General",
+                    objects: []
+                }
+            ]
         }
     
         function genDefaultAxisSettings(axisId, axisLabel) {        
@@ -470,19 +470,24 @@ class Math3D {
     
     renderMathObjects(){
         var _this = this;
-        _.forEach(this.settings.wrappedMathTree, function(folder, idx){
-            _.forEach(folder.objects, function(metaObj, idx){
-                MathObject.renderNewObject(_this, metaObj);
-            })
+        _.forEach(this.settings.wrappedMathTree, function(branch, idx){
+            var branchCopy = {
+                name: branch.name,
+                objects: []
+            };
+            _this.mathTree.push(branchCopy);
+            _.forEach(branch.objects, function(metaObj, idx){
+                // creating a new object appends to last branch
+                var mathObj = MathObject.renderNewObject(_this, metaObj);
+            });
         })
         this.settings.wrappedMathTree = [];
-
     }
     
     onVariableChange(varName){
         // update objects where the variables have changed
-        _.forEach(this.mathTree, function(folder, idx){
-            _.forEach(folder.objects, function(obj, idx){
+        _.forEach(this.mathTree, function(branch, idx){
+            _.forEach(branch.objects, function(obj, idx){
                 if ( _.contains( obj.variables, varName) ){
                     obj.recalculateData();
                 }
@@ -501,11 +506,11 @@ class Math3D {
         rawSettings.camera.position = [camera.x, camera.y, camera.z].map( function(x){return Math.round(x*1000)/1000; } );
         rawSettings.camera.position = this.swizzle(this.swizzle(rawSettings.camera.position));
         // add math objects
-        _.forEach(this.mathTree, function(folder){
-            rawSettings.wrappedMathTree.push({name:folder.name, objects:[]});
-            var serialFolder = rawSettings.wrappedMathTree[rawSettings.wrappedMathTree.length-1];
-            _.forEach(folder.objects, function(mathObj){
-                serialFolder.objects.push( JSON.parse(mathObj.serialize()) ); // serialized then parsed to remove getters and setters
+        _.forEach(this.mathTree, function(branch){
+            rawSettings.wrappedMathTree.push({name:branch.name, objects:[]});
+            var serialBranch = rawSettings.wrappedMathTree[rawSettings.wrappedMathTree.length-1];
+            _.forEach(branch.objects, function(mathObj){
+                serialBranch.objects.push( JSON.parse(mathObj.serialize()) ); // serialized then parsed to remove getters and setters
             });
         });
         return JSON.stringify(Utility.deepObjectDiff(rawSettings,this.defaultSettings));
@@ -520,11 +525,6 @@ class Math3D {
     
     static decodeSettingsAsURL64(encodedSettings){
         var settings = JSON.parse(window.atob(encodedSettings))
-        
-        // What are the next 3 lines for?
-        // _.forEach(settings.wrappedMathObjects, function(wrappedMathObj, idx){
-        //     settings.wrappedMathObjects[idx] = JSON.parse(wrappedMathObj);
-        // })
         
         return settings
     }
@@ -619,8 +619,8 @@ class MathObject {
                 if MEOW is a getter/setter, store associated value in _MEOW
         */
         this.math3d = math3d;
-        console.log(math3d);
-        math3d.mathTree[0].objects.push(this);
+        // Add new objects to newest mathTree branch
+        math3d.mathTree[math3d.mathTree.length-1].objects.push(this);
         
         //Every abstract sublcass should define these
         this.mathboxGroup = null; 
@@ -833,11 +833,11 @@ class MathObject {
     remove(){
         this.mathboxGroup.remove();
         var objIdx = -1;
-        var folderIdx = 0;
+        var branchIdx = 0;
         while (objIdx < 0){
-            var objIdx = this.math3d.mathTree[folderIdx].objects.indexOf(this);
+            var objIdx = this.math3d.mathTree[branchIdx].objects.indexOf(this);
         }
-        this.math3d.mathTree[folderIdx].objects.splice(objIdx, 1);
+        this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);
     }
     
     static renderNewObject(math3d, metaObj) {

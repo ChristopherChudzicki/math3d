@@ -22,6 +22,19 @@
   <script src="resources/bootstrap/js/bootstrap.js"></script>
   <script src="resources/jscolor.js"></script>
   
+  <!-- Angular Tree -->
+  <link rel="stylesheet" href="resources/angular-tree/source/angular-ui-tree.css">
+  <script src="resources/angular-tree/source/main.js"></script>
+  <script src="resources/angular-tree/source/controllers/handleCtrl.js"></script>
+  <script src="resources/angular-tree/source/controllers/nodeCtrl.js"></script>
+  <script src="resources/angular-tree/source/controllers/nodesCtrl.js"></script>
+  <script src="resources/angular-tree/source/controllers/treeCtrl.js"></script>
+  <script src="resources/angular-tree/source/directives/uiTree.js"></script>
+  <script src="resources/angular-tree/source/directives/uiTreeHandle.js"></script>
+  <script src="resources/angular-tree/source/directives/uiTreeNode.js"></script>
+  <script src="resources/angular-tree/source/directives/uiTreeNodes.js"></script>
+  <script src="resources/angular-tree/source/services/helper.js"></script>
+  
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
@@ -70,8 +83,30 @@
                 </li>
               </ul>
             </div>
-            <div ui-sortable ng-model="objectList" class="list-group">
-              <div compile-template class="list-group-item" ng-repeat="obj in objectList" ng-bind-html="$parent.addOjbectToUi(obj)" ng-controller='mathObjectCtrl'>
+            <div ui-tree id='tree-root'>
+              <div class="list-group" ui-tree-nodes ng-model="displayTree">
+                <div class="list-group-item" ui-tree-node ng-repeat="branch in displayTree">
+                  <!-- Folder Header -->
+                  <div class="tree-node tree-node-content">
+                    <a class="btn btn-success btn-xs" ng-if="branch.objects && branch.objects.length > 0" data-nodrag ng-click="toggle(this)"><span
+                        class="glyphicon"
+                        ng-class="{
+                          'glyphicon-chevron-right': collapsed,
+                          'glyphicon-chevron-down': !collapsed
+                        }"></span></a>
+                        <span ui-tree-handle>
+                            {{branch.name}}
+                        </span>                        
+                        <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)">
+                            <span class="glyphicon glyphicon-remove"></span>
+                        </a>
+                  </div>
+                  <!-- Folder items -->
+                  <div class="list-group" ui-tree-nodes='' ng-class="{hidden: collapsed}" ng-model="branch.objects">
+                    <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addOjbectToUi(obj)" ng-controller='mathObjectCtrl'>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -128,19 +163,29 @@ var encodedUserSettings = queryString['settings'];
 
 var authorSettings = {
   containerId:'my-math-box',
-  wrappedMathObjects:[
+  wrappedMathTree:[
     {
-      type: 'Point',
-      settings: {rawExpression: "[[3,1,4]]"}
+      name:'Branch 1',
+      objects: [
+        {
+          type: 'Point',
+          settings: {rawExpression: "[[3,1,4]]"}
+        },
+        {
+          type: 'Vector',
+          settings: {rawExpression: "[3k, 3i-2j]", color:'red'}
+        },
+      ]
     },
     {
-      type: 'Vector',
-      settings: {rawExpression: "[3k, 3i-2j]", color:'red'}
-    },
-    {
-      type: 'ParametricCurve',
-      settings: {rawExpression:'[2*cos(pi*t), 2*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
-    },
+      name: 'Branch 2',
+      objects: [
+        {
+          type: 'ParametricCurve',
+          settings: {rawExpression:'[2*cos(pi*t), 2*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
+        },
+      ]
+    }
   ]
 };
 
