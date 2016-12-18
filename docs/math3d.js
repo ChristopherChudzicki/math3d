@@ -622,6 +622,8 @@ class MathObject {
         // Add new objects to newest mathTree branch
         math3d.mathTree[math3d.mathTree.length-1].objects.push(this);
         
+        this.type = this.constructor.name;
+        
         //Every abstract sublcass should define these
         this.mathboxGroup = null; 
         this.mathboxDataType = null; // e.g., 'array'
@@ -646,6 +648,9 @@ class MathObject {
             },
             color: {
                 set: function(val){
+                    // test whether val is a valid hex color except for missing '#', e.g., 00FF2A. jscolor provides such colors.
+                    var needsHash = /(^[0-9A-F]{6}$)|(^[0-9A-F]{3}$)/i.test(val);
+                    if (needsHash){val = "#" + val;}
                     this._color = val[0] === '#' ? val : Utility.namedColorToHexColor(val);
                     if (_this.mathboxGroup !== null){
                         _this.setColor(val);

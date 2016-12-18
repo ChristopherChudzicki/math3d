@@ -62,11 +62,11 @@
                     <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li ng-click="createNewObject(objectList,'Point')" ><a href="">Point</a></li>
-                     <li ng-click="createNewObject(objectList,'Line')" ><a href="">Line</a></li>
-                     <li ng-click="createNewObject(objectList,'Vector')" ><a href="">Vector</a></li>
-                     <li ng-click="createNewObject(objectList,'ParametricCurve')" ><a href="">Parametric Curve</a></li>
-                     <li ng-click="createNewObject(objectList,'ParametricSurface')" ><a href="">Parametric Surface</a></li>
+                     <li ng-click="createNewObject('Point')" ><a href="">Point</a></li>
+                     <li ng-click="createNewObject('Line')" ><a href="">Line</a></li>
+                     <li ng-click="createNewObject('Vector')" ><a href="">Vector</a></li>
+                     <li ng-click="createNewObject('ParametricCurve')" ><a href="">Parametric Curve</a></li>
+                     <li ng-click="createNewObject('ParametricSurface')" ><a href="">Parametric Surface</a></li>
                      <li role="separator" class="divider"></li>
                      <li class="disabled">
                        <a href="">Constant</a>
@@ -84,8 +84,8 @@
               </ul>
             </div>
             <div ui-tree id='tree-root'>
-              <div class="list-group" ui-tree-nodes ng-model="displayTree">
-                <div class="list-group-item" ui-tree-node ng-repeat="branch in displayTree">
+              <div class="list-group" ui-tree-nodes ng-model="mathTree">
+                <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree">
                   <!-- Folder Header -->
                   <div class="tree-node tree-node-content">
                     <a class="btn btn-success btn-xs" ng-if="branch.objects && branch.objects.length > 0" data-nodrag ng-click="toggle(this)"><span
@@ -103,7 +103,7 @@
                   </div>
                   <!-- Folder items -->
                   <div class="list-group" ui-tree-nodes='' ng-class="{hidden: collapsed}" ng-model="branch.objects">
-                    <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addOjbectToUi(obj)" ng-controller='mathObjectCtrl'>
+                    <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content math-object" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addOjbectToUi(obj)" >
                     </div>
                   </div>
                 </div>
