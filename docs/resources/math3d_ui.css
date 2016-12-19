@@ -45,7 +45,7 @@ span.remove-item {
     color:darkgray;
 }
 
-span.settings:hover{
+a.btn.btn-link:hover{
     background-color:#ecf0f1;
     border-radius:4px;
 }

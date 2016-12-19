@@ -68,6 +68,7 @@
                      <li ng-click="createNewObject('ParametricCurve')" ><a href="">Parametric Curve</a></li>
                      <li ng-click="createNewObject('ParametricSurface')" ><a href="">Parametric Surface</a></li>
                      <li role="separator" class="divider"></li>
+                     <li ng-click="createNewFolder()"><a href="">Folder</a></li>
                      <li class="disabled">
                        <a href="">Constant</a>
                      </li>
@@ -88,7 +89,7 @@
                 <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree">
                   <!-- Folder Header -->
                   <div class="tree-node tree-node-content">
-                    <a class="btn btn-success btn-xs" ng-if="branch.objects && branch.objects.length > 0" data-nodrag ng-click="toggle(this)"><span
+                    <a class="btn btn-link btn-xs" type='button' data-nodrag ng-click="toggle(this)"><span
                         class="glyphicon"
                         ng-class="{
                           'glyphicon-chevron-right': collapsed,

@@ -38,6 +38,10 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         var mathObj = MathObject.renderNewObject(math3d, metaMathObj);
     }
     
+    $scope.createNewFolder = function(){
+        $scope.mathTree.push({name:'Untitled', objects:[]});
+    }
+    
     $scope.addOjbectToUi = function(obj){
         var content = genObjectTemplate(obj.type)
         
@@ -61,8 +65,8 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
                         <div class="col-xs-8">
                             <div class="input-group input-group-sm">
                                 <input type="text" class="form-control" ng-model="obj.settings.rawExpression"></input>
-                                <span class="input-group-btn settings">
-                                    <a class="btn btn-xs" type="button">
+                                <span class="input-group-btn">
+                                    <a class="btn btn-link btn-xs" type="button">
                                         <span class="glyphicon glyphicon-wrench"></span>
                                     </a>
                                 </span>
