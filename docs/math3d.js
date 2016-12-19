@@ -838,8 +838,9 @@ class MathObject {
     remove(){
         this.mathboxGroup.remove();
         var objIdx = -1;
-        var branchIdx = 0;
+        var branchIdx = -1;
         while (objIdx < 0){
+            branchIdx+= 1;
             var objIdx = this.math3d.mathTree[branchIdx].objects.indexOf(this);
         }
         this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);

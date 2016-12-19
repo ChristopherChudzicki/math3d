@@ -89,23 +89,26 @@
                 <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree">
                   <!-- Folder Header -->
                   <div class="tree-node tree-node-content">
-                    <a class="btn btn-link btn-xs" type='button' data-nodrag ng-click="toggle(this)"><span
-                        class="glyphicon"
+                    <a class="btn btn-link btn-xs" type='button' data-nodrag ng-click="toggle(this)">
+                      <span class="glyphicon"
                         ng-class="{
                           'glyphicon-chevron-right': collapsed,
                           'glyphicon-chevron-down': !collapsed
-                        }"></span></a>
-                        <span ui-tree-handle>
-                            {{branch.name}}
-                        </span>                        
-                        <a class="pull-right btn btn-danger btn-xs" data-nodrag ng-click="remove(this)">
-                            <span class="glyphicon glyphicon-remove"></span>
-                        </a>
-                  </div>
-                  <!-- Folder items -->
-                  <div class="list-group" ui-tree-nodes='' ng-class="{hidden: collapsed}" ng-model="branch.objects">
-                    <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content math-object" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addOjbectToUi(obj)" >
+                        }">
+                      </span>
+                    </a>
+                    <span ui-tree-handle>
+                      {{branch.name}}
+                    </span>
+                    <a class="pull-right btn btn-link btn-xs" data-nodrag ng-class="{disabled: branch.objects.length>0}">
+                      <span class="glyphicon glyphicon-remove remove-item">
+                      </span>
+                    </a>
                     </div>
+                    <!-- Folder items -->
+                    <div class="list-group" ui-tree-nodes='' ng-class="{hidden: collapsed}" ng-model="branch.objects">
+                      <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content math-object" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addOjbectToUi(obj)" >
+                      </div>
                   </div>
                 </div>
               </div>
