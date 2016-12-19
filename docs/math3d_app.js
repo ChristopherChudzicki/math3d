@@ -56,7 +56,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     $scope.removeFolder = function(branch){
         // Should only be used if branch is empty
         if (branch.objects.length===0){
-            _.remove(math3d.mathTree, branch);
+            _.remove(math3d.mathTree, function(arg){return arg===branch;});
         }
     }
     
