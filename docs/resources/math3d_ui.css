@@ -10,6 +10,11 @@
     padding:4px;
 }
 
+form.math-object-settings div.form-group{
+    margin-bottom:4pt;
+    margin-left:0pt;
+}
+
 input.jscolor {
     width:25px;
 }
@@ -74,7 +79,7 @@ span.grippy {
     text-shadow: 1px 0 1px black;
 }
 span.grippy::after {
-    content: '.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ';
+    content: '... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ';
 }
 
 div.math-object:hover span.grippy{

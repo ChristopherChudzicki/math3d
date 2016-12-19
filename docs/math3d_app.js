@@ -53,12 +53,13 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     
     function genObjectTemplate(type){
         var common = `
-            <form class="form-horizontal">
+            <form class="form-horizontal math-object-settings">
                 <div class="row">
-                    <div class="col-xs-1">
-                        <span ui-tree-handle class="grippy"></span>
-                    </div> 
+                    
                     <div class="form-group">
+                        <div class="col-xs-1">
+                            <span ui-tree-handle class="grippy"></span>
+                        </div> 
                         <div class="col-xs-1">
                             <input class="jscolor hide-text" ng-model="obj.settings.color" ></input>
                         </div>
