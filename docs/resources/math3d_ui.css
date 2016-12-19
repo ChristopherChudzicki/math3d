@@ -85,8 +85,21 @@ div.folder-header-right{
     flex:1;
 }
 
+.folder-header-center input {
+    border:none;
+    font-weight:bold;
+}
+
+.folder-header-center input:hover + span {
+    visibility:visible;
+}
+
+span.folder-name-editable{
+    color:lightgray;
+    visibility:hidden;
+}
+
 div.folder-main .folder-contents{
-    
 }
 
 /*https://codepen.io/zachariab/pen/wkrbc*/

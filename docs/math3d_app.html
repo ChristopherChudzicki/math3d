@@ -104,7 +104,8 @@
                           </a>
                         </div>
                         <div class="folder-header-center">
-                          <input style="border:none;font-weight:bold" type='text' ng-model="branch.name"> </input>
+                          <input type='text' size="{{branch.name.length}}" ng-model="branch.name"> </input>
+                          <span class="glyphicon glyphicon-pencil folder-name-editable"></span>
                         </div>
                         <div class="folder-header-right pull-right">
                           <a class="pull-right btn btn-link btn-xs" data-nodrag ng-class="{disabled: branch.objects.length>0}" ng-click="removeFolder(branch);">
