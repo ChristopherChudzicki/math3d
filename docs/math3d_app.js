@@ -64,7 +64,6 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         var common = `
             <form class="form-horizontal math-object-settings">
                 <div class="row">
-                    
                     <div class="form-group">
                         <div class="col-xs-1">
                             <span ui-tree-handle class="grippy"></span>
@@ -104,7 +103,8 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         } if (type === 'ParametricSurface'){
             footer = `
             <div class="row">
-                <div class="col-xs-9 offset-xs-1">
+                <div class="col-xs-2"></div>
+                <div class="col-xs-9">
                     <div class="input-group input-group-sm">
                         u, v ∈ <input style="width:100px" type="test" ng-model="obj.settings.range"></input>
                     </div>

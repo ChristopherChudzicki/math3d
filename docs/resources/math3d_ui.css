@@ -58,30 +58,73 @@ span.settings:hover span.glyphicon{
     color:#18bc9c;
 }
 
+div.folder-container{
+    overflow:hidden;
+    margin-bottom:6px;
+    display:flex;
+}
+
+div.folder-sidebar{
+    flex:1;
+}
+
+div.folder-main{
+    flex:20;
+}
+
+div.folder-main .folder-header{
+    display:flex;
+}
+div.folder-header-left{
+    flex:1;
+}
+div.folder-header-center{
+    flex:8;
+}
+div.folder-header-right{
+    flex:1;
+}
+
+div.folder-main .folder-contents{
+    
+}
+
 /*https://codepen.io/zachariab/pen/wkrbc*/
-span.grippy {
+span.grippy, span.long-grippy {
     visibility:hidden;
     content: '....';
     width: 20px;
-    height: 40px;
     display: inline-block;
-    overflow: hidden;
     line-height: 5px;
     padding: 3px 4px;
     cursor: move;
     vertical-align: middle;
-    margin-top: -.7em;
+    margin-top: -.2em;
     margin-right: .3em;
     font-size: 12px;
     font-family: sans-serif;
     letter-spacing: 2px;
     color: #cccccc;
-    text-shadow: 1px 0 1px black;
+    text-shadow: 1px 0 1px #8c8c8c;
 }
+span.grippy {
+    height: 40px;
+}
+span.long-grippy {
+    height:40px;
+}
+
 span.grippy::after {
-    content: '... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ... ';
+    content: '.. .. .. .. .. .. .. ';
+}
+
+span.long-grippy::after {
+    content: '.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ';
 }
 
 div.math-object:hover span.grippy{
+    visibility:visible;
+}
+div.folder-container:hover span.long-grippy{
     visibility:visible;
 }
