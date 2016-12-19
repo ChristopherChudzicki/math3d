@@ -73,7 +73,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
                             </div>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-xs remove-item upper-right" ng-click="obj.remove();">
+                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
                         <span class="glyphicon glyphicon-remove remove-item"></span>
                     </button>
                 </div>
