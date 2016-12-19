@@ -100,7 +100,7 @@
                     <span ui-tree-handle>
                       {{branch.name}}
                     </span>
-                    <a class="pull-right btn btn-link btn-xs" data-nodrag ng-class="{disabled: branch.objects.length>0}">
+                    <a class="pull-right btn btn-link btn-xs" data-nodrag ng-class="{disabled: branch.objects.length>0}" ng-click="removeFolder(branch);">
                       <span class="glyphicon glyphicon-remove remove-item">
                       </span>
                     </a>

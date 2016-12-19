@@ -31,6 +31,8 @@ app.controller('saveCtrl', ['$scope', function($scope){
 
 app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     // displayTree will hold mathObjects and custom vars, funcs, sliders
+    $scope.debug = arg => console.log(arg);
+    
     $scope.mathTree = math3d.mathTree;
     
     $scope.createNewObject = function(type){
@@ -50,6 +52,13 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         
         return $sce.trustAsHtml(content)
     };
+    
+    $scope.removeFolder = function(branch){
+        // Should only be used if branch is empty
+        if (branch.objects.length===0){
+            _.remove(math3d.mathTree, branch);
+        }
+    }
     
     function genObjectTemplate(type){
         var common = `
