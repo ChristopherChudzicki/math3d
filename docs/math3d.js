@@ -156,7 +156,6 @@ class Math3D {
         // Add getters and setters for updating after initial rendering
         this.settings = this.makeDynamicSettings();
         
-        
         // create math scope
         this.mathScope = new WatchedScope(this.settings.mathScope)
         this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
@@ -542,7 +541,8 @@ class WatchedScope{
             set: function(val){
                 this['_'+key] = val;
                 onChangeFunction(key, val);
-            }
+            },
+            configurable:true
         })
         this[key] = val
     }
@@ -623,8 +623,171 @@ class MathObject {
         math3d.mathTree[math3d.mathTree.length-1].objects.push(this);
         
         this.type = this.constructor.name;
+    }
+    
+    setDefaults(settings){
+        _.merge(this.settings, this.defaultSettings, settings);
+        return this.settings;
+    }
+    
+    parseRawExpression(expr){
+        return new MathExpression(expr);
+    }
+    
+    serialize(){
+        // copy settings values, no setters and getters
+        var rawSettings = Utility.deepCopyValuesOnly(this.settings)
+        var metaObj = {
+            type: this.constructor.name,
+            settings: Utility.deepObjectDiff(rawSettings, this.defaultSettings)
+        }
+        // Our object setters store values in properties prefixed with '_'. Let's remove the underscores.
+        return JSON.stringify(metaObj);
+    };
+    
+    static renderNewObject(math3d, metaObj) {
+        if (metaObj.type === 'MathObject'){
+            return new MathObject(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'VariableSlider'){
+            return new VariableSlider(math3d, metaObj.settings)
+        };
         
-        //Every abstract sublcass should define these
+        if (metaObj.type === 'Point'){
+            return new Point(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'Line'){
+            return new Line(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'Vector'){
+            return new Vector(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'ParametricCurve'){
+            return new ParametricCurve(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'ParametricSurface'){
+            return new ParametricSurface(math3d, metaObj.settings)
+        };
+    }
+}
+
+class VariableSlider extends MathObject {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        
+        this.name = null;
+        this.parsedMin = null;
+        this.parsedMax = null;
+        this.variables = [];
+        
+        var _this = this;
+        this.settings = {};
+        Object.defineProperties(this.settings,{
+            min: {
+                set: function(val){
+                    this._min = val;
+                    _this.setMin(val);
+                },
+                get: function(){return this._min;},
+            },
+            max: {
+                set: function(val){
+                    this._max = val;
+                    _this.setMax(val);
+                },
+                get: function(){return this._max;},
+            },
+            value: {
+                set: function(val){
+                    this._value = val;
+                    _this.setValue(val);
+                },
+                get: function(){return this._value;},
+            },
+            name: {
+                set: function(val){
+                    // _this.name: current name
+                    // val: new name
+                    val = _this.setName(val);
+                    this._name = val;
+                    _this.name = val;
+                },
+                get: function(val){
+                    return this._name;
+                }
+            }
+        });
+        
+        this.settings = this.setDefaults(settings);
+        var onVariableChange = math3d.onVariableChange.bind(math3d);
+        math3d.mathScope.addVariable(this.settings.name, this.settings.value, onVariableChange);
+        
+    }
+    
+    get defaultSettings(){
+        var defaults = {
+            value:0.5,
+            min:'0',
+            max:'10',
+            name: 'X'
+        }
+        return defaults
+    }
+    
+    updateVariablesList(){
+        this.variables = []
+        if (this.parsedMin !== null){
+            this.variables = this.variables.concat( this.parsedMin.variables );
+            this.variables = this.variables.concat( this.parsedMin.functions );
+        }
+        if (this.parsedMax !== null){
+            this.variables = this.variables.concat( this.parsedMax.variables );
+            this.variables = this.variables.concat( this.parsedMax.functions );
+        }
+    }
+    
+    setMin(val){
+        this.parsedMin = this.parseRawExpression(val);
+        this.min = this.parsedMin.eval(this.math3d.mathScope);
+        this.updateVariablesList();
+    }
+    setMax(val){
+        this.parsedMax = this.parseRawExpression(val);
+        this.max = this.parsedMax.eval(this.math3d.mathScope);
+        this.updateVariablesList();
+    }
+    setValue(val){
+        this.math3d.mathScope[this.name] = val;
+    }
+    setName(newName){
+        // If this slider already has same name, don't do anything
+        if (this.name === newName){return;}
+        // If another variable has this name already, alter it
+        if (this.math3d.mathScope.hasOwnProperty(newName)){
+            var subscript = 0
+            while (this.math3d.mathScope.hasOwnProperty(newName + `_${subscript}`)){
+                subscript += 1
+            }
+            newName += `_${subscript}`
+        }
+        if (this.math3d.mathScope.hasOwnProperty(this.name)) {
+            this.math3d.mathScope.removeVariable(this.name);
+        }
+        else {
+            var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
+            this.math3d.mathScope.addVariable(newName, this.settings.value, onVariableChange);
+        }
+        return newName;
+    }
+    
+}
+
+// All classes below are used for rendering graphics with MathBox
+// Abstract
+class MathGraphic extends MathObject{
+    constructor(math3d, settings){ 
+        //Every sublcass should define these
+        super(math3d, settings);
         this.mathboxGroup = null; 
         this.mathboxDataType = null; // e.g., 'array'
         this.mathboxRenderType = null; // e.g., 'point'
@@ -748,15 +911,6 @@ class MathObject {
         Utility.assert(typeof settings.color === 'string' || typeof settings.color === 'undefined')
     }
     
-    setDefaults(settings){
-        _.merge(this.settings, this.defaultSettings, settings);
-        return this.settings;
-    }
-    
-    parseRawExpression(expr){
-        return new MathExpression(expr);
-    }
-    
     updateVariablesList(){
         this.variables = []
         if (this.parsedExpression !== null){
@@ -824,17 +978,6 @@ class MathObject {
         this.recalculateData();
     }
     
-    serialize(){
-        // copy settings values, no setters and getters
-        var rawSettings = Utility.deepCopyValuesOnly(this.settings)
-        var metaObj = {
-            type: this.constructor.name,
-            settings: Utility.deepObjectDiff(rawSettings, this.defaultSettings)
-        }
-        // Our object setters store values in properties prefixed with '_'. Let's remove the underscores.
-        return JSON.stringify(metaObj);
-    };
-    
     remove(){
         this.mathboxGroup.remove();
         var objIdx = -1;
@@ -845,30 +988,9 @@ class MathObject {
         }
         this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);
     }
-    
-    static renderNewObject(math3d, metaObj) {
-        if (metaObj.type === 'MathObject'){
-            return new MathObject(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'Point'){
-            return new Point(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'Line'){
-            return new Line(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'Vector'){
-            return new Vector(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'ParametricCurve'){
-            return new ParametricCurve(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'ParametricSurface'){
-            return new ParametricSurface(math3d, metaObj.settings)
-        };
-    }
 }
 
-class Point extends MathObject {
+class Point extends MathGraphic {
     constructor(math3d, settings){
         super(math3d, settings);
         this.mathboxDataType = 'array';
@@ -925,7 +1047,7 @@ class Point extends MathObject {
     
 }
 
-class AbstractCurve extends MathObject {
+class AbstractCurve extends MathGraphic {
     constructor(math3d, settings){
         super(math3d, settings);
         this.mathboxDataType = 'interval';
@@ -1090,7 +1212,7 @@ class ParametricCurve extends AbstractCurve{
     
 }
 
-class AbstractSurface extends MathObject {
+class AbstractSurface extends MathGraphic {
     constructor(math3d, settings){
         super(math3d, settings);
         this.mathboxDataType = 'area';
