@@ -679,18 +679,74 @@ class MathObject {
     }
 }
 
-class VariableSlider extends MathObject {
+class AbstractVariable extends MathObject{
     constructor(math3d, settings){
         super(math3d, settings);
         
         this.name = null;
         this.lastValidName = null;
-        this.parsedMin = null;
-        this.parsedMax = null;
         this.variables = [];
         
         var _this = this;
         this.settings = {};
+        Object.defineProperties(this.settings,{
+            name: {
+                set: function(val){
+                    // _this.name: current name
+                    // val: new name
+                    this._name = val;
+                    val = _this.setName(val);
+                },
+                get: function(val){
+                    return this._name;
+                }
+            }
+        });     
+    }
+    setName(newName){
+        this.math3d.mathScope.removeVariable(this.lastValidName);
+        this.valid = this.addVarToMathScope(newName);
+        console.log(this.valid)
+        if (this.valid) {
+            this.lastValidName = newName;
+        }
+        this.name = newName;
+        
+        // name change might cause other variables to be valid. Let's check
+        this.updateOthers();
+        
+        return newName;
+    }
+    updateOthers(){
+        var _this = this;
+        _.forEach(this.math3d.mathTree, function(branch){
+            _.forEach(branch.objects, function(obj){
+                if (obj.constructor.prototype instanceof AbstractVariable && obj !== _this ){
+                    obj.math3d.mathScope.removeVariable(obj.name);
+                    obj.valid = obj.addVarToMathScope(obj.name);
+                }
+            })
+        })
+    }
+}
+
+class Variable extends AbstractVariable{
+    constructor(math3d, settings){
+        Object.defineProperties(this.settings,{
+            rawExpression: {},
+            rawName:{}
+        });
+    }
+}
+
+class VariableSlider extends AbstractVariable {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        
+        this.parsedMin = null;
+        this.parsedMax = null;
+        
+        var _this = this;
         Object.defineProperties(this.settings,{
             min: {
                 set: function(val){
@@ -712,17 +768,6 @@ class VariableSlider extends MathObject {
                     _this.setValue(val);
                 },
                 get: function(){return this._value;},
-            },
-            name: {
-                set: function(val){
-                    // _this.name: current name
-                    // val: new name
-                    this._name = val;
-                    val = _this.setName(val);
-                },
-                get: function(val){
-                    return this._name;
-                }
             }
         });
         
@@ -767,31 +812,6 @@ class VariableSlider extends MathObject {
     setValue(val){
         this.math3d.mathScope[this.name] = val;
     }
-    setName(newName){
-        this.math3d.mathScope.removeVariable(this.lastValidName);
-        this.valid = this.addVarToMathScope(newName);
-        if (this.valid) {
-            this.lastValidName = newName;
-        }
-        this.name = newName;
-        
-        // name change might cause other variables to be valid. Let's check
-        this.updateOthers();
-        
-        return newName;
-    }
-    
-    updateOthers(){
-        var _this = this;
-        _.forEach(this.math3d.mathTree, function(branch){
-            _.forEach(branch.objects, function(obj){
-                if (obj.type === 'VariableSlider' && obj !== _this){
-                    obj.math3d.mathScope.removeVariable(obj.name);
-                    obj.valid = obj.addVarToMathScope(obj.name);
-                }
-            })
-        })
-    }
     
     addVarToMathScope(newName){
          var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
@@ -801,7 +821,6 @@ class VariableSlider extends MathObject {
 }
 
 // All classes below are used for rendering graphics with MathBox
-// Abstract
 class MathGraphic extends MathObject{
     constructor(math3d, settings){ 
         //Every sublcass should define these
@@ -1342,5 +1361,3 @@ class ParametricSurface extends AbstractSurface {
     }
     
 }
-
-//TODO: Slider variables are saved via mathScope and mathTree, which causes trouble when reloading through URL
