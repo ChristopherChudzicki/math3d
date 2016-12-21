@@ -61,7 +61,9 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
     function genObjectTemplate(type){
-        var common = `
+        var template = ``;
+        if (_.indexOf(['Point', 'Line', 'Vector', 'ParametricCurve', 'ParametricSurface'], type)>=0) {
+            template = `
             <form class="form-horizontal math-object-settings">
                 <div class="row">
                     <div class="form-group">
@@ -88,31 +90,62 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
                 </div>
             </form>
         `
-        var footer = ``
+        }        
         if (type === 'ParametricCurve'){
-            footer = `
+            template += `
             <div class="row">
                 <div class="col-xs-2"></div>
                 <div class="col-xs-9">
                     <div class="input-group input-group-sm">
-                        t ∈ <input style="width:100px" type="test" ng-model="obj.settings.range"></input>
-                    </div>
-                </div>
-            </div>
-            `
-        } if (type === 'ParametricSurface'){
-            footer = `
-            <div class="row">
-                <div class="col-xs-2"></div>
-                <div class="col-xs-9">
-                    <div class="input-group input-group-sm">
-                        u, v ∈ <input style="width:100px" type="test" ng-model="obj.settings.range"></input>
+                        t ∈ <input style="width:100px" type="text" ng-model="obj.settings.range"></input>
                     </div>
                 </div>
             </div>
             `
         }
-        return common + footer
+        if (type === 'ParametricSurface'){
+            template += `
+            <div class="row">
+                <div class="col-xs-2"></div>
+                <div class="col-xs-9">
+                    <div class="input-group input-group-sm">
+                        u, v ∈ <input style="width:100px" type="text" ng-model="obj.settings.range"></input>
+                    </div>
+                </div>
+            </div>
+            `
+        }
+        if (type === 'VariableSlider'){
+            template = `
+            <form class="form-horizontal math-object-settings">
+                <div class="row">
+                    <div class="col-xs-2">
+                            
+                    </div>
+                    <div class="col-xs-8">
+                        <div class="input-group input-group-sm">
+                            <input size="4" type="text" ng-model="obj.settings.name"></input>
+                            <span>={{obj.settings.value}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-2">
+                        </div>
+                        <div class="col-xs-8">
+                            <input type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}" step="{{(obj.max-obj.min)/100}}"></input>
+                        </div>
+                        <div class="col-xs-2"></div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
+                        <span class="glyphicon glyphicon-remove remove-item"></span>
+                    </button>
+                </div>
+            </form>
+            `
+        }
+        return template
     }
     
 }]);
