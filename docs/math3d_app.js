@@ -30,7 +30,8 @@ app.controller('saveCtrl', ['$scope', function($scope){
 }])
 
 app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
-    // displayTree will hold mathObjects and custom vars, funcs, sliders
+    globalScope.$scope = $scope;
+    
     $scope.debug = arg => console.log(arg);
     
     $scope.mathTree = math3d.mathTree;
@@ -119,15 +120,17 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             template = `
             <form class="form-horizontal math-object-settings">
                 <div class="row">
-                    <div class="col-xs-2">
-                            
-                    </div>
-                    <div class="col-xs-8">
-                        <div class="input-group input-group-sm">
-                            <input size="4" type="text" ng-model="obj.settings.name"></input>
-                            <span>={{obj.settings.value}}</span>
+                    <div class="form-group">
+                        <div class="col-xs-2">
+                            <span ui-tree-handle class="grippy"></span>
                         </div>
-                    </div>
+                        <div class="col-xs-8">
+                            <div class="input-group input-group-sm">
+                                <input ng-class="{'has-error': !obj.valid}" class="has-feedback" size="{{1+obj.settings.name.length}}" type="text" ng-model="obj.settings.name"></input>
+                                <span> = {{obj.settings.value}}</span>
+                            </div>
+                        </div>
+                    </div>  
                 </div>
                 <div class="row">
                     <div class="form-group">
@@ -136,7 +139,23 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
                         <div class="col-xs-8">
                             <input type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}" step="{{(obj.max-obj.min)/100}}"></input>
                         </div>
+                        <div class="col-xs-2">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
+                        <span class="glyphicon glyphicon-remove remove-item"></span>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="form-group">
                         <div class="col-xs-2"></div>
+                        <div class="col-xs-2">
+                            <input class="form-incognito" type="text" size="{{obj.settings.min.length}}" ng-model="obj.settings.min"></input>
+                        </div>
+                        <div class="col-xs-4"></div>
+                        <div class="col-xs-2">
+                            <input class="form-incognito" type="text" size="{{obj.settings.max.length}}" ng-model="obj.settings.max"></input>
+                        </div>
                     </div>
                     <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
                         <span class="glyphicon glyphicon-remove remove-item"></span>

@@ -495,8 +495,9 @@ class Math3D {
     }
     
     serialize(settings){
+        //Do not copy this.mathScope; those anything added to mathScope should be stored in mathTree;
+        
         settings = Utility.defaultVal(settings, this.settings);
-        settings.mathScope = JSON.parse(this.mathScope.serialize()); // serialized then parsed to remove getters and setters
         // copy settings values, no setters and getters
         var rawSettings = Utility.deepCopyValuesOnly(this.settings)
         // camera is a THREE js Vec3 object
@@ -535,16 +536,23 @@ class WatchedScope{
     }
     
     addVariable(key, val, onChangeFunction){
-        // onChangeFunction = Utility.defaultVal(onChangeFunction, function(a, b){console.log(`Variable ${a} now has value ${b}`)})
-        Object.defineProperty(this, key, {
-            get: function(){return this['_'+key];},
-            set: function(val){
-                this['_'+key] = val;
-                onChangeFunction(key, val);
-            },
-            configurable:true
-        })
-        this[key] = val
+        // If key already defined, return false; else add variable and return true
+        if (this.hasOwnProperty(key) || key === ''){
+            return false;
+        }
+        else {
+            Object.defineProperty(this, key, {
+                get: function(){return this['_'+key];},
+                set: function(val){
+                    this['_'+key] = val;
+                    onChangeFunction(key, val);
+                },
+                configurable:true
+            })
+            this[key] = val
+            return true
+        }
+        
     }
     
     removeVariable(key){
@@ -676,6 +684,7 @@ class VariableSlider extends MathObject {
         super(math3d, settings);
         
         this.name = null;
+        this.lastValidName = null;
         this.parsedMin = null;
         this.parsedMax = null;
         this.variables = [];
@@ -708,9 +717,8 @@ class VariableSlider extends MathObject {
                 set: function(val){
                     // _this.name: current name
                     // val: new name
-                    val = _this.setName(val);
                     this._name = val;
-                    _this.name = val;
+                    val = _this.setName(val);
                 },
                 get: function(val){
                     return this._name;
@@ -760,24 +768,34 @@ class VariableSlider extends MathObject {
         this.math3d.mathScope[this.name] = val;
     }
     setName(newName){
-        // If this slider already has same name, don't do anything
-        if (this.name === newName){return;}
-        // If another variable has this name already, alter it
-        if (this.math3d.mathScope.hasOwnProperty(newName)){
-            var subscript = 0
-            while (this.math3d.mathScope.hasOwnProperty(newName + `_${subscript}`)){
-                subscript += 1
-            }
-            newName += `_${subscript}`
+        this.math3d.mathScope.removeVariable(this.lastValidName);
+        this.valid = this.addVarToMathScope(newName);
+        if (this.valid) {
+            this.lastValidName = newName;
         }
-        if (this.math3d.mathScope.hasOwnProperty(this.name)) {
-            this.math3d.mathScope.removeVariable(this.name);
-        }
-        else {
-            var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
-            this.math3d.mathScope.addVariable(newName, this.settings.value, onVariableChange);
-        }
+        this.name = newName;
+        
+        // name change might cause other variables to be valid. Let's check
+        this.updateOthers();
+        
         return newName;
+    }
+    
+    updateOthers(){
+        var _this = this;
+        _.forEach(this.math3d.mathTree, function(branch){
+            _.forEach(branch.objects, function(obj){
+                if (obj.type === 'VariableSlider' && obj !== _this){
+                    obj.math3d.mathScope.removeVariable(obj.name);
+                    obj.valid = obj.addVarToMathScope(obj.name);
+                }
+            })
+        })
+    }
+    
+    addVarToMathScope(newName){
+         var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
+         return this.math3d.mathScope.addVariable(newName, this.settings.value, onVariableChange)
     }
     
 }
@@ -1325,5 +1343,4 @@ class ParametricSurface extends AbstractSurface {
     
 }
 
-// Data in a matrix
-// https://groups.google.com/d/topic/mathbox/fOH6FPs3RHw/discussion
+//TODO: Slider variables are saved via mathScope and mathTree, which causes trouble when reloading through URL

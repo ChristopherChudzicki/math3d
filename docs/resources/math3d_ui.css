@@ -13,6 +13,7 @@
 form.math-object-settings div.form-group{
     margin-bottom:4pt;
     margin-left:0pt;
+    margin-top:4pt;
 }
 
 input.jscolor {
@@ -85,7 +86,7 @@ div.folder-header-right{
     flex:1;
 }
 
-.folder-header-center input {
+.form-incognito {
     border:none;
     font-weight:bold;
 }
@@ -100,6 +101,12 @@ span.folder-name-editable{
 }
 
 div.folder-main .folder-contents{
+}
+
+input.has-error.has-feedback {
+    outline: none;
+    border-color: red;
+    box-shadow: 0 0 10px red;
 }
 
 /*https://codepen.io/zachariab/pen/wkrbc*/
