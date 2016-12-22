@@ -498,10 +498,11 @@ class Math3D {
             _this.mathTree.push(branchCopy);
             _.forEach(branch.objects, function(metaObj, idx){
                 // creating a new object appends to last branch
-                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider'){
-                    _this.mathScope.removeVariable(metaObj.settings.name)
-                }
                 var mathObj = MathObject.renderNewObject(_this, metaObj);
+                if (mathObj.type==='VariableSlider' || mathObj.type === 'Variable'){
+                    mathObj.valid = true;
+                    mathObj.lastValidName = mathObj.name;
+                }
             });
         })
         
@@ -511,12 +512,16 @@ class Math3D {
     }
     
     onVariableChange(varName){
+        console.log("Changed")
         // update objects where the variables have changed
         _.forEach(this.mathTree, function(branch, idx){
             _.forEach(branch.objects, function(obj, idx){
                 if ( _.contains( obj.variables, varName) ){
-                    console.log('Updated',obj)
-                    obj.recalculateData();
+                    try {
+                        obj.recalculateData();
+                    } catch (e) {
+                        console.log(`Caught:${e}`);
+                    }
                 }
             })
         })
@@ -745,6 +750,8 @@ class AbstractVariable extends MathObject{
         });     
     }
     setName(newName){
+        console.log("My name is: " + newName);
+        console.log(Object.keys(this.math3d.mathScope))
         this.math3d.mathScope.removeVariable(this.lastValidName);
         this.valid = this.addVarToMathScope(newName);
 
@@ -753,7 +760,7 @@ class AbstractVariable extends MathObject{
         }
         this.name = newName;
         
-        // name change might cause other variables to be valid. Let's check
+        // name change might cause other variables to be valid / invalid. Let's check
         this.updateOthers();
         
         return newName;
@@ -766,12 +773,15 @@ class AbstractVariable extends MathObject{
         MathObject.prototype.remove.call(this);
     }
     updateOthers(){
+        console.log("Updating Others")
         var _this = this;
         _.forEach(this.math3d.mathTree, function(branch){
             _.forEach(branch.objects, function(obj){
-                if (obj.constructor.prototype instanceof AbstractVariable && obj !== _this ){
-                    obj.math3d.mathScope.removeVariable(obj.name);
+                if (obj.constructor.prototype instanceof AbstractVariable && obj !== _this && !obj.valid ){
                     obj.valid = obj.addVarToMathScope(obj.name);
+                    if (obj.valid){
+                        obj.lastValidName = obj.name;
+                    }
                 }
             })
         })
@@ -903,6 +913,7 @@ class VariableSlider extends AbstractVariable {
         
         this.settings = this.setDefaults(settings);
         var onVariableChange = math3d.onVariableChange.bind(math3d);
+        console.log(this.settings.value)
         math3d.mathScope.addVariable(this.settings.name, this.settings.value, onVariableChange);
         
     }
@@ -1172,18 +1183,6 @@ class Point extends MathGraphic {
             size: 14,
         });
         return defaults
-    }
-    
-    static validateSettings(settings, scope){
-        // I think this validation stuff was unncessary ...
-        super.validateSettings(settings, scope)
-        Utility.assert(typeof settings.size === 'number' || typeof settings.size === 'undefined')
-        
-        // Now try to parse the raw expression. Should be an array [p1, p2, ...] where each p is a 3-component array
-        if (settings.rawExpression !== undefined){
-            var test = new MathExpression(settings.rawExpression)
-            test.eval(scope).every( function(elem){return elem.length===3})
-        }
     }
     
     recalculateData(){
