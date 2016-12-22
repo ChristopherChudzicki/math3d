@@ -469,6 +469,27 @@ class Math3D {
     
     renderMathObjects(){
         var _this = this;
+        // Variable Objects needs to be added to mathTree first because other objects might reference them. 
+        // The following seems a bit hacky, but works well.
+        // 1. Add only Variable objects to the mathTree. This will expand mathScope
+        // 2. redefine mathTree as []
+        // 3. Add all mathObjects to the mathTree. Delete Variable names from mathScope just before they are added.
+        
+        
+        _.forEach(this.settings.wrappedMathTree, function(branch, idx){
+            var branchCopy = {
+                name: branch.name,
+                objects: []
+            };
+            _this.mathTree.push(branchCopy);
+            _.forEach(branch.objects, function(metaObj, idx){
+                // only add variables
+                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider'){
+                    var mathObj = MathObject.renderNewObject(_this, metaObj);
+                }
+            });
+        })
+        this.mathTree = [];
         _.forEach(this.settings.wrappedMathTree, function(branch, idx){
             var branchCopy = {
                 name: branch.name,
@@ -477,9 +498,15 @@ class Math3D {
             _this.mathTree.push(branchCopy);
             _.forEach(branch.objects, function(metaObj, idx){
                 // creating a new object appends to last branch
+                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider'){
+                    _this.mathScope.removeVariable(metaObj.settings.name)
+                }
                 var mathObj = MathObject.renderNewObject(_this, metaObj);
             });
         })
+        
+        // Now, render all other objects
+        
         this.settings.wrappedMathTree = [];
     }
     
@@ -488,6 +515,7 @@ class Math3D {
         _.forEach(this.mathTree, function(branch, idx){
             _.forEach(branch.objects, function(obj, idx){
                 if ( _.contains( obj.variables, varName) ){
+                    console.log('Updated',obj)
                     obj.recalculateData();
                 }
             })
@@ -753,7 +781,7 @@ class AbstractVariable extends MathObject{
 class Variable extends AbstractVariable{
     constructor(math3d, settings){
         super(math3d, settings);
-        this.expression = null;
+        this.parsedExpression = null;
         this.argNames = null;
         this.function = null;
         
@@ -762,6 +790,8 @@ class Variable extends AbstractVariable{
             rawExpression: {
                 set: function(val){
                     this._rawExpression = val;
+                    _this.parsedExpression = _this.parseRawExpression(val);
+                    _this.updateVariablesList();
                     _this.setRawExpression(val);
                 },
                 get: function(){
@@ -809,7 +839,6 @@ class Variable extends AbstractVariable{
          return this.math3d.mathScope.addVariable(newName, this.value, onVariableChange);
     }
     setRawExpression(val){
-        var expr = this.parseRawExpression(val);
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         if (this.function){
             let argNames = this.argNames;
@@ -818,13 +847,24 @@ class Variable extends AbstractVariable{
                 for (let j=0; j<arguments.length;j++){
                     localMathScope[argNames[j]] = arguments[j];
                 }
-                return expr.eval(localMathScope);
+                return this.parsedExpression.eval(localMathScope);
             }
         } 
         else {
-            this.value = expr.eval(localMathScope);
+            this.value = this.parsedExpression.eval(localMathScope);
         }
         this.math3d.mathScope[this.name] = this.value;
+    }
+    
+    updateVariablesList(){
+        this.variables = []
+        if (this.parsedExpression !== null){
+            this.variables = this.variables.concat( this.parsedExpression.variables );
+            this.variables = this.variables.concat( this.parsedExpression.functions );
+        }
+    }
+    recalculateData(){
+        this.settings.rawExpression = this.settings.rawExpression;
     }
 }
 
@@ -871,7 +911,7 @@ class VariableSlider extends AbstractVariable {
             value:0.5,
             min:'0',
             max:'10',
-            name: 'X'
+            name:'X'
         }
         return defaults
     }
@@ -907,6 +947,10 @@ class VariableSlider extends AbstractVariable {
          return this.math3d.mathScope.addVariable(newName, this.settings.value, onVariableChange);
     }
     
+    recalculateData(){
+        this.settings.min = this.settings.min;
+        this.settings.max = this.settings.max;
+    }
 }
 
 // All classes below are used for rendering graphics with MathBox
@@ -1037,6 +1081,9 @@ class MathGraphic extends MathObject{
         Utility.assert(typeof settings.color === 'string' || typeof settings.color === 'undefined')
     }
     
+    //Define this for every subclass
+    recalculateData(){}
+    
     updateVariablesList(){
         this.variables = []
         if (this.parsedExpression !== null){
@@ -1049,9 +1096,6 @@ class MathGraphic extends MathObject{
             this.variables = this.variables.concat( this.parsedRange.functions );
         }
     }
-    
-    //Define this for every subclass
-    recalculateData(){}
     
     get data() {return this._data;}
     set data(val) {
