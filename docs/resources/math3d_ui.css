@@ -88,6 +88,8 @@ div.folder-header-right{
 
 .form-incognito {
     border:none;
+}
+.form-bold {
     font-weight:bold;
 }
 

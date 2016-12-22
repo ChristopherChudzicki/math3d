@@ -29,9 +29,7 @@ app.controller('saveCtrl', ['$scope', function($scope){
     };
 }])
 
-app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
-    globalScope.$scope = $scope;
-    
+app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
     $scope.debug = arg => console.log(arg);
     
     $scope.mathTree = math3d.mathTree;
@@ -116,25 +114,48 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             </div>
             `
         }
+        if (type === 'Variable'){
+            template = `
+            <form class="form-horizontal math-object-settings">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-1">
+                            <span ui-tree-handle class="grippy"></span>
+                        </div>
+                        <div class="col-xs-9">
+                            <div class="input-group input-group-sm">
+                                <input size="4" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" ng-model="obj.settings.rawName" ></input>
+                                <span style="padding-left:2pt;padding-right:2pt;" class="input-group-addon"> = </span>
+                                <input type="text" class="form-control" ng-model="obj.settings.rawExpression"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
+                        <span class="glyphicon glyphicon-remove remove-item"></span>
+                    </button>
+                </div>
+            </form>
+            `
+        }
         if (type === 'VariableSlider'){
             template = `
             <form class="form-horizontal math-object-settings">
                 <div class="row">
                     <div class="form-group">
-                        <div class="col-xs-2">
+                        <div class="col-xs-1">
                             <span ui-tree-handle class="grippy"></span>
                         </div>
-                        <div class="col-xs-8">
+                        <div class="col-xs-4">
                             <div class="input-group input-group-sm">
-                                <input ng-class="{'has-error': !obj.valid}" class="has-feedback" size="{{1+obj.settings.name.length}}" type="text" ng-model="obj.settings.name"></input>
-                                <span> = {{obj.settings.value}}</span>
+                                <input style="width:auto" type="text" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" size="{{1+obj.settings.name.length}}" type="text" ng-model="obj.settings.name"></input>
+                                <span style="padding-left:2pt;padding-right:2pt;" class="input-group-addon"> = {{obj.settings.value}} </span>
                             </div>
                         </div>
                     </div>  
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <div class="col-xs-2">
+                        <div class="col-xs-1">
                         </div>
                         <div class="col-xs-8">
                             <input type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}" step="{{(obj.max-obj.min)/100}}"></input>
@@ -148,7 +169,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
                 </div>
                 <div class="row">
                     <div class="form-group">
-                        <div class="col-xs-2"></div>
+                        <div class="col-xs-1"></div>
                         <div class="col-xs-2">
                             <input class="form-incognito" type="text" size="{{obj.settings.min.length}}" ng-model="obj.settings.min"></input>
                         </div>

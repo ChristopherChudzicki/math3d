@@ -653,9 +653,22 @@ class MathObject {
         return JSON.stringify(metaObj);
     };
     
+    remove(){
+        var objIdx = -1;
+        var branchIdx = -1;
+        while (objIdx < 0){
+            branchIdx+= 1;
+            var objIdx = this.math3d.mathTree[branchIdx].objects.indexOf(this);
+        }
+        this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);
+    }
+    
     static renderNewObject(math3d, metaObj) {
         if (metaObj.type === 'MathObject'){
             return new MathObject(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'Variable'){
+            return new Variable(math3d, metaObj.settings)
         };
         if (metaObj.type === 'VariableSlider'){
             return new VariableSlider(math3d, metaObj.settings)
@@ -706,7 +719,7 @@ class AbstractVariable extends MathObject{
     setName(newName){
         this.math3d.mathScope.removeVariable(this.lastValidName);
         this.valid = this.addVarToMathScope(newName);
-        console.log(this.valid)
+
         if (this.valid) {
             this.lastValidName = newName;
         }
@@ -716,6 +729,13 @@ class AbstractVariable extends MathObject{
         this.updateOthers();
         
         return newName;
+    }
+    // addVarToMathScope(newName){} defined by all subclasses
+    
+    
+    remove(){
+        this.math3d.mathScope.removeVariable(this.lastValidName);
+        MathObject.prototype.remove.call(this);
     }
     updateOthers(){
         var _this = this;
@@ -732,10 +752,79 @@ class AbstractVariable extends MathObject{
 
 class Variable extends AbstractVariable{
     constructor(math3d, settings){
+        super(math3d, settings);
+        this.expression = null;
+        this.argNames = null;
+        this.function = null;
+        
+        var _this = this;
         Object.defineProperties(this.settings,{
-            rawExpression: {},
-            rawName:{}
+            rawExpression: {
+                set: function(val){
+                    this._rawExpression = val;
+                    _this.setRawExpression(val);
+                },
+                get: function(){
+                    return this._rawExpression;
+                }
+            },
+            rawName:{
+                set: function(val){
+                    this._rawName = val;
+                    _this.setRawName(val);
+                },
+                get: function(){
+                    return this._rawName;
+                }
+            }
         });
+        this.settings = this.setDefaults(settings);
+        
+    }
+    
+    get defaultSettings(){
+        var defaults = {
+            rawName: 'f(t)',
+            rawExpression: 'e^t'
+        }
+        return defaults
+    }
+    
+    setRawName(val){
+        var expr = this.parseRawExpression(val);
+        // expr should be something like f_1(s,t); should have 1 function and 0+ variables
+        if (expr.functions.length === 1){
+            this.function = true;
+            this.argNames = expr.variables;
+            this.settings.name = expr.functions[0];
+        }
+        else if (expr.functions.length === 0) {
+            this.function = false;
+            this.argNames = []
+            this.settings.name = expr.variables[0];
+        } else {}
+    }
+    addVarToMathScope(newName){
+         var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
+         return this.math3d.mathScope.addVariable(newName, this.value, onVariableChange);
+    }
+    setRawExpression(val){
+        var expr = this.parseRawExpression(val);
+        var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
+        if (this.function){
+            let argNames = this.argNames;
+            this.value = function(){
+                //arguments and this.argNames should have same length
+                for (let j=0; j<arguments.length;j++){
+                    localMathScope[argNames[j]] = arguments[j];
+                }
+                return expr.eval(localMathScope);
+            }
+        } 
+        else {
+            this.value = expr.eval(localMathScope);
+        }
+        this.math3d.mathScope[this.name] = this.value;
     }
 }
 
@@ -815,7 +904,7 @@ class VariableSlider extends AbstractVariable {
     
     addVarToMathScope(newName){
          var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
-         return this.math3d.mathScope.addVariable(newName, this.settings.value, onVariableChange)
+         return this.math3d.mathScope.addVariable(newName, this.settings.value, onVariableChange);
     }
     
 }
@@ -1017,13 +1106,7 @@ class MathGraphic extends MathObject{
     
     remove(){
         this.mathboxGroup.remove();
-        var objIdx = -1;
-        var branchIdx = -1;
-        while (objIdx < 0){
-            branchIdx+= 1;
-            var objIdx = this.math3d.mathTree[branchIdx].objects.indexOf(this);
-        }
-        this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);
+        MathObject.prototype.remove.call(this);
     }
 }
 
