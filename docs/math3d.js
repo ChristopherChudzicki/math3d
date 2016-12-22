@@ -839,6 +839,7 @@ class Variable extends AbstractVariable{
          return this.math3d.mathScope.addVariable(newName, this.value, onVariableChange);
     }
     setRawExpression(val){
+        var expr = this.parsedExpression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         if (this.function){
             let argNames = this.argNames;
@@ -847,11 +848,11 @@ class Variable extends AbstractVariable{
                 for (let j=0; j<arguments.length;j++){
                     localMathScope[argNames[j]] = arguments[j];
                 }
-                return this.parsedExpression.eval(localMathScope);
+                return expr.eval(localMathScope);
             }
         } 
         else {
-            this.value = this.parsedExpression.eval(localMathScope);
+            this.value = expr.eval(localMathScope);
         }
         this.math3d.mathScope[this.name] = this.value;
     }
