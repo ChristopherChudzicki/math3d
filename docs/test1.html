@@ -25,9 +25,18 @@
 
 var queryString = Utility.getQueryString();
 var encodedUserSettings = queryString['settings'];
+
+function f1(t){
+    return [Math.cos(t), Math.sin(t), t]
+}
+function f2(t){
+    var expr = new MathExpression("[cos(t), sin(t), t]");
+    return expr.eval({t:t})
+}
+
 var authorSettings = {
   containerId:'my-math-box',
-  mathScope: {a:2,b:-2,c:1,d:3,r:3},
+  mathScope: {a:2,b:-2,c:1,d:3,r:3, f1:f1, f2:f2},
   wrappedMathTree:[
     {
     name: "General",
@@ -42,7 +51,7 @@ var authorSettings = {
       },
       {
         type: 'ParametricCurve',
-        settings: {rawExpression:'[r*cos(pi*t),r*sin(pi*t),t]', range:"[-d,d]"}
+        settings: {rawExpression:'f2(t)', range:"[-d,d]"}
       },
       {
         type: 'ParametricSurface',
@@ -67,12 +76,13 @@ gui.add(math3d.mathScope, "d")
       .max(5)
       .step(0.01);
       
-var iterations = 100;
-console.time('Function #1');
-for(var i = 0; i < iterations; i++ ){
+      
+var t0 = performance.now();
+for(let i = 0; i < 1000; i++ ){
   math3d.mathTree[0].objects[2].recalculateData()
 };
-console.timeEnd('Function #1')
+var t1 = performance.now();
+console.log("Call to doSomething took " + (t1 - t0) + " milliseconds.")
 
 </script>
 

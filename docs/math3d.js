@@ -156,7 +156,6 @@ class Math3D {
         // Add getters and setters for updating after initial rendering
         this.settings = this.makeDynamicSettings();
         
-        
         // create math scope
         this.mathScope = new WatchedScope(this.settings.mathScope)
         this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
@@ -470,6 +469,27 @@ class Math3D {
     
     renderMathObjects(){
         var _this = this;
+        // Variable Objects needs to be added to mathTree first because other objects might reference them. 
+        // The following seems a bit hacky, but works well.
+        // 1. Add only Variable objects to the mathTree. This will expand mathScope
+        // 2. redefine mathTree as []
+        // 3. Add all mathObjects to the mathTree. Delete Variable names from mathScope just before they are added.
+        
+        
+        _.forEach(this.settings.wrappedMathTree, function(branch, idx){
+            var branchCopy = {
+                name: branch.name,
+                objects: []
+            };
+            _this.mathTree.push(branchCopy);
+            _.forEach(branch.objects, function(metaObj, idx){
+                // only add variables
+                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider'){
+                    var mathObj = MathObject.renderNewObject(_this, metaObj);
+                }
+            });
+        })
+        this.mathTree = [];
         _.forEach(this.settings.wrappedMathTree, function(branch, idx){
             var branchCopy = {
                 name: branch.name,
@@ -479,25 +499,38 @@ class Math3D {
             _.forEach(branch.objects, function(metaObj, idx){
                 // creating a new object appends to last branch
                 var mathObj = MathObject.renderNewObject(_this, metaObj);
+                if (mathObj.type==='VariableSlider' || mathObj.type === 'Variable'){
+                    mathObj.valid = true;
+                    mathObj.lastValidName = mathObj.name;
+                }
             });
         })
+        
+        // Now, render all other objects
+        
         this.settings.wrappedMathTree = [];
     }
     
     onVariableChange(varName){
+        console.log("Changed")
         // update objects where the variables have changed
         _.forEach(this.mathTree, function(branch, idx){
             _.forEach(branch.objects, function(obj, idx){
                 if ( _.contains( obj.variables, varName) ){
-                    obj.recalculateData();
+                    try {
+                        obj.recalculateData();
+                    } catch (e) {
+                        console.log(`Caught:${e}`);
+                    }
                 }
             })
         })
     }
     
     serialize(settings){
+        //Do not copy this.mathScope; those anything added to mathScope should be stored in mathTree;
+        
         settings = Utility.defaultVal(settings, this.settings);
-        settings.mathScope = JSON.parse(this.mathScope.serialize()); // serialized then parsed to remove getters and setters
         // copy settings values, no setters and getters
         var rawSettings = Utility.deepCopyValuesOnly(this.settings)
         // camera is a THREE js Vec3 object
@@ -536,15 +569,23 @@ class WatchedScope{
     }
     
     addVariable(key, val, onChangeFunction){
-        // onChangeFunction = Utility.defaultVal(onChangeFunction, function(a, b){console.log(`Variable ${a} now has value ${b}`)})
-        Object.defineProperty(this, key, {
-            get: function(){return this['_'+key];},
-            set: function(val){
-                this['_'+key] = val;
-                onChangeFunction(key, val);
-            }
-        })
-        this[key] = val
+        // If key already defined, return false; else add variable and return true
+        if (this.hasOwnProperty(key) || key === ''){
+            return false;
+        }
+        else {
+            Object.defineProperty(this, key, {
+                get: function(){return this['_'+key];},
+                set: function(val){
+                    this['_'+key] = val;
+                    onChangeFunction(key, val);
+                },
+                configurable:true
+            })
+            this[key] = val
+            return true
+        }
+        
     }
     
     removeVariable(key){
@@ -623,8 +664,312 @@ class MathObject {
         math3d.mathTree[math3d.mathTree.length-1].objects.push(this);
         
         this.type = this.constructor.name;
+    }
+    
+    setDefaults(settings){
+        _.merge(this.settings, this.defaultSettings, settings);
+        return this.settings;
+    }
+    
+    parseRawExpression(expr){
+        return new MathExpression(expr);
+    }
+    
+    serialize(){
+        // copy settings values, no setters and getters
+        var rawSettings = Utility.deepCopyValuesOnly(this.settings)
+        var metaObj = {
+            type: this.constructor.name,
+            settings: Utility.deepObjectDiff(rawSettings, this.defaultSettings)
+        }
+        // Our object setters store values in properties prefixed with '_'. Let's remove the underscores.
+        return JSON.stringify(metaObj);
+    };
+    
+    remove(){
+        var objIdx = -1;
+        var branchIdx = -1;
+        while (objIdx < 0){
+            branchIdx+= 1;
+            var objIdx = this.math3d.mathTree[branchIdx].objects.indexOf(this);
+        }
+        this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);
+    }
+    
+    static renderNewObject(math3d, metaObj) {
+        if (metaObj.type === 'MathObject'){
+            return new MathObject(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'Variable'){
+            return new Variable(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'VariableSlider'){
+            return new VariableSlider(math3d, metaObj.settings)
+        };
         
-        //Every abstract sublcass should define these
+        if (metaObj.type === 'Point'){
+            return new Point(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'Line'){
+            return new Line(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'Vector'){
+            return new Vector(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'ParametricCurve'){
+            return new ParametricCurve(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'ParametricSurface'){
+            return new ParametricSurface(math3d, metaObj.settings)
+        };
+    }
+}
+
+class AbstractVariable extends MathObject{
+    constructor(math3d, settings){
+        super(math3d, settings);
+        
+        this.name = null;
+        this.lastValidName = null;
+        this.variables = [];
+        
+        var _this = this;
+        this.settings = {};
+        Object.defineProperties(this.settings,{
+            name: {
+                set: function(val){
+                    // _this.name: current name
+                    // val: new name
+                    this._name = val;
+                    val = _this.setName(val);
+                },
+                get: function(val){
+                    return this._name;
+                }
+            }
+        });     
+    }
+    setName(newName){
+        console.log("My name is: " + newName);
+        console.log(Object.keys(this.math3d.mathScope))
+        this.math3d.mathScope.removeVariable(this.lastValidName);
+        this.valid = this.addVarToMathScope(newName);
+
+        if (this.valid) {
+            this.lastValidName = newName;
+        }
+        this.name = newName;
+        
+        // name change might cause other variables to be valid / invalid. Let's check
+        this.updateOthers();
+        
+        return newName;
+    }
+    // addVarToMathScope(newName){} defined by all subclasses
+    
+    
+    remove(){
+        this.math3d.mathScope.removeVariable(this.lastValidName);
+        MathObject.prototype.remove.call(this);
+    }
+    updateOthers(){
+        console.log("Updating Others")
+        var _this = this;
+        _.forEach(this.math3d.mathTree, function(branch){
+            _.forEach(branch.objects, function(obj){
+                if (obj.constructor.prototype instanceof AbstractVariable && obj !== _this && !obj.valid ){
+                    obj.valid = obj.addVarToMathScope(obj.name);
+                    if (obj.valid){
+                        obj.lastValidName = obj.name;
+                    }
+                }
+            })
+        })
+    }
+}
+
+class Variable extends AbstractVariable{
+    constructor(math3d, settings){
+        super(math3d, settings);
+        this.parsedExpression = null;
+        this.argNames = null;
+        this.function = null;
+        
+        var _this = this;
+        Object.defineProperties(this.settings,{
+            rawExpression: {
+                set: function(val){
+                    this._rawExpression = val;
+                    _this.parsedExpression = _this.parseRawExpression(val);
+                    _this.updateVariablesList();
+                    _this.setRawExpression(val);
+                },
+                get: function(){
+                    return this._rawExpression;
+                }
+            },
+            rawName:{
+                set: function(val){
+                    this._rawName = val;
+                    _this.setRawName(val);
+                },
+                get: function(){
+                    return this._rawName;
+                }
+            }
+        });
+        this.settings = this.setDefaults(settings);
+        
+    }
+    
+    get defaultSettings(){
+        var defaults = {
+            rawName: 'f(t)',
+            rawExpression: 'e^t'
+        }
+        return defaults
+    }
+    
+    setRawName(val){
+        var expr = this.parseRawExpression(val);
+        // expr should be something like f_1(s,t); should have 1 function and 0+ variables
+        if (expr.functions.length === 1){
+            this.function = true;
+            this.argNames = expr.variables;
+            this.settings.name = expr.functions[0];
+        }
+        else if (expr.functions.length === 0) {
+            this.function = false;
+            this.argNames = []
+            this.settings.name = expr.variables[0];
+        } else {}
+    }
+    addVarToMathScope(newName){
+         var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
+         return this.math3d.mathScope.addVariable(newName, this.value, onVariableChange);
+    }
+    setRawExpression(val){
+        var expr = this.parsedExpression;
+        var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
+        if (this.function){
+            let argNames = this.argNames;
+            this.value = function(){
+                //arguments and this.argNames should have same length
+                for (let j=0; j<arguments.length;j++){
+                    localMathScope[argNames[j]] = arguments[j];
+                }
+                return expr.eval(localMathScope);
+            }
+        } 
+        else {
+            this.value = expr.eval(localMathScope);
+        }
+        this.math3d.mathScope[this.name] = this.value;
+    }
+    
+    updateVariablesList(){
+        this.variables = []
+        if (this.parsedExpression !== null){
+            this.variables = this.variables.concat( this.parsedExpression.variables );
+            this.variables = this.variables.concat( this.parsedExpression.functions );
+        }
+    }
+    recalculateData(){
+        this.settings.rawExpression = this.settings.rawExpression;
+    }
+}
+
+class VariableSlider extends AbstractVariable {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        
+        this.parsedMin = null;
+        this.parsedMax = null;
+        
+        var _this = this;
+        Object.defineProperties(this.settings,{
+            min: {
+                set: function(val){
+                    this._min = val;
+                    _this.setMin(val);
+                },
+                get: function(){return this._min;},
+            },
+            max: {
+                set: function(val){
+                    this._max = val;
+                    _this.setMax(val);
+                },
+                get: function(){return this._max;},
+            },
+            value: {
+                set: function(val){
+                    this._value = val;
+                    _this.setValue(val);
+                },
+                get: function(){return this._value;},
+            }
+        });
+        
+        this.settings = this.setDefaults(settings);
+        var onVariableChange = math3d.onVariableChange.bind(math3d);
+        console.log(this.settings.value)
+        math3d.mathScope.addVariable(this.settings.name, this.settings.value, onVariableChange);
+        
+    }
+    
+    get defaultSettings(){
+        var defaults = {
+            value:0.5,
+            min:'0',
+            max:'10',
+            name:'X'
+        }
+        return defaults
+    }
+    
+    updateVariablesList(){
+        this.variables = []
+        if (this.parsedMin !== null){
+            this.variables = this.variables.concat( this.parsedMin.variables );
+            this.variables = this.variables.concat( this.parsedMin.functions );
+        }
+        if (this.parsedMax !== null){
+            this.variables = this.variables.concat( this.parsedMax.variables );
+            this.variables = this.variables.concat( this.parsedMax.functions );
+        }
+    }
+    
+    setMin(val){
+        this.parsedMin = this.parseRawExpression(val);
+        this.min = this.parsedMin.eval(this.math3d.mathScope);
+        this.updateVariablesList();
+    }
+    setMax(val){
+        this.parsedMax = this.parseRawExpression(val);
+        this.max = this.parsedMax.eval(this.math3d.mathScope);
+        this.updateVariablesList();
+    }
+    setValue(val){
+        this.math3d.mathScope[this.name] = val;
+    }
+    
+    addVarToMathScope(newName){
+         var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
+         return this.math3d.mathScope.addVariable(newName, this.settings.value, onVariableChange);
+    }
+    
+    recalculateData(){
+        this.settings.min = this.settings.min;
+        this.settings.max = this.settings.max;
+    }
+}
+
+// All classes below are used for rendering graphics with MathBox
+class MathGraphic extends MathObject{
+    constructor(math3d, settings){ 
+        //Every sublcass should define these
+        super(math3d, settings);
         this.mathboxGroup = null; 
         this.mathboxDataType = null; // e.g., 'array'
         this.mathboxRenderType = null; // e.g., 'point'
@@ -748,14 +1093,8 @@ class MathObject {
         Utility.assert(typeof settings.color === 'string' || typeof settings.color === 'undefined')
     }
     
-    setDefaults(settings){
-        _.merge(this.settings, this.defaultSettings, settings);
-        return this.settings;
-    }
-    
-    parseRawExpression(expr){
-        return new MathExpression(expr);
-    }
+    //Define this for every subclass
+    recalculateData(){}
     
     updateVariablesList(){
         this.variables = []
@@ -769,9 +1108,6 @@ class MathObject {
             this.variables = this.variables.concat( this.parsedRange.functions );
         }
     }
-    
-    //Define this for every subclass
-    recalculateData(){}
     
     get data() {return this._data;}
     set data(val) {
@@ -824,51 +1160,13 @@ class MathObject {
         this.recalculateData();
     }
     
-    serialize(){
-        // copy settings values, no setters and getters
-        var rawSettings = Utility.deepCopyValuesOnly(this.settings)
-        var metaObj = {
-            type: this.constructor.name,
-            settings: Utility.deepObjectDiff(rawSettings, this.defaultSettings)
-        }
-        // Our object setters store values in properties prefixed with '_'. Let's remove the underscores.
-        return JSON.stringify(metaObj);
-    };
-    
     remove(){
         this.mathboxGroup.remove();
-        var objIdx = -1;
-        var branchIdx = -1;
-        while (objIdx < 0){
-            branchIdx+= 1;
-            var objIdx = this.math3d.mathTree[branchIdx].objects.indexOf(this);
-        }
-        this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);
-    }
-    
-    static renderNewObject(math3d, metaObj) {
-        if (metaObj.type === 'MathObject'){
-            return new MathObject(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'Point'){
-            return new Point(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'Line'){
-            return new Line(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'Vector'){
-            return new Vector(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'ParametricCurve'){
-            return new ParametricCurve(math3d, metaObj.settings)
-        };
-        if (metaObj.type === 'ParametricSurface'){
-            return new ParametricSurface(math3d, metaObj.settings)
-        };
+        MathObject.prototype.remove.call(this);
     }
 }
 
-class Point extends MathObject {
+class Point extends MathGraphic {
     constructor(math3d, settings){
         super(math3d, settings);
         this.mathboxDataType = 'array';
@@ -885,18 +1183,6 @@ class Point extends MathObject {
             size: 14,
         });
         return defaults
-    }
-    
-    static validateSettings(settings, scope){
-        // I think this validation stuff was unncessary ...
-        super.validateSettings(settings, scope)
-        Utility.assert(typeof settings.size === 'number' || typeof settings.size === 'undefined')
-        
-        // Now try to parse the raw expression. Should be an array [p1, p2, ...] where each p is a 3-component array
-        if (settings.rawExpression !== undefined){
-            var test = new MathExpression(settings.rawExpression)
-            test.eval(scope).every( function(elem){return elem.length===3})
-        }
     }
     
     recalculateData(){
@@ -925,7 +1211,7 @@ class Point extends MathObject {
     
 }
 
-class AbstractCurve extends MathObject {
+class AbstractCurve extends MathGraphic {
     constructor(math3d, settings){
         super(math3d, settings);
         this.mathboxDataType = 'interval';
@@ -1090,7 +1376,7 @@ class ParametricCurve extends AbstractCurve{
     
 }
 
-class AbstractSurface extends MathObject {
+class AbstractSurface extends MathGraphic {
     constructor(math3d, settings){
         super(math3d, settings);
         this.mathboxDataType = 'area';
@@ -1202,6 +1488,3 @@ class ParametricSurface extends AbstractSurface {
     }
     
 }
-
-// Data in a matrix
-// https://groups.google.com/d/topic/mathbox/fOH6FPs3RHw/discussion

@@ -29,8 +29,7 @@ app.controller('saveCtrl', ['$scope', function($scope){
     };
 }])
 
-app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
-    // displayTree will hold mathObjects and custom vars, funcs, sliders
+app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
     $scope.debug = arg => console.log(arg);
     
     $scope.mathTree = math3d.mathTree;
@@ -61,7 +60,9 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
     function genObjectTemplate(type){
-        var common = `
+        var template = ``;
+        if (_.indexOf(['Point', 'Line', 'Vector', 'ParametricCurve', 'ParametricSurface'], type)>=0) {
+            template = `
             <form class="form-horizontal math-object-settings">
                 <div class="row">
                     <div class="form-group">
@@ -88,31 +89,103 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
                 </div>
             </form>
         `
-        var footer = ``
+        }        
         if (type === 'ParametricCurve'){
-            footer = `
+            template += `
             <div class="row">
                 <div class="col-xs-2"></div>
                 <div class="col-xs-9">
                     <div class="input-group input-group-sm">
-                        t ∈ <input style="width:100px" type="test" ng-model="obj.settings.range"></input>
-                    </div>
-                </div>
-            </div>
-            `
-        } if (type === 'ParametricSurface'){
-            footer = `
-            <div class="row">
-                <div class="col-xs-2"></div>
-                <div class="col-xs-9">
-                    <div class="input-group input-group-sm">
-                        u, v ∈ <input style="width:100px" type="test" ng-model="obj.settings.range"></input>
+                        t ∈ <input style="width:100px" type="text" ng-model="obj.settings.range"></input>
                     </div>
                 </div>
             </div>
             `
         }
-        return common + footer
+        if (type === 'ParametricSurface'){
+            template += `
+            <div class="row">
+                <div class="col-xs-2"></div>
+                <div class="col-xs-9">
+                    <div class="input-group input-group-sm">
+                        u, v ∈ <input style="width:100px" type="text" ng-model="obj.settings.range"></input>
+                    </div>
+                </div>
+            </div>
+            `
+        }
+        if (type === 'Variable'){
+            template = `
+            <form class="form-horizontal math-object-settings">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-1">
+                            <span ui-tree-handle class="grippy"></span>
+                        </div>
+                        <div class="col-xs-9">
+                            <div class="input-group input-group-sm">
+                                <input size="4" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" ng-model="obj.settings.rawName" ></input>
+                                <span style="padding-left:2pt;padding-right:2pt;" class="input-group-addon"> = </span>
+                                <input type="text" class="form-control" ng-model="obj.settings.rawExpression"></input>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
+                        <span class="glyphicon glyphicon-remove remove-item"></span>
+                    </button>
+                </div>
+            </form>
+            `
+        }
+        if (type === 'VariableSlider'){
+            template = `
+            <form class="form-horizontal math-object-settings">
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-1">
+                            <span ui-tree-handle class="grippy"></span>
+                        </div>
+                        <div class="col-xs-4">
+                            <div class="input-group input-group-sm">
+                                <input style="width:auto" type="text" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" size="{{1+obj.settings.name.length}}" type="text" ng-model="obj.settings.name"></input>
+                                <span style="padding-left:2pt;padding-right:2pt;" class="input-group-addon"> = {{obj.settings.value}} </span>
+                            </div>
+                        </div>
+                    </div>  
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-1">
+                        </div>
+                        <div class="col-xs-8">
+                            <input type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}" step="{{(obj.max-obj.min)/100}}"></input>
+                        </div>
+                        <div class="col-xs-2">
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
+                        <span class="glyphicon glyphicon-remove remove-item"></span>
+                    </button>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <div class="col-xs-1"></div>
+                        <div class="col-xs-2">
+                            <input class="form-incognito" type="text" size="{{obj.settings.min.length}}" ng-model="obj.settings.min"></input>
+                        </div>
+                        <div class="col-xs-4"></div>
+                        <div class="col-xs-2">
+                            <input class="form-incognito" type="text" size="{{obj.settings.max.length}}" ng-model="obj.settings.max"></input>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
+                        <span class="glyphicon glyphicon-remove remove-item"></span>
+                    </button>
+                </div>
+            </form>
+            `
+        }
+        return template
     }
     
 }]);
