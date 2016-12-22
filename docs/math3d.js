@@ -512,7 +512,6 @@ class Math3D {
     }
     
     onVariableChange(varName){
-        console.log("Changed")
         // update objects where the variables have changed
         _.forEach(this.mathTree, function(branch, idx){
             _.forEach(branch.objects, function(obj, idx){
@@ -595,7 +594,6 @@ class WatchedScope{
 
     serialize(){
         var rawSettings = Utility.deepCopyValuesOnly(this)
-        console.log(rawSettings);
         return JSON.stringify(rawSettings);
     }
 
@@ -750,8 +748,6 @@ class AbstractVariable extends MathObject{
         });     
     }
     setName(newName){
-        console.log("My name is: " + newName);
-        console.log(Object.keys(this.math3d.mathScope))
         this.math3d.mathScope.removeVariable(this.lastValidName);
         this.valid = this.addVarToMathScope(newName);
 
@@ -773,7 +769,6 @@ class AbstractVariable extends MathObject{
         MathObject.prototype.remove.call(this);
     }
     updateOthers(){
-        console.log("Updating Others")
         var _this = this;
         _.forEach(this.math3d.mathTree, function(branch){
             _.forEach(branch.objects, function(obj){
@@ -913,7 +908,6 @@ class VariableSlider extends AbstractVariable {
         
         this.settings = this.setDefaults(settings);
         var onVariableChange = math3d.onVariableChange.bind(math3d);
-        console.log(this.settings.value)
         math3d.mathScope.addVariable(this.settings.name, this.settings.value, onVariableChange);
         
     }
