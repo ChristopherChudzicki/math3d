@@ -32,6 +32,18 @@ app.controller('saveCtrl', ['$scope', function($scope){
 app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
     $scope.debug = arg => console.log(arg);
     
+    $scope.updatePopovers = function(){
+        $('.popover-markup>.popover-trigger').popover({
+            html: true,
+            title: function () {
+                return $(this).parent().find('.popover-head').html();
+            },
+            content: function () {
+                return $(this).parent().find('.popover-content').html();
+            }
+        });
+    }
+    
     $scope.mathTree = math3d.mathTree;
     
     $scope.createNewObject = function(type){
@@ -75,11 +87,16 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
                         <div class="col-xs-8">
                             <div class="input-group input-group-sm">
                                 <input type="text" class="form-control" ng-model="obj.settings.rawExpression"></input>
-                                <span class="input-group-btn">
-                                    <a class="btn btn-link btn-xs" type="button">
+                                <span class="input-group-btn popover-markup">
+                                    <a data-container="body" class="popover-trigger btn btn-link btn-xs" type="button">
                                         <span class="glyphicon glyphicon-wrench"></span>
                                     </a>
+                                    <div class="popover-head hide">Settings</div>
+                                    <div class="popover-content hide">
+                                        TODO
+                                    </div>
                                 </span>
+                                {{$parent.updatePopovers()}}
                             </div>
                         </div>
                     </div>
@@ -189,6 +206,3 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
 }]);
-
-
-

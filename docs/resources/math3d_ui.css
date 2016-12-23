@@ -1,8 +1,7 @@
 .math3d-controller {
     z-index:1000;
     width:275px;
-    height:100%;
-    position:fixed;
+    position:absolute;
     padding-left:0;
 }
 
