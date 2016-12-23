@@ -1074,6 +1074,7 @@ class MathGraphic extends MathObject{
             visible: true,
             color: '#3090FF',
             zIndex: 0,
+            opacity:1,
         }
         return defaults
     }
