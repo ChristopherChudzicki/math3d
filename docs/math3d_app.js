@@ -4,7 +4,7 @@ container.attr("ng-app", 'math3dApp')
 // container.attr("ng-controller", 'main')
 
 // app = angular.module('math3dApp', ['ui.sortable']);
-app = angular.module('math3dApp', ['ui.tree']);
+app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ui.bootstrap']);
 
 app.directive('compileTemplate', ["$compile", "$parse", function($compile, $parse) {
     // http://stackoverflow.com/a/25407201/2747370
@@ -31,20 +31,6 @@ app.controller('saveCtrl', ['$scope', function($scope){
 
 app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
     $scope.debug = arg => console.log(arg);
-    
-    // TODO: Fix popovers. I think I need angular-ui-bootstrap. 
-    // See https://angular-ui.github.io/bootstrap/
-    $scope.updatePopovers = function(){
-        $('.popover-markup>.popover-trigger').popover({
-            html: true,
-            title: function () {
-                return $(this).parent().find('.popover-head').html();
-            },
-            content: function () {
-                return $(this).parent().find('.popover-content').html();
-            }
-        });
-    }
     
     $scope.mathTree = math3d.mathTree;
     
@@ -89,16 +75,19 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
                         <div class="col-xs-8">
                             <div class="input-group input-group-sm">
                                 <input type="text" class="form-control" ng-model="obj.settings.rawExpression"></input>
-                                <span class="input-group-btn popover-markup">
-                                    <a data-container="body" class="popover-trigger btn btn-link btn-xs" type="button">
+                                <span class="input-group-btn">
+                                    <a class="popover-trigger btn btn-link btn-xs" 
+                                        type="button"
+                                        popover-template="'templates/popover.html'" 
+                                        popover-placement="right" 
+                                        popover-trigger="click"
+                                        popover-append-to-body="true"
+                                        type="button"
+                                        class="btn btn-default"
+                                        >
                                         <span class="glyphicon glyphicon-wrench"></span>
                                     </a>
-                                    <div class="popover-head hide">Settings</div>
-                                    <div class="popover-content hide">
-                                        TODO
-                                    </div>
                                 </span>
-                                {{$parent.updatePopovers()}}
                             </div>
                         </div>
                     </div>
