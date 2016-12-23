@@ -32,6 +32,8 @@ app.controller('saveCtrl', ['$scope', function($scope){
 app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
     $scope.debug = arg => console.log(arg);
     
+    // TODO: Fix popovers. I think I need angular-ui-bootstrap. 
+    // See https://angular-ui.github.io/bootstrap/
     $scope.updatePopovers = function(){
         $('.popover-markup>.popover-trigger').popover({
             html: true,
