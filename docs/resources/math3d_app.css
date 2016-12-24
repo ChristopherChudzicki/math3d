@@ -38,7 +38,7 @@ li.save {
     height:100px;
 }
 
-button.upper-right {
+.upper-right {
     background: transparent;
     margin-top: 1px;
     margin-right: 2px;
@@ -148,4 +148,16 @@ div.math-object:hover span.grippy{
 }
 div.folder-container:hover span.long-grippy{
     visibility:visible;
+}
+
+
+.popover.popover-settings {
+    background-color:rgba(255, 255, 255, 0.75);
+}
+.popover.popover-settings .form-group{
+    margin:2pt;
+}
+.popover.popover-settings input {
+    max-width:100%;
+    background-color:rgba(255, 255, 255, 0.85);
 }

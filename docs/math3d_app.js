@@ -78,9 +78,12 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
                                 <span class="input-group-btn">
                                     <a class="popover-trigger btn btn-link btn-xs" 
                                         type="button"
-                                        popover-template="'templates/popover.html'" 
+                                        ng-controller="popoverCtrl"
+                                        popover-is-open="myPopover.isOpen"  
+                                        popover-class="popover-settings"
+                                        uib-popover-template="'templates/settings_popover.html'" 
                                         popover-placement="right" 
-                                        popover-trigger="click"
+                                        popover-trigger="outsideClick"
                                         popover-append-to-body="true"
                                         type="button"
                                         class="btn btn-default"
@@ -196,4 +199,21 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         return template
     }
     
+}]);
+
+//http://stackoverflow.com/a/32366115/2747370
+//http://codepen.io/dmvianna/pen/OyNNJx
+app.controller('popoverCtrl', ['$scope', function($scope) {
+    // query popover
+    $scope.myPopover = {
+        isOpen: false,
+        templateUrl: 'templates/settings_popover.html',
+        open: function open() {
+            $scope.myPopover.isOpen = true;
+            $scope.myPopover.data = 'Hello!';
+        },
+        close: function close() {
+            $scope.myPopover.isOpen = false;
+        }
+    };
 }]);

@@ -973,6 +973,13 @@ class MathGraphic extends MathObject{
         this.variables = [];
         
         this.settings = {};
+        this.userSettings = [
+            {attribute:'visible',format:'Boolean'},
+            {attribute:'opacity',format:'Number'},
+            {attribute:'color',format:'String'},
+            {attribute:'zIndex',format:'Number'},
+            {attribute:'rawExpression',format:'String'}
+        ]
         
         var _this = this;
         Object.defineProperties(this.settings,{
@@ -1079,15 +1086,6 @@ class MathGraphic extends MathObject{
         return defaults
     }
     
-    static validateSettings(settings, scope){
-        // I think this validation stuff was unncessary ...
-        // Validate complete or partial settings.
-        Utility.assert(typeof settings.visible === 'boolean' || typeof settings.visible === 'undefined')
-        Utility.assert(typeof settings.zIndex === 'number' || typeof settings.zIndex === 'undefined')
-        // warning: color check is not robust
-        Utility.assert(typeof settings.color === 'string' || typeof settings.color === 'undefined')
-    }
-    
     //Define this for every subclass
     recalculateData(){}
     
@@ -1168,6 +1166,9 @@ class Point extends MathGraphic {
         this.mathboxRenderType = 'point';
 
         this.settings = this.setDefaults(settings);
+        this.userSettings = this.userSettings.concat([
+            {attribute:'size', format:'Number'}
+        ])
         
         this.mathboxGroup = this.render();
     }
@@ -1279,6 +1280,9 @@ class Vector extends AbstractCurveFromData {
         super(math3d, settings);
         
         this.settings = this.setDefaults(settings);
+        this.userSettings = this.userSettings.concat([
+            {attribute:'size', format:'Number'}
+        ])
         
         this.mathboxGroup = this.render();
     }
@@ -1297,6 +1301,10 @@ class ParametricCurve extends AbstractCurve{
         super(math3d, settings);
         
         this.settings = this.setDefaults(settings);
+        this.userSettings = this.userSettings.concat([
+            {attribute:'range', format:'String'},
+            {attribute:'samples', format:'Integer'}
+        ])
         
         this.mathboxGroup = this.render();
     }
@@ -1376,6 +1384,13 @@ class AbstractSurface extends MathGraphic {
         super(math3d, settings);
         this.mathboxDataType = 'area';
         this.mathboxRenderType = 'surface';
+        this.userSettings = this.userSettings.concat([
+            {attribute:'gridX', format:'Integer'},
+            {attribute:'gridY', format:'Integer'},
+            {attribute:'gridOpacity', format:'Number'},
+            {attribute:'shaded', format:'Boolean'}
+        ])
+    
     }
     get defaultSettings(){
         var defaults = _.merge(super.defaultSettings, {
@@ -1394,6 +1409,10 @@ class ParametricSurface extends AbstractSurface {
         super(math3d, settings);
            
         this.settings = this.setDefaults(settings);
+        this.userSettings = this.userSettings.concat([
+            {attribute:'range', type:'String'},
+            {attribute:'samples', type:'Array'}
+        ])
         
         this.mathboxGroup = this.render();
     }

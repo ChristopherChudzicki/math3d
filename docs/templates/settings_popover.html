@@ -1,0 +1,17 @@
+<section>
+  <h4 style="margin-top:0pt" class='text-center'>Settings</h4>
+  <button type="button" class="btn btn-link btn-xs upper-right" ng-click="myPopover.close()">
+      <span class="glyphicon glyphicon-remove remove-item"></span>
+  </button>
+  <form class="form-horizontal">
+    <div class="form-group" ng-repeat="setting in obj.userSettings">
+        <label class="control-label col-xs-6" >{{setting.attribute}}</label>  
+      <div class="col-xs-6">
+        <input ng-if="setting.format==='Number'"  type="number"          class="form-control input-sm" ng-model="obj.settings[setting.attribute]">
+        <input ng-if="setting.format==='Integer'" type="number" step="1" class="form-control input-sm" ng-model="obj.settings[setting.attribute]">
+        <input ng-if="setting.format==='String'"  type="text"            class="form-control input-sm" ng-model="obj.settings[setting.attribute]">
+        <input ng-if="setting.format==='Boolean'" type="checkbox"        class="form-control input-sm" ng-model="obj.settings[setting.attribute]">
+      </div>
+    </div>
+  </form>
+</section>
