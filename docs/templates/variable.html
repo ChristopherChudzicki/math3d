@@ -1,0 +1,19 @@
+<form class="form-horizontal math-object-settings">
+    <div class="row">
+        <div class="form-group">
+            <div class="col-xs-1">
+                <span ui-tree-handle class="grippy"></span>
+            </div>
+            <div class="col-xs-9">
+                <div class="input-group input-group-sm">
+                    <input size="4" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" ng-model="obj.settings.rawName" ></input>
+                    <span style="padding-left:2pt;padding-right:2pt;" class="input-group-addon"> = </span>
+                    <input type="text" class="form-control" ng-model="obj.settings.rawExpression"></input>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
+            <span class="glyphicon glyphicon-remove remove-item"></span>
+        </button>
+    </div>
+</form>

@@ -658,6 +658,7 @@ class MathObject {
                 if MEOW is a getter/setter, store associated value in _MEOW
         */
         this.math3d = math3d;
+        this.id = _.uniqueId();
         // Add new objects to newest mathTree branch
         math3d.mathTree[math3d.mathTree.length-1].objects.push(this);
         
@@ -1336,6 +1337,7 @@ class ParametricCurve extends AbstractCurve{
             
             this.range = this.parsedRange.eval(this.math3d.mathScope);
             this.mathboxGroup.select("cartesian").set("range",[this.range, [0,1]]);
+            this.mathboxGroup.select("interval").set("width",this.settings.samples);
             
             this.mathboxGroup.select("interval").set("expr", function (emit, t, i, j, time) {
                 localMathScope[param] = t;
@@ -1447,6 +1449,9 @@ class ParametricSurface extends AbstractSurface {
             
             this.range = this.parsedRange.eval(this.math3d.mathScope);
             this.mathboxGroup.select("cartesian").set("range",this.range);
+            
+            this.mathboxGroup.select("area").set("width",this.settings.samples[0]);
+            this.mathboxGroup.select("area").set("height",this.settings.samples[1]);
             this.mathboxGroup.select("area").set("expr", function (emit, u, v, i, j, time) {
                 localMathScope[param0] = u;
                 localMathScope[param1] = v;

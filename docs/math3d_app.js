@@ -21,31 +21,47 @@ app.directive('compileTemplate', ["$compile", "$parse", function($compile, $pars
     }
 }]);
 
-// https://gist.github.com/BobNisco/9885852
+// https://gist.github.com/BobNisco/9885852 (modifications in comments)
 // Add this directive where you keep your directives
 app.directive('onLongPress', function($timeout) {
+    return {
+		restrict: 'A',
+        link: function(scope, elem, attrs) {
+            var timeoutHandler;
+            
+            elem.bind('mousedown', function() {
+                timeoutHandler = $timeout(function() {
+                    scope.$eval(attrs.onLongPress);
+                }, 600);
+            });
+
+            elem.bind('mouseup', function() {
+                $timeout.cancel(timeoutHandler);
+            });
+		}
+	};
+})
+app.directive('onShortPress', function($timeout) {
 	return {
 		restrict: 'A',
 		link: function($scope, $elm, $attrs) {
 			$elm.bind('mousedown', function(evt) {
-				// Locally scoped variable that will keep track of the long press
-				$scope.longPress = true;
+				// Locally scoped variable that will keep track of the short press
+				$scope.shortPress = true;
 
-				// We'll set a timeout for 600 ms for a long press
+				// After a timeout of 600 ms, shortPress is false;
 				$timeout(function() {
-					if ($scope.longPress) {
-						// If the touchend event hasn't fired,
-						// apply the function given in on the element's on-long-press attribute
-						$scope.$apply(function() {
-							$scope.$eval($attrs.onLongPress)
-						});
-					}
+					$scope.shortPress=false;
 				}, 600);
 			});
 
 			$elm.bind('mouseup', function(evt) {
-				// Prevent the onLongPress event from firing
-				$scope.longPress = false;
+				// Prevent the onShortPress event from firing
+                if ($scope.shortPress){
+					$scope.$apply(function() {
+						$scope.$eval($attrs.onShortPress)
+					});
+                }
 				// If there is an on-touch-end function attached to this element, apply it
 				if ($attrs.onTouchEnd) {
 					$scope.$apply(function() {
@@ -80,7 +96,9 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
     $scope.addOjbectToUi = function(obj){
-        var content = genObjectTemplate(obj.type)
+        var content = `
+            <div ng-include="'templates/${obj.type.toLowerCase()}.html'">
+            </div>`;
         
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
@@ -95,147 +113,23 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         }
     }
     
-    function genObjectTemplate(type){
-        var template = ``;
-        if (_.indexOf(['Point', 'Line', 'Vector', 'ParametricCurve', 'ParametricSurface'], type)>=0) {
-            template = `
-            <form class="form-horizontal math-object-settings">
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-xs-1">
-                            <span ui-tree-handle class="grippy"></span>
-                        </div> 
-                        <div class="col-xs-1">
-                            <input class="jscolor hide-text" ng-model="obj.settings.color" ></input>
-                        </div>
-                        <div class="col-xs-8">
-                            <div class="input-group input-group-sm">
-                                <input type="text" class="form-control" ng-model="obj.settings.rawExpression"></input>
-                                <span class="input-group-btn">
-                                    <a class="popover-trigger btn btn-link btn-xs" 
-                                        type="button"
-                                        ng-controller="popoverCtrl"
-                                        popover-is-open="myPopover.isOpen"  
-                                        popover-class="popover-settings"
-                                        uib-popover-template="'templates/settings_popover.html'" 
-                                        popover-placement="right" 
-                                        popover-trigger="outsideClick"
-                                        popover-append-to-body="true"
-                                        type="button"
-                                        class="btn btn-default"
-                                        >
-                                        <span class="glyphicon glyphicon-wrench"></span>
-                                    </a>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
-                        <span class="glyphicon glyphicon-remove remove-item"></span>
-                    </button>
-                </div>
-            </form>
-        `
-        }        
-        if (type === 'ParametricCurve'){
-            template += `
-            <div class="row">
-                <div class="col-xs-2"></div>
-                <div class="col-xs-9">
-                    <div class="input-group input-group-sm">
-                        t ∈ <input style="width:100px" type="text" ng-model="obj.settings.range"></input>
-                    </div>
-                </div>
-            </div>
-            `
-        }
-        if (type === 'ParametricSurface'){
-            template += `
-            <div class="row">
-                <div class="col-xs-2"></div>
-                <div class="col-xs-9">
-                    <div class="input-group input-group-sm">
-                        u, v ∈ <input style="width:100px" type="text" ng-model="obj.settings.range"></input>
-                    </div>
-                </div>
-            </div>
-            `
-        }
-        if (type === 'Variable'){
-            template = `
-            <form class="form-horizontal math-object-settings">
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-xs-1">
-                            <span ui-tree-handle class="grippy"></span>
-                        </div>
-                        <div class="col-xs-9">
-                            <div class="input-group input-group-sm">
-                                <input size="4" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" ng-model="obj.settings.rawName" ></input>
-                                <span style="padding-left:2pt;padding-right:2pt;" class="input-group-addon"> = </span>
-                                <input type="text" class="form-control" ng-model="obj.settings.rawExpression"></input>
-                            </div>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
-                        <span class="glyphicon glyphicon-remove remove-item"></span>
-                    </button>
-                </div>
-            </form>
-            `
-        }
-        if (type === 'VariableSlider'){
-            template = `
-            <form class="form-horizontal math-object-settings">
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-xs-1">
-                            <span ui-tree-handle class="grippy"></span>
-                        </div>
-                        <div class="col-xs-4">
-                            <div class="input-group input-group-sm">
-                                <input style="width:auto" type="text" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" size="{{1+obj.settings.name.length}}" type="text" ng-model="obj.settings.name"></input>
-                                <span style="padding-left:2pt;padding-right:2pt;" class="input-group-addon"> = {{obj.settings.value}} </span>
-                            </div>
-                        </div>
-                    </div>  
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-xs-1">
-                        </div>
-                        <div class="col-xs-8">
-                            <input type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}" step="{{(obj.max-obj.min)/100}}"></input>
-                        </div>
-                        <div class="col-xs-2">
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
-                        <span class="glyphicon glyphicon-remove remove-item"></span>
-                    </button>
-                </div>
-                <div class="row">
-                    <div class="form-group">
-                        <div class="col-xs-1"></div>
-                        <div class="col-xs-2">
-                            <input class="form-incognito" type="text" size="{{obj.settings.min.length}}" ng-model="obj.settings.min"></input>
-                        </div>
-                        <div class="col-xs-4"></div>
-                        <div class="col-xs-2">
-                            <input class="form-incognito" type="text" size="{{obj.settings.max.length}}" ng-model="obj.settings.max"></input>
-                        </div>
-                    </div>
-                    <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
-                        <span class="glyphicon glyphicon-remove remove-item"></span>
-                    </button>
-                </div>
-            </form>
-            `
-        }
-        return template
-    }
-    
 }]);
+
+app.controller('mathObjectCtrl',['$scope', function($scope){
+    $scope.setColor = function(obj){
+        document.getElementById(`jscolor-${obj.id}`).jscolor.show()
+    }
+    $scope.getStyle = function(obj){
+        if (obj.settings.visible){
+            var backgroundColor = obj.settings.color;
+            var borderColor = Utility.lightenColor(obj.settings.color,-0.5);       
+        } else {
+            var backgroundColor = 'lightgray';
+            var borderColor = 'darkgray';
+        }
+        return `background-color:${backgroundColor}; border-color:${borderColor}`
+    }
+}])
 
 //http://stackoverflow.com/a/32366115/2747370
 //http://codepen.io/dmvianna/pen/OyNNJx
