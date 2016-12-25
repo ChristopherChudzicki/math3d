@@ -80,7 +80,9 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
     $scope.addOjbectToUi = function(obj){
-        var content = genObjectTemplate(obj.type)
+        var content = `
+            <div ng-include="'templates/${obj.type.toLowerCase()}.html'">
+            </div>`;
         
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
@@ -93,13 +95,6 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         if (branch.objects.length===0){
             _.remove(math3d.mathTree, function(arg){return arg===branch;});
         }
-    }
-    
-    function genObjectTemplate(type){
-        var template = `
-            <div ng-include="'templates/${type.toLowerCase()}.html'">
-            </div>`;
-        return template
     }
     
 }]);
