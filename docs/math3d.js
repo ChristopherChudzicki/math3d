@@ -757,6 +757,7 @@ class AbstractVariable extends MathObject{
         this.name = newName;
         
         // name change might cause other variables to be valid / invalid. Let's check
+    
         this.updateOthers();
         
         return newName;
@@ -776,6 +777,7 @@ class AbstractVariable extends MathObject{
                     obj.valid = obj.addVarToMathScope(obj.name);
                     if (obj.valid){
                         obj.lastValidName = obj.name;
+                        obj.recalculateData();
                     }
                 }
             })
@@ -844,6 +846,9 @@ class Variable extends AbstractVariable{
          return this.math3d.mathScope.addVariable(newName, this.value, onVariableChange);
     }
     setRawExpression(val){
+        if (!this.valid){
+            return
+        }
         var expr = this.parsedExpression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         if (this.function){
@@ -945,6 +950,9 @@ class VariableSlider extends AbstractVariable {
         this.updateVariablesList();
     }
     setValue(val){
+        if (!this.valid){
+            return
+        }
         this.math3d.mathScope[this.name] = val;
     }
     
@@ -955,6 +963,7 @@ class VariableSlider extends AbstractVariable {
     
     recalculateData(){
         this.settings.min = this.settings.min;
+        this.settings.value = this.settings.value;
         this.settings.max = this.settings.max;
     }
 }
