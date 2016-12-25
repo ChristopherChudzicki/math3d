@@ -19,10 +19,21 @@ input.jscolor {
     width:25px;
 }
 
-.hide-text {
-  text-indent: 100%;
-  white-space: nowrap;
-  overflow: hidden;
+div.visibility-indicator {
+    width:20px;
+    height:20px;
+    border-style:solid;
+    border-width:4px;
+}
+div.visibility-indicator.visibility-indicator-true {
+}
+div.visibility-indicator.visibility-indicator-false {
+}
+
+.hide-in-place {
+    opacity:0;
+    width:1px;
+    height:1px;
 }
 
 div.add-object {

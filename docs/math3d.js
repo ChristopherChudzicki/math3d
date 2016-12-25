@@ -658,6 +658,7 @@ class MathObject {
                 if MEOW is a getter/setter, store associated value in _MEOW
         */
         this.math3d = math3d;
+        this.id = _.uniqueId();
         // Add new objects to newest mathTree branch
         math3d.mathTree[math3d.mathTree.length-1].objects.push(this);
         

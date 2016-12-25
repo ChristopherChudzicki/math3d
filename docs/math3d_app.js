@@ -21,31 +21,47 @@ app.directive('compileTemplate', ["$compile", "$parse", function($compile, $pars
     }
 }]);
 
-// https://gist.github.com/BobNisco/9885852
+// https://gist.github.com/BobNisco/9885852 (modifications in comments)
 // Add this directive where you keep your directives
 app.directive('onLongPress', function($timeout) {
+    return {
+		restrict: 'A',
+        link: function(scope, elem, attrs) {
+            var timeoutHandler;
+            
+            elem.bind('mousedown', function() {
+                timeoutHandler = $timeout(function() {
+                    scope.$eval(attrs.onLongPress);
+                }, 600);
+            });
+
+            elem.bind('mouseup', function() {
+                $timeout.cancel(timeoutHandler);
+            });
+		}
+	};
+})
+app.directive('onShortPress', function($timeout) {
 	return {
 		restrict: 'A',
 		link: function($scope, $elm, $attrs) {
 			$elm.bind('mousedown', function(evt) {
-				// Locally scoped variable that will keep track of the long press
-				$scope.longPress = true;
+				// Locally scoped variable that will keep track of the short press
+				$scope.shortPress = true;
 
-				// We'll set a timeout for 600 ms for a long press
+				// After a timeout of 600 ms, shortPress is false;
 				$timeout(function() {
-					if ($scope.longPress) {
-						// If the touchend event hasn't fired,
-						// apply the function given in on the element's on-long-press attribute
-						$scope.$apply(function() {
-							$scope.$eval($attrs.onLongPress)
-						});
-					}
+					$scope.shortPress=false;
 				}, 600);
 			});
 
 			$elm.bind('mouseup', function(evt) {
-				// Prevent the onLongPress event from firing
-				$scope.longPress = false;
+				// Prevent the onShortPress event from firing
+                if ($scope.shortPress){
+					$scope.$apply(function() {
+						$scope.$eval($attrs.onShortPress)
+					});
+                }
 				// If there is an on-touch-end function attached to this element, apply it
 				if ($attrs.onTouchEnd) {
 					$scope.$apply(function() {
@@ -98,6 +114,22 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
 }]);
+
+app.controller('mathObjectCtrl',['$scope', function($scope){
+    $scope.setColor = function(obj){
+        document.getElementById(`jscolor-${obj.id}`).jscolor.show()
+    }
+    $scope.getStyle = function(obj){
+        if (obj.settings.visible){
+            var backgroundColor = obj.settings.color;
+            var borderColor = Utility.lightenColor(obj.settings.color,-0.5);       
+        } else {
+            var backgroundColor = 'lightgray';
+            var borderColor = 'darkgray';
+        }
+        return `background-color:${backgroundColor}; border-color:${borderColor}`
+    }
+}])
 
 //http://stackoverflow.com/a/32366115/2747370
 //http://codepen.io/dmvianna/pen/OyNNJx
