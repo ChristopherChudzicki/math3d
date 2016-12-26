@@ -1036,7 +1036,7 @@ class MathGraphic extends MathObject{
                 set: function(val){
                     this._zIndex = val;
                     if (_this.mathboxGroup !== null){
-                        _this.setzIndex(val);
+                        _this.setZIndex(val);
                     }
                 },
                 get: function(){return this._zIndex;},
@@ -1081,6 +1081,33 @@ class MathGraphic extends MathObject{
                     _this.setSamples(val);
                 },
                 get: function(){return this._samples;},
+            },
+            end: {
+                set: function(val){
+                    this._end = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setEnd(val);
+                    }
+                },
+                get: function(){return this._end;},
+            },
+            start: {
+                set: function(val){
+                    this._start = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setStart(val);
+                    }
+                },
+                get: function(){return this._start;},
+            },
+            size: {
+                set: function(val){
+                    this._size = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setSize(val);
+                    }
+                },
+                get: function(){return this._size;},
             },
         });
         
@@ -1163,6 +1190,18 @@ class MathGraphic extends MathObject{
         this.recalculateData();
     }
     
+    setStart(val){
+        this.mathboxGroup.select(this.mathboxRenderType).set("start",val);
+    }
+    
+    setEnd(val){
+        this.mathboxGroup.select(this.mathboxRenderType).set("end",val);
+    }
+    
+    setSize(val){
+        this.mathboxGroup.select(this.mathboxRenderType).set("size",val);
+    }
+    
     remove(){
         this.mathboxGroup.remove();
         MathObject.prototype.remove.call(this);
@@ -1239,6 +1278,12 @@ class AbstractCurveFromData extends AbstractCurve {
     constructor(math3d, settings){
         super(math3d, settings);
         this.mathboxDataType = 'array';
+        
+        this.userSettings = this.userSettings.concat([
+            {attribute:'size', format:'Number'},
+            {attribute:'start', format:'Boolean'},
+            {attribute:'end', format:'Boolean'}
+        ])
     }
     
     recalculateData(){
@@ -1280,6 +1325,9 @@ class Line extends AbstractCurveFromData {
     get defaultSettings(){
         var defaults = _.merge(super.defaultSettings, {
             rawExpression: "[[0,0,0],[pi,0,0],[pi,pi,0],[0,pi,0]]",
+            start:false,
+            end:false,
+            size:6,
         });
         return defaults
     }
@@ -1290,19 +1338,55 @@ class Vector extends AbstractCurveFromData {
         super(math3d, settings);
         
         this.settings = this.setDefaults(settings);
-        this.userSettings = this.userSettings.concat([
-            {attribute:'size', format:'Number'}
-        ])
         
         this.mathboxGroup = this.render();
+        
+        var _this = this;
+        Object.defineProperties(this.settings,{
+            tail: {
+                set: function(val) {
+                    this._tail = val;
+                    _this.setTail(val);
+                    return
+                },
+                get: function() {
+                    return this._tail;
+                }
+            },
+            components: {
+                set: function(val) {
+                    this._components = val;
+                    _this.setComponents(val);
+                    return
+                },
+                get: function() {
+                    return this._components;
+                }
+            }
+        });
     }
+    
     get defaultSettings(){
         var defaults = _.merge(super.defaultSettings, {
-            rawExpression: "[[0,0,0],[pi,0,0],[pi,pi,0],[0,pi,0]]",
             end:true,
+            start:false,
             size:6,
+            rawExpression:"[[0,0,0],[1,2,3]]",
+            tail:"[0,0,0]",
+            components:"[1,2,3]"
         });
         return defaults
+    }
+    
+    setTail(val){
+        if (this.settings.components !== undefined){
+            this.settings.rawExpression = `[${val},${val}+${this.settings.components}]`
+        }
+    }
+    setComponents(val){
+        if (this.settings.tail !== undefined){
+            this.settings.rawExpression = `[${this.settings.tail},${this.settings.tail}+${val}]`
+        }
     }
 }
 
