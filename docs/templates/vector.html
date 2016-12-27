@@ -1,3 +1,42 @@
 <form class="form-horizontal math-object-settings">
-    <div ng-include="'templates/common.html'"></div>
+    <div class="row" ng-controller="mathObjectCtrl">
+        <div class="form-group">
+            <div class="col-xs-1">
+                <span ui-tree-handle class="grippy"></span>
+            </div> 
+            <div class="col-xs-1">
+                <!-- <input class="jscolor hide-text" ng-model="obj.settings.color" ></input> -->
+                <div style="{{getStyle(obj)}}"
+                  class = "visibility-indicator"
+                  on-long-press="setColor(obj)"
+                  on-short-press="obj.settings.visible = ! obj.settings.visible">
+                </div>
+                <input id="{{'jscolor-'+obj.id}}" class="jscolor hide-in-place" ng-model="obj.settings.color" ></input>
+            </div>
+            <div class="col-xs-8">
+                <div class="input-group input-group-sm">
+                    <input type="text" class="form-control" ng-model="obj.settings.components"></input>
+                    <span class="input-group-btn">
+                        <a class="popover-trigger btn btn-link btn-xs" 
+                            type="button"
+                            ng-controller="popoverCtrl"
+                            popover-is-open="myPopover.isOpen"  
+                            popover-class="popover-settings"
+                            uib-popover-template="'templates/settings_popover.html'" 
+                            popover-placement="right" 
+                            popover-trigger="outsideClick"
+                            popover-append-to-body="true"
+                            type="button"
+                            class="btn btn-default"
+                            >
+                            <span class="glyphicon glyphicon-wrench"></span>
+                        </a>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
+            <span class="glyphicon glyphicon-remove remove-item"></span>
+        </button>
+    </div>
 </form>
