@@ -140,6 +140,41 @@ class Utility {
 
 }
 
+class MathUtility {
+    static diff(f, ...values){
+        // If only function "f" is provided, return a new function that approximates the derivative of f
+        // values are provided also, return the value of the derivative at those values;
+        var eps = 0.008;
+        var numberOfArguments = f.numberOfArguments ? f.numberOfArguments : f.length;
+        var derivative = function(){
+            var derivComponents = [];
+            for (let j=0; j<numberOfArguments; j++){
+                arguments[j] = Number(arguments[j]) // When used inside mathJS expressions, argument might be a string. So convert to a number first.
+                arguments[j] += -0.5*eps
+                let initialValue = f(...arguments);
+                arguments[j] += eps
+                let finalValue = f(...arguments);
+                arguments[j] += -0.5*eps
+                derivComponents.push( math.divide(math.subtract(finalValue, initialValue),eps) )
+            }
+            if (derivComponents.length===1){
+                return derivComponents[0]
+            } 
+            else {
+                return derivComponents
+            }
+        }
+        
+        if (values.length > 0){
+            return derivative(...values)
+        }
+        else {
+            derivative.numberOfArguments = numberOfArguments;
+            return derivative
+        }
+    }
+}
+
 class Math3D {
     constructor(settings){
         this.swizzleOrder = Utility.defaultVal(settings.swizzleOrder, 'yzx');
@@ -157,16 +192,28 @@ class Math3D {
         this.settings = this.makeDynamicSettings();
         
         // create math scope
-        this.mathScope = new WatchedScope(this.settings.mathScope)
         this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
-        var onVariableChange = this.onVariableChange.bind(this);
-        for (let key in this.settings.mathScope){
-            let val = this.settings.mathScope[key];
-            this.mathScope.addVariable(key, val, onVariableChange)
-        }
+        this.setDefaultMathScope();
         
         //Render math objects; this will update this.mathTree
         this.renderMathObjects();
+    }
+    
+    setDefaultMathScope(){
+        var defaultMathScope = {
+            'pi': Math.PI,
+            'e': Math.E,
+            'i': [1,0,0],
+            'j': [0,1,0],
+            'k': [0,0,1],
+            'diff':MathUtility.diff,
+        };
+        this.mathScope = new WatchedScope(this.settings.mathScope)
+        var onVariableChange = this.onVariableChange.bind(this);
+        for (let key in defaultMathScope){
+            let val = defaultMathScope[key];
+            this.mathScope.addVariable(key, val, onVariableChange)
+        }
     }
     
     setDefaults(settings){
@@ -193,13 +240,6 @@ class Math3D {
                 'x': genDefaultAxisSettings.call(this,'x', 'x'),
                 'y': genDefaultAxisSettings.call(this,'y', 'y'),
                 'z': genDefaultAxisSettings.call(this,'z', 'z'),
-            },
-            mathScope:{
-                'pi': Math.PI,
-                'e': Math.E,
-                'i': [1,0,0],
-                'j': [0,1,0],
-                'k': [0,0,1],
             },
             wrappedMathTree: [
                 {
@@ -791,7 +831,7 @@ class Variable extends AbstractVariable{
         super(math3d, settings);
         this.parsedExpression = null;
         this.argNames = null;
-        this.function = null;
+        this.holdEvaluation = null;
         
         var _this = this;
         Object.defineProperties(this.settings,{
@@ -832,15 +872,16 @@ class Variable extends AbstractVariable{
         var expr = this.parseRawExpression(val);
         // expr should be something like f_1(s,t); should have 1 function and 0+ variables
         if (expr.functions.length === 1){
-            this.function = true;
+            this.holdEvaluation = true;
             this.argNames = expr.variables;
             this.settings.name = expr.functions[0];
         }
         else if (expr.functions.length === 0) {
-            this.function = false;
+            this.holdEvaluation = false;
             this.argNames = []
             this.settings.name = expr.variables[0];
         } else {}
+        this.setRawExpression();
     }
     addVarToMathScope(newName){
          var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
@@ -852,15 +893,16 @@ class Variable extends AbstractVariable{
         }
         var expr = this.parsedExpression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
-        if (this.function){
+        if (this.holdEvaluation){
             let argNames = this.argNames;
             this.value = function(){
                 //arguments and this.argNames should have same length
-                for (let j=0; j<arguments.length;j++){
+                for (let j=0; j<argNames.length;j++){
                     localMathScope[argNames[j]] = arguments[j];
                 }
                 return expr.eval(localMathScope);
             }
+            this.value.numberOfArguments = argNames.length;
         } 
         else {
             this.value = expr.eval(localMathScope);
@@ -1604,3 +1646,8 @@ class ParametricSurface extends AbstractSurface {
     }
     
 }
+
+var f2 = function(x,y){
+    return x*y*y
+}
+var diff = MathUtility.diff;
