@@ -984,11 +984,11 @@ class MathGraphic extends MathObject{
         
         this.settings = {};
         this.userSettings = [
-            {attribute:'visible',format:'Boolean'},
+            //{attribute:'visible',format:'Boolean'},
             {attribute:'opacity',format:'Number'},
-            {attribute:'color',format:'String'},
+            //{attribute:'color',format:'String'},
             {attribute:'zIndex',format:'Number'},
-            {attribute:'rawExpression',format:'String'}
+            //{attribute:'rawExpression',format:'String'}
         ]
         
         var _this = this;
@@ -1336,9 +1336,7 @@ class Line extends AbstractCurveFromData {
 class Vector extends AbstractCurveFromData {
     constructor(math3d, settings){
         super(math3d, settings);
-        
-        this.settings = this.setDefaults(settings);
-        
+
         this.mathboxGroup = this.render();
         
         var _this = this;
@@ -1364,6 +1362,12 @@ class Vector extends AbstractCurveFromData {
                 }
             }
         });
+        
+        this.settings = this.setDefaults(settings);
+        this.userSettings = this.userSettings.concat([
+            {attribute:'tail', format:'String'},
+            // {attribute:'components', format:'String'}
+        ])
     }
     
     get defaultSettings(){
