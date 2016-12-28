@@ -130,7 +130,9 @@ app.controller('mathObjectCtrl',['$scope', function($scope){
         }
         return `background-color:${backgroundColor}; border-color:${borderColor}`
     }
-    
+}])
+
+app.controller('sliderCtrl', ['$scope', function($scope){
     $scope.animationRunning = false;
     $scope.intervalID = null;
     $scope.toggleAnimate = function(obj){
