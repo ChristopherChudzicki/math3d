@@ -116,6 +116,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
 }]);
 
 app.controller('mathObjectCtrl',['$scope', function($scope){
+    $scope.debug = arg => console.log(arg)
     $scope.setColor = function(obj){
         document.getElementById(`jscolor-${obj.id}`).jscolor.show()
     }
@@ -128,6 +129,33 @@ app.controller('mathObjectCtrl',['$scope', function($scope){
             var borderColor = 'darkgray';
         }
         return `background-color:${backgroundColor}; border-color:${borderColor}`
+    }
+    
+    $scope.animationRunning = false;
+    $scope.intervalID = null;
+    $scope.toggleAnimate = function(obj){
+        if (!$scope.animationRunning){
+            $scope.startAnimation(obj)
+        }
+        else {
+            $scope.stopAnimation(obj)
+        }
+        return
+    }
+    $scope.startAnimation = function(obj){
+        $scope.animationRunning = true;
+        var ele = document.getElementById("slider-"+obj.id)
+        $scope.intervalID = setInterval(function(){
+           ele.stepUp();
+           if (ele.value >= ele.max){
+               ele.value = ele.min
+           }
+           angular.element(ele).trigger('input')
+        },40)
+    }
+    $scope.stopAnimation = function(obj){
+        $scope.animationRunning = false;
+        clearInterval($scope.intervalID);
     }
 }])
 

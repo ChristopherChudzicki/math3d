@@ -1,4 +1,4 @@
-<form class="form-horizontal math-object-settings">
+<form class="form-horizontal math-object-settings" ng-controller="mathObjectCtrl">
     <div class="row">
         <div class="form-group">
             <div class="col-xs-1">
@@ -13,13 +13,13 @@
         </div>  
     </div>
     <div class="row">
-        <div class="form-group">
-            <div class="col-xs-1">
-            </div>
-            <div class="col-xs-8">
-                <input type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}" step="{{(obj.max-obj.min)/100}}"></input>
-            </div>
-            <div class="col-xs-2">
+        <div class="form-group" style="margin-bottom:0pt">
+            <div class="col-xs-1"></div>
+            <div class="col-xs-10">
+              <button type="button" class="btn btn-link btn-xs" ng-click="toggleAnimate(obj)">
+                <span class="glyphicon" ng-class="{'glyphicon-play':!animationRunning, 'glyphicon-pause':animationRunning}"></span>
+              </button>
+              <input id="slider-{{obj.id}}" style="display:inline-block;width:75%;" type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}" step="{{(obj.max-obj.min)/100}}"></input>
             </div>
         </div>
         <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">
@@ -27,12 +27,12 @@
         </button>
     </div>
     <div class="row">
-        <div class="form-group">
-            <div class="col-xs-1"></div>
+        <div class="form-group" style="margin-top:0pt">
+            <div class="col-xs-3"></div>
             <div class="col-xs-2">
                 <input class="form-incognito" type="text" size="{{obj.settings.min.length}}" ng-model="obj.settings.min"></input>
             </div>
-            <div class="col-xs-4"></div>
+            <div class="col-xs-3"></div>
             <div class="col-xs-2">
                 <input class="form-incognito" type="text" size="{{obj.settings.max.length}}" ng-model="obj.settings.max"></input>
             </div>
