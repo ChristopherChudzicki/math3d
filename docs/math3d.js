@@ -1646,8 +1646,3 @@ class ParametricSurface extends AbstractSurface {
     }
     
 }
-
-var f2 = function(x,y){
-    return x*y*y
-}
-var diff = MathUtility.diff;
