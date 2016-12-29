@@ -74,11 +74,15 @@ app.directive('onShortPress', function($timeout) {
 })
 
 app.controller('saveCtrl', ['$scope', function($scope){
-        $scope.saveURL = function(){
+    $scope.saveURL = function(){
         var url = math3d.saveSettingsAsURL();
         $("#save-modal textarea").val(url);
         $("#url-length").html(url.length);
     };
+}])
+
+app.controller('settingsCtrl', ['$scope', function($scope){
+    $scope.settings = math3d.settings;
 }])
 
 app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
@@ -130,7 +134,9 @@ app.controller('mathObjectCtrl',['$scope', function($scope){
         }
         return `background-color:${backgroundColor}; border-color:${borderColor}`
     }
-    
+}])
+
+app.controller('sliderCtrl', ['$scope', function($scope){
     $scope.animationRunning = false;
     $scope.intervalID = null;
     $scope.toggleAnimate = function(obj){

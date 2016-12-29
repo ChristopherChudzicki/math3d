@@ -227,7 +227,7 @@ class Math3D {
                 zMin: -5,
                 zMax: +5
             },
-            scale: [1, 1, 0.5],
+            scale: {x:1, y:1, z:0.5},
             camera: {
                 position: [-0.75,-1.5,0.25],
             },
@@ -281,9 +281,11 @@ class Math3D {
         var math3d = this;
         var dynamicSettings = {
             range: {},
-            grids: {}
+            grids: {},
+            scale: {}
         }
     
+        var _this = this;
         Object.defineProperties(dynamicSettings.range,{
             xMin: {
                 set: function(val){ this._xMin = val; math3d.updateRange();},
@@ -325,7 +327,37 @@ class Math3D {
                 get: function(){ return this._yz; }
             }
         })
-    
+        
+        Object.defineProperties(dynamicSettings.scale,{
+            x: {
+                set: function(val){
+                    this._x = val;
+                    _this.mathbox.select('#main-cartesian').set("scale", _this.swizzle(_this.settings.scale) );
+                },
+                get: function(){
+                    return this._x;
+                }
+            },
+            y: {
+                set: function(val){
+                    this._y = val;
+                    _this.mathbox.select('#main-cartesian').set("scale", _this.swizzle(_this.settings.scale) );
+                },
+                get: function(){
+                    return this._y;
+                }
+            },
+            z: {
+                set: function(val){
+                    this._z = val;
+                    _this.mathbox.select('#main-cartesian').set("scale", _this.swizzle(_this.settings.scale) );
+                },
+                get: function(){
+                    return this._z;
+                }
+            }
+        })
+        
         return _.merge(dynamicSettings, this.settings);
     
     }
@@ -393,6 +425,7 @@ class Math3D {
                 focus: this.settings.focus,
             })
             .cartesian({
+                id: 'main-cartesian',
                 scale: this.swizzle(this.settings.scale)
             });
         
@@ -467,8 +500,8 @@ class Math3D {
     drawGrids(){
         // TODO: enable drawing of other grids
         var divX = 10;
-        var divY = divX * this.settings.scale[1]/this.settings.scale[0]
-        var divZ = divZ * this.settings.scale[2]/this.settings.scale[0]
+        var divY = divX * this.settings.scale.y/this.settings.scale.x
+        var divZ = divZ * this.settings.scale.z/this.settings.scale.x
     
         var trueAxes = this.swizzle(this.swizzle({x:'x', y:'y', z:'z'}))
     
@@ -1646,8 +1679,3 @@ class ParametricSurface extends AbstractSurface {
     }
     
 }
-
-var f2 = function(x,y){
-    return x*y*y
-}
-var diff = MathUtility.diff;
