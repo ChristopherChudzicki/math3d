@@ -81,7 +81,7 @@ app.controller('saveCtrl', ['$scope', function($scope){
     };
 }])
 
-app.controller('settingsCtrl', ['$scope', function($scope){
+app.controller('axesSettingsCtrl', ['$scope', function($scope){
     $scope.settings = math3d.settings;
 }])
 
