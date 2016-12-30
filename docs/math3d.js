@@ -740,7 +740,8 @@ class MathObject {
     }
     
     setDefaults(settings){
-        _.merge(this.settings, this.defaultSettings, settings);
+        settings = _.merge({},this.defaultSettings, settings);
+        _.merge(this.settings,settings);
         return this.settings;
     }
     
@@ -915,17 +916,17 @@ class Variable extends AbstractVariable{
             this.argNames = []
             this.settings.name = expr.variables[0];
         } else {}
-        this.setRawExpression();
+        this.setRawExpression(this.settings.rawExpression);
     }
     addVarToMathScope(newName){
          var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
          return this.math3d.mathScope.addVariable(newName, this.value, onVariableChange);
     }
     setRawExpression(val){
-        if (!this.valid){
+        var expr = this.parsedExpression;
+        if (!this.valid || expr===null){
             return
         }
-        var expr = this.parsedExpression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         if (this.holdEvaluation){
             let argNames = this.argNames;
