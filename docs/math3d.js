@@ -927,6 +927,10 @@ class Variable extends AbstractVariable{
         if (!this.valid || expr===null){
             return
         }
+        
+        if (expr === null){
+            return
+        }
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         if (this.holdEvaluation){
             let argNames = this.argNames;
@@ -1249,7 +1253,7 @@ class MathGraphic extends MathObject{
     }
     
     setVisible(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("visible",val);
+        this.mathboxGroup.set("visible",val);
     }
     
     setWidth(val){
