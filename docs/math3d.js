@@ -42,7 +42,6 @@ class Utility {
         // FIXME I'm not 100% sure this actually copies the object ... strings, numbers, arrays, will definitely be copied.
         var deepCopy = {};
         for (var key in obj){
-            console.log(key, obj)
             if (key[0]=='_'){
                 //In this case, the object should have a getter, but let's check
                 var subkey = key.substring(1)
