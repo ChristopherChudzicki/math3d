@@ -1481,7 +1481,6 @@ class ParametricCurve extends AbstractCurve{
         
         this.settings = this.setDefaults(settings);
         this.userSettings = this.userSettings.concat([
-            {attribute:'range', format:'String'},
             {attribute:'samples', format:'Integer'}
         ])
         
@@ -1633,11 +1632,34 @@ class AbstractSurface extends MathGraphic {
 class ParametricSurface extends AbstractSurface {
     constructor(math3d, settings){
         super(math3d, settings);
-           
+        
+        var _this = this;
+        Object.defineProperties(this.settings,{
+            samplesU: {
+                set: function(val){
+                    this._samplesU = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.recalculateData();
+                    }
+                },
+                get: function(){return this._samplesU;},
+            },
+            samplesV: {
+                set: function(val){
+                    this._samplesV = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.recalculateData();
+                    }
+                },
+                get: function(){return this._samplesV;},
+            },
+        })
+        
+        //TODO: samplesU and samplesV set OK, but are updating strangely.
         this.settings = this.setDefaults(settings);
         this.userSettings = this.userSettings.concat([
-            {attribute:'range', type:'String'},
-            {attribute:'samples', type:'Array'}
+            //{attribute:'samplesU', format:'Integer'},
+            //{attribute:'samplesV', format:'Integer'}
         ])
         
         this.mathboxGroup = this.render();
@@ -1648,7 +1670,8 @@ class ParametricSurface extends AbstractSurface {
             parameters: ['u','v'],
             rawExpression: "[v*cos(u),v*sin(u),v]",
             range: "[[-pi,pi],[-1,1]]",
-            samples: [32,32],
+            samplesU: 64,
+            samplesV: 64
         });
         return defaults
     }
@@ -1665,8 +1688,8 @@ class ParametricSurface extends AbstractSurface {
             this.range = this.parsedRange.eval(this.math3d.mathScope);
             this.mathboxGroup.select("cartesian").set("range",this.range);
             
-            this.mathboxGroup.select("area").set("width",this.settings.samples[0]);
-            this.mathboxGroup.select("area").set("height",this.settings.samples[1]);
+            this.mathboxGroup.select("area").set("width",this.settings.samplesU);
+            this.mathboxGroup.select("area").set("height",this.settings.samplesV);
             this.mathboxGroup.select("area").set("expr", function (emit, u, v, i, j, time) {
                 localMathScope[param0] = u;
                 localMathScope[param1] = v;
@@ -1690,8 +1713,8 @@ class ParametricSurface extends AbstractSurface {
         var data = group.cartesian({
             range: this.range
         }).area({
-            width:this.settings.samples[0],
-            height:this.settings.samples[1],
+            width:this.settings.samplesU,
+            height:this.settings.samplesV,
             expr: function (emit, u, v, i, j, time) {
                 localMathScope[param0] = u;
                 localMathScope[param1] = v;
