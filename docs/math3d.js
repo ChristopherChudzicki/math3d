@@ -1417,8 +1417,6 @@ class Line extends AbstractCurveFromData {
 class Vector extends AbstractCurveFromData {
     constructor(math3d, settings){
         super(math3d, settings);
-
-        this.mathboxGroup = this.render();
         
         var _this = this;
         Object.defineProperties(this.settings,{
@@ -1449,6 +1447,8 @@ class Vector extends AbstractCurveFromData {
             {attribute:'tail', format:'String'},
             // {attribute:'components', format:'String'}
         ])
+        
+        this.mathboxGroup = this.render();
     }
     
     get defaultSettings(){
