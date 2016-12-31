@@ -1565,22 +1565,68 @@ class AbstractSurface extends MathGraphic {
         this.mathboxDataType = 'area';
         this.mathboxRenderType = 'surface';
         this.userSettings = this.userSettings.concat([
-            {attribute:'gridX', format:'Integer'},
-            {attribute:'gridY', format:'Integer'},
+            {attribute:'gridU', format:'Integer'},
+            {attribute:'gridV', format:'Integer'},
             {attribute:'gridOpacity', format:'Number'},
             {attribute:'shaded', format:'Boolean'}
         ])
+        
+        var _this = this;
+        Object.defineProperties(this.settings,{
+            gridU: {
+                set: function(val){
+                    this._gridU = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setGridX(val);
+                    }
+                },
+                get: function(){return this._gridU;},
+            },
+            gridV: {
+                set: function(val){
+                    this._gridV = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setGridY(val);
+                    }
+                },
+                get: function(){return this._gridV;},
+            },
+            gridOpacity: {
+                set: function(val){
+                    this._gridOpacity = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setGridOpacity(val);
+                    }
+                },
+                get: function(){return this._gridOpacity;},
+            },
+        })
     
     }
     get defaultSettings(){
         var defaults = _.merge(super.defaultSettings, {
             opacity: 0.66,
-            gridX: 8,
-            gridY: 8,
+            gridU: 8,
+            gridV: 8,
             gridOpacity:0.75,
             shaded:false
         });
         return defaults
+    }
+
+    setGridX(val){
+        this.mathboxGroup.select('.gridU resample').set("width",val);
+    }
+    setGridY(val){
+        this.mathboxGroup.select('.gridV resample').set("height",val);
+    }
+    setGridOpacity(val){
+        this.mathboxGroup.select('line').set('opacity',val);
+    }
+    setColor(val){
+        super.setColor(val);
+        var gridColor = Utility.lightenColor(val,-0.5);
+        this.mathboxGroup.select('line').set('color',gridColor);
     }
 }
 
@@ -1665,15 +1711,15 @@ class ParametricSurface extends AbstractSurface {
             visible: this.settings.visible,
             opacity: this.settings.opacity,
             shaded: this.settings.shaded
-        }).group()
-            .resample({height:this.settings.gridY,source:data})
+        }).group().set('classes',['gridV'])
+            .resample({height:this.settings.gridV,source:data})
             .line({
                 color:gridColor,
                 opacity:this.settings.gridOpacity
             })
         .end()
-        .group()
-            .resample({width:this.settings.gridX, source:data,})
+        .group().set('classes',['gridU'])
+            .resample({width:this.settings.gridU, source:data,})
             .transpose({order:'yx'})
             .line({
                 color:gridColor,
