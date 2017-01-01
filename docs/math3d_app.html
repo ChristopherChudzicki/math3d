@@ -86,40 +86,7 @@
             <div ui-tree id='tree-root'>
               <div class="list-group" ui-tree-nodes ng-model="mathTree">
                 <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree">
-                  <div class="tree-node tree-node-content folder-container">
-                    <div class="folder-sidebar" ui-tree-handle>
-                      <span class="long-grippy"></span>
-                    </div>
-                    <div class="folder-main">
-                      <!-- Folder Header -->
-                      <div class="folder-header">
-                        <div class="folder-header-left">
-                          <a class="btn btn-link btn-xs" type='button' data-nodrag ng-click="toggle(this)">
-                            <span class="glyphicon"
-                              ng-class="{
-                              'glyphicon-chevron-right': collapsed,
-                              'glyphicon-chevron-down': !collapsed
-                            }">
-                            </span>
-                          </a>
-                        </div>
-                        <div class="folder-header-center">
-                          <input class="form-incognito form-bold" type='text' size="{{branch.name.length}}" ng-model="branch.name"> </input>
-                          <span class="glyphicon glyphicon-pencil folder-name-editable"></span>
-                        </div>
-                        <div class="folder-header-right pull-right">
-                          <a class="pull-right btn btn-link btn-xs" data-nodrag ng-class="{disabled: branch.objects.length>0 || mathTree.length === 1}" ng-click="removeFolder(branch);">
-                            <span class="glyphicon glyphicon-remove remove-item">
-                            </span>
-                          </a>
-                        </div>
-                      </div>
-                      <!-- Folder items -->
-                      <div class="list-group folder-contents" ui-tree-nodes='' ng-class="{hidden: collapsed}" ng-model="branch.objects">
-                        <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content math-object" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addOjbectToUi(obj)" >
-                        </div>
-                      </div>
-                    </div>
+                  <div ng-include="'templates/folder.html'">
                   </div>
                 </div>
               </div>

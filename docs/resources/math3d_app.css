@@ -9,12 +9,6 @@
     padding:4px;
 }
 
-form.math-object-settings div.form-group{
-    margin-bottom:4pt;
-    margin-left:0pt;
-    margin-top:4pt;
-}
-
 input.jscolor {
     width:25px;
 }
@@ -60,6 +54,16 @@ li.save {
 span.remove-item {
     color:darkgray;
 }
+span.edit-label{
+    visibility:hidden;
+}
+span.edit-label .glyphicon {
+    color:darkgray;
+}
+span.label-and-description:hover span.edit-label{
+    visibility:visible;
+}
+
 
 .btn:focus{
     outline:none;
@@ -92,6 +96,7 @@ div.folder-main .folder-header{
 }
 div.folder-header-left{
     flex:1;
+    overflow:hidden;
 }
 div.folder-header-center{
     flex:8;
@@ -126,8 +131,10 @@ input.has-error.has-feedback {
 }
 
 /*https://codepen.io/zachariab/pen/wkrbc*/
-span.grippy, span.long-grippy {
+span.grippy {
+    height:1em;
     visibility:hidden;
+    overflow:visible;
     content: '....';
     width: 20px;
     display: inline-block;
@@ -143,28 +150,32 @@ span.grippy, span.long-grippy {
     color: #cccccc;
     text-shadow: 1px 0 1px #8c8c8c;
 }
-span.grippy {
-    height: 40px;
-}
-span.long-grippy {
-    height:40px;
-}
 
 span.grippy::after {
-    content: '.. .. .. .. .. .. .. ';
-}
-
-span.long-grippy::after {
     content: '.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ';
 }
 
-div.math-object:hover span.grippy{
-    visibility:visible;
-}
-div.folder-container:hover span.long-grippy{
+div.grippy-trigger:hover > * > span.grippy{
     visibility:visible;
 }
 
+.object-cell {
+    display:flex;
+}
+
+.object-cell-handle {
+    flex:1;
+    margin-bottom:4pt;
+    overflow:hidden;
+}
+
+.object-cell-main {
+    flex:9;
+}
+
+.description-text {
+    color:gray;
+}
 
 .popover.popover-settings {
     background-color:rgba(255, 255, 255, 0.75);
