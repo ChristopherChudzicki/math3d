@@ -1,8 +1,29 @@
+<div class="row">
+  <div class="col-xs-10">
+    <span class="label-and-description">
+      <span ng-if="obj.settings.label !== null || obj.settings.label !== '' " class="label-text">{{obj.settings.label}}: </span>
+      <span class="description-text">{{obj.settings.description}}</span>
+      <span class="edit-label">
+          <a class="popover-trigger btn btn-link btn-xs" 
+              type="button"
+              ng-controller="popoverCtrl"
+              popover-is-open="myPopover.isOpen"  
+              popover-class="popover-label"
+              uib-popover-template="'templates/label_popover.html'" 
+              popover-placement="right" 
+              popover-trigger="outsideClick"
+              popover-append-to-body="true"
+              type="button"
+              class="btn btn-default"
+              >
+              <span class="glyphicon glyphicon-pencil"></span>
+          </a>
+      </span>
+    </span>
+  </div>
+</div>
 <div class="row" ng-controller="mathObjectCtrl">
     <div class="form-group">
-        <div class="col-xs-1">
-            <span ui-tree-handle class="grippy"></span>
-        </div> 
         <div class="col-xs-1">
             <!-- <input class="jscolor hide-text" ng-model="obj.settings.color" ></input> -->
             <div style="{{getStyle(obj)}}"
@@ -12,9 +33,11 @@
             </div>
             <input id="{{'jscolor-'+obj.id}}" class="jscolor hide-in-place" ng-model="obj.settings.color" ></input>
         </div>
-        <div class="col-xs-8">
+        <div class="col-xs-9">
             <div class="input-group input-group-sm">
-                <input type="text" class="form-control" ng-model="obj.settings.rawExpression"></input>
+                <input type="text" class="form-control" ng-if="obj.type!=='Vector'" ng-model="obj.settings.rawExpression"></input>
+                <!-- Vectors have settings.rawExpression, but users should edit it through settings.components instead. -->
+                <input type="text" class="form-control" ng-if="obj.type==='Vector'" ng-model="obj.settings.components"></input>
                 <span class="input-group-btn">
                     <a class="popover-trigger btn btn-link btn-xs" 
                         type="button"

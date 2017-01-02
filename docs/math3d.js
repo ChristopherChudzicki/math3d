@@ -1200,6 +1200,7 @@ class MathGraphic extends MathObject{
             color: '#3090FF',
             zIndex: 0,
             opacity:1,
+            description:this.type,
         }
         return defaults
     }
@@ -1295,6 +1296,34 @@ class Point extends MathGraphic {
         this.mathboxDataType = 'array';
         this.mathboxRenderType = 'point';
 
+        var _this = this;
+        Object.defineProperties(this.settings,{
+            label: {
+                set: function(val) {
+                    this._label = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setLabel(val);
+                    }
+                    return
+                },
+                get: function() {
+                    return this._label;
+                }
+            },
+            labelVisible: {
+                set: function(val) {
+                    this._labelVisible = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setLabelVisible(val);
+                    }
+                    return
+                },
+                get: function() {
+                    return this._labelVisible;
+                }
+            }
+        });
+        
         this.settings = this.setDefaults(settings);
         this.userSettings = this.userSettings.concat([
             {attribute:'size', format:'Number'}
@@ -1307,6 +1336,8 @@ class Point extends MathGraphic {
         var defaults = _.merge(super.defaultSettings, {
             rawExpression: "[[0,0,0]]",
             size: 14,
+            labelVisible:false,
+            label:null,
         });
         return defaults
     }
@@ -1330,9 +1361,23 @@ class Point extends MathGraphic {
             size: this.settings.size,
             visible: this.settings.visible,
             zIndex: this.settings.zIndex,
+        })
+        .format({
+            data:[this.settings.label]
+        }).label({
+            size:20,
+            visible:this.settings.labelVisible,
+            offset:[0,20]
         });
         
         return group;
+    }
+    
+    setLabel(val){
+        this.mathboxGroup.select('format').set("data",[val]);
+    }
+    setLabelVisible(val){
+        this.mathboxGroup.select('label').set("visible",val);
     }
     
 }
@@ -1389,7 +1434,15 @@ class AbstractCurveFromData extends AbstractCurve {
             end: this.settings.end,
             size: this.settings.size,
             zIndex: this.settings.zIndex
+        })
+        .format({
+            data:['',this.settings.label]
+        }).label({
+            size:20,
+            visible:this.settings.labelVisible,
+            offset:[0,20]
         });
+        ;
         
         return group;
     }
@@ -1439,6 +1492,30 @@ class Vector extends AbstractCurveFromData {
                 get: function() {
                     return this._components;
                 }
+            },
+            label: {
+                set: function(val) {
+                    this._label = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setLabel(val);
+                    }
+                    return
+                },
+                get: function() {
+                    return this._label;
+                }
+            },
+            labelVisible: {
+                set: function(val) {
+                    this._labelVisible = val;
+                    if (_this.mathboxGroup !== null){
+                        _this.setLabelVisible(val);
+                    }
+                    return
+                },
+                get: function() {
+                    return this._labelVisible;
+                }
             }
         });
         
@@ -1458,7 +1535,9 @@ class Vector extends AbstractCurveFromData {
             size:6,
             rawExpression:"[[0,0,0],[1,2,3]]",
             tail:"[0,0,0]",
-            components:"[1,2,3]"
+            components:"[1,2,3]",
+            labelVisible:false,
+            label:null,
         });
         return defaults
     }
@@ -1472,6 +1551,13 @@ class Vector extends AbstractCurveFromData {
         if (this.settings.tail !== undefined){
             this.settings.rawExpression = `[${this.settings.tail},${this.settings.tail}+${val}]`
         }
+    }
+    
+    setLabel(val){
+        this.mathboxGroup.select('format').set("data",['',val]);
+    }
+    setLabelVisible(val){
+        this.mathboxGroup.select('label').set("visible",val);
     }
 }
 

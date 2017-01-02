@@ -1,11 +1,16 @@
-<form class="form-horizontal math-object-settings">
-    <div ng-include="'templates/common.html'"></div>
-    <div class="row">
-        <div class="col-xs-2"></div>
-        <div class="col-xs-9">
-            <div class="input-group input-group-sm">
-                u, v ∈ <input style="width:100px" type="text" ng-model="obj.settings.range"></input>
-            </div>
-        </div>
-    </div>
-</form>
+<div class="object-cell grippy-trigger" style="display:flex">
+  <div class="object-cell-handle">
+    <span ui-tree-handle style="height:1em" class="grippy"></span>
+  </div>
+  <form class="object-cell-main" class="form-horizontal math-object-settings">
+      <div ng-include="'templates/common.html'"></div>
+      <div class="row">
+          <div class="col-xs-2"></div>
+          <div class="col-xs-9">
+              <div class="input-group input-group-sm">
+                  u, v ∈ <input style="width:100px" type="text" ng-model="obj.settings.range"></input>
+              </div>
+          </div>
+      </div>
+  </form>
+</div>
