@@ -4,23 +4,35 @@
   </div>
   <form class="object-cell-main form-horizontal math-object-settings" ng-controller="sliderCtrl">
       <div class="row">
-          <div class="form-group">
+          <div class="form-group" style="margin-bottom:2pt">
               <div class="col-xs-4">
-                  <div class="input-group input-group-sm">
-                      <input style="width:auto" type="text" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" size="{{1+obj.settings.name.length}}" type="text" ng-model="obj.settings.name"></input>
-                      <span style="padding-left:2pt;padding-right:2pt;" class="input-group-addon"> = {{obj.settings.value}} </span>
-                  </div>
+                <div class="input-group input-group-sm">
+                  <input style="width:auto" type="text" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" size="{{1+obj.settings.name.length}}" type="text" ng-model="obj.settings.name"></input>
+                  <span style="padding-left:2pt;padding-right:2pt" class="input-group-addon"> = {{obj.settings.value.substring(0,5)}} </span>
+                </div>
+              </div>
+              <div class="col-xs-6">
+                <div class="btn-group">
+                  <a class="btn btn-link btn-quiet btn-xs" ng-click="incrementSpeed(obj,-1)">
+                    <span class="glyphicon glyphicon-backward"></span>
+                  </a>
+                  <a class="btn btn-quiet disabled btn-xs">
+                    {{obj.speedsAsStrings[obj.settings.speedIdx]}} ×
+                  </a>
+                  <a class="btn btn-link btn-quiet btn-xs" ng-click="incrementSpeed(obj,+1)">
+                    <span class="glyphicon glyphicon-forward"></span>
+                  </a>
+                </div>
               </div>
           </div>  
       </div>
       <div class="row">
           <div class="form-group" style="margin-bottom:0pt">
-              <div class="col-xs-1"></div>
-              <div class="col-xs-10">
+              <div class="col-xs-12">
                 <button type="button" class="btn btn-link btn-xs" ng-click="toggleAnimate(obj)">
                   <span class="glyphicon" ng-class="{'glyphicon-play':!animationRunning, 'glyphicon-pause':animationRunning}"></span>
                 </button>
-                <input id="slider-{{obj.id}}" style="display:inline-block;width:75%;" type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}" step="{{(obj.max-obj.min)/100}}"></input>
+                <input id="slider-{{obj.id}}" style="display:inline-block;width:75%;" type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}"></input>
               </div>
           </div>
           <button type="button" class="btn btn-link btn-xs remove-item upper-right" ng-click="obj.remove();">

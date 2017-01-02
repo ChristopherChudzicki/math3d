@@ -174,6 +174,10 @@ class MathUtility {
             return derivative
         }
     }
+    
+    static clamp(min, val, max){
+        return Math.min(Math.max(min, val), max)
+    }
 }
 
 class Math3D {
@@ -968,6 +972,9 @@ class VariableSlider extends AbstractVariable {
         this.parsedMin = null;
         this.parsedMax = null;
         
+        this.speeds = [1/16, 1/8, 1/4, 1/2, 3/4, 1, 3/2, 2, 3, 4, 8]
+        this.speedsAsStrings = ['1/16', '1/8', '1/4', '1/2', '3/4', 1, 1.5, 2, 3, 4, 8]
+        
         var _this = this;
         Object.defineProperties(this.settings,{
             min: {
@@ -1004,7 +1011,8 @@ class VariableSlider extends AbstractVariable {
             value:0.5,
             min:'0',
             max:'10',
-            name:'X'
+            name:'X',
+            speedIdx:5
         }
         return defaults
     }

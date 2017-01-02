@@ -51,6 +51,14 @@ li.save {
     top:0;
     right:0;
 }
+
+.btn-quiet {
+    color:darkgray;
+}
+.btn-quiet:hover {
+    color:darkgray;
+}
+
 span.remove-item {
     color:darkgray;
 }
