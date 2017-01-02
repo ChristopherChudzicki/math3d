@@ -30,7 +30,7 @@
         <button type="button" class="btn btn-link btn-xs" ng-click="toggleAnimate(obj)">
           <span class="glyphicon" ng-class="{'glyphicon-play':!obj.settings.animationRunning, 'glyphicon-pause':obj.settings.animationRunning}"></span>
         </button>
-        <input id="slider-{{obj.id}}" style="display:inline-block;width:75%;" type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}"></input>
+        <input elem-ready="initSlider(obj)" id="slider-{{obj.id}}" style="display:inline-block;width:75%;" type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}"></input>
       </div>
     </div>
     <div class="form-group" style="margin-top:0pt">
