@@ -1,7 +1,7 @@
 <div class="row">
   <div class="col-xs-10">
     <span class="label-and-description">
-      <span ng-if="obj.settings.label !== null" class="label-text">{{obj.settings.label}}: </span>
+      <span ng-if="obj.settings.label !== null || obj.settings.label !== '' " class="label-text">{{obj.settings.label}}: </span>
       <span class="description-text">{{obj.settings.description}}</span>
       <span class="edit-label">
           <a class="popover-trigger btn btn-link btn-xs" 
