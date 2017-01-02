@@ -83,7 +83,7 @@
                 </li>
               </ul>
             </div>
-            <div ui-tree id='tree-root'>
+            <div ui-tree="treeOptions" id='tree-root' ng-controller="dropValidateCtrl">
               <div class="list-group" ui-tree-nodes ng-model="mathTree">
                 <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree">
                   <div ng-include="'templates/folder.html'">
