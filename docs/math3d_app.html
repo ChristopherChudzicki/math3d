@@ -83,9 +83,9 @@
                 </li>
               </ul>
             </div>
-            <div ui-tree="treeOptions" id='tree-root' ng-controller="dropValidateCtrl">
+            <div ui-tree="treeOptions" id='tree-root' ng-controller="treeCtrl">
               <div class="list-group" ui-tree-nodes ng-model="mathTree">
-                <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree">
+                <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree" data-collapsed="branch.collapsed">
                   <div ng-include="'templates/folder.html'">
                   </div>
                 </div>
@@ -152,6 +152,7 @@ var authorSettings = {
   wrappedMathTree:[
     {
       name:'Folder 1',
+      collapsed:false,
       objects: [
         {
           type: 'Point',
@@ -165,6 +166,7 @@ var authorSettings = {
     },
     {
       name: 'Folder 2',
+      collapsed:false,
       objects: [
         {
           type: 'ParametricCurve',

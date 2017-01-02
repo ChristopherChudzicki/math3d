@@ -73,11 +73,15 @@ app.directive('onShortPress', function($timeout) {
 	};
 })
 
-app.controller('dropValidateCtrl', function($scope)  {
+app.controller('treeCtrl', function($scope)  {
     $scope.treeOptions = {
         accept: function(sourceNodeScope, destNodesScope, destIndex) {
             return sourceNodeScope.depth() - 1 === destNodesScope.depth()
         },
+        toggle: function(collapsed, sourceNodeScope){
+            console.log(sourceNodeScope)
+            sourceNodeScope.branch.collapsed = collapsed;
+        }
     };
 });
 
@@ -104,7 +108,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
     $scope.createNewFolder = function(){
-        $scope.mathTree.push({name:'Untitled', objects:[]});
+        $scope.mathTree.push({name:'Untitled', objects:[], collapsed:false});
     }
     
     $scope.addOjbectToUi = function(obj){

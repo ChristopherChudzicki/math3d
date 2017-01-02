@@ -557,6 +557,7 @@ class Math3D {
         _.forEach(this.settings.wrappedMathTree, function(branch, idx){
             var branchCopy = {
                 name: branch.name,
+                collapsed: branch.collapsed,
                 objects: []
             };
             _this.mathTree.push(branchCopy);
@@ -571,6 +572,7 @@ class Math3D {
         _.forEach(this.settings.wrappedMathTree, function(branch, idx){
             var branchCopy = {
                 name: branch.name,
+                collapsed: branch.collapsed,
                 objects: []
             };
             _this.mathTree.push(branchCopy);
@@ -617,7 +619,7 @@ class Math3D {
         rawSettings.camera.position = this.swizzle(this.swizzle(rawSettings.camera.position));
         // add math objects
         _.forEach(this.mathTree, function(branch){
-            rawSettings.wrappedMathTree.push({name:branch.name, objects:[]});
+            rawSettings.wrappedMathTree.push({name:branch.name, collapsed:branch.collapsed, objects:[]});
             var serialBranch = rawSettings.wrappedMathTree[rawSettings.wrappedMathTree.length-1];
             _.forEach(branch.objects, function(mathObj){
                 serialBranch.objects.push( JSON.parse(mathObj.serialize()) ); // serialized then parsed to remove getters and setters
