@@ -150,18 +150,26 @@ app.controller('sliderCtrl', ['$scope', function($scope){
     }
     $scope.startAnimation = function(obj){
         $scope.animationRunning = true;
-        var ele = document.getElementById("slider-"+obj.id)
+        var ele = document.getElementById("slider-"+obj.id);
+        ele.step = ((ele.max-ele.min)/200) * obj.speeds[obj.settings.speedIdx];
         $scope.intervalID = setInterval(function(){
            ele.stepUp();
-           if (ele.value >= ele.max){
+           if (ele.value > ele.max - ele.step){
                ele.value = ele.min
            }
            angular.element(ele).trigger('input')
-        },40)
+        },20)
     }
     $scope.stopAnimation = function(obj){
         $scope.animationRunning = false;
         clearInterval($scope.intervalID);
+    }
+    
+    $scope.incrementSpeed = function(obj, incr){
+        obj.settings.speedIdx += incr;
+        obj.settings.speedIdx = MathUtility.clamp(0, obj.settings.speedIdx, obj.speeds.length);
+        $scope.toggleAnimate(obj);
+        $scope.toggleAnimate(obj);
     }
 }])
 
