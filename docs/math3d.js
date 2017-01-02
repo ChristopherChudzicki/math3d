@@ -974,8 +974,19 @@ class VariableSlider extends AbstractVariable {
         this.parsedMin = null;
         this.parsedMax = null;
         
-        this.speeds = [1/16, 1/8, 1/4, 1/2, 3/4, 1, 3/2, 2, 3, 4, 8]
-        this.speedsAsStrings = ['1/16', '1/8', '1/4', '1/2', '3/4', 1, 1.5, 2, 3, 4, 8]
+        this.speeds = [
+            {value:1/16, string:"1/16"},
+            {value:1/8, string:"1/8"},
+            {value:1/4, string:"1/4"},
+            {value:1/2, string:"1/2"},
+            {value:3/4, string:"3/4"},
+            {value:1, string:"1"},
+            {value:1.5, string:"1.5"},
+            {value:2, string:"2"},
+            {value:3, string:"3"},
+            {value:4, string:"4"},
+            {value:8, string:"8"},
+        ]
         
         var _this = this;
         Object.defineProperties(this.settings,{
@@ -1014,7 +1025,8 @@ class VariableSlider extends AbstractVariable {
             min:'0',
             max:'10',
             name:'X',
-            speedIdx:5
+            speedIdx:5,
+            animationRunning:false,
         }
         return defaults
     }

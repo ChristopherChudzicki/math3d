@@ -21,6 +21,21 @@ app.directive('compileTemplate', ["$compile", "$parse", function($compile, $pars
     }
 }]);
 
+// http://stackoverflow.com/a/29571230/2747370
+app.directive( 'elemReady', function( $parse ) {
+   return {
+       restrict: 'A',
+       link: function( $scope, elem, attrs ) {    
+          elem.ready(function(){
+            $scope.$apply(function(){
+                var func = $parse(attrs.elemReady);
+                func($scope);
+            })
+          })
+       }
+    }
+})
+
 // https://gist.github.com/BobNisco/9885852 (modifications in comments)
 // Add this directive where you keep your directives
 app.directive('onLongPress', function($timeout) {
@@ -149,10 +164,9 @@ app.controller('mathObjectCtrl',['$scope', function($scope){
 }])
 
 app.controller('sliderCtrl', ['$scope', function($scope){
-    $scope.animationRunning = false;
     $scope.intervalID = null;
     $scope.toggleAnimate = function(obj){
-        if (!$scope.animationRunning){
+        if (!obj.settings.animationRunning){
             $scope.startAnimation(obj)
         }
         else {
@@ -161,9 +175,9 @@ app.controller('sliderCtrl', ['$scope', function($scope){
         return
     }
     $scope.startAnimation = function(obj){
-        $scope.animationRunning = true;
+        obj.settings.animationRunning = true;
         var ele = document.getElementById("slider-"+obj.id);
-        ele.step = ((ele.max-ele.min)/200) * obj.speeds[obj.settings.speedIdx];
+        ele.step = ((ele.max-ele.min)/200) * obj.speeds[obj.settings.speedIdx].value;
         $scope.intervalID = setInterval(function(){
            ele.stepUp();
            if (ele.value > ele.max - ele.step){
@@ -173,7 +187,7 @@ app.controller('sliderCtrl', ['$scope', function($scope){
         },20)
     }
     $scope.stopAnimation = function(obj){
-        $scope.animationRunning = false;
+        obj.settings.animationRunning = false;
         clearInterval($scope.intervalID);
     }
     
@@ -183,6 +197,14 @@ app.controller('sliderCtrl', ['$scope', function($scope){
         $scope.toggleAnimate(obj);
         $scope.toggleAnimate(obj);
     }
+    
+    $scope.initSlider = function(obj){
+        if (obj.animationStarted === undefined && obj.settings.animationRunning){
+            $scope.startAnimation(obj);
+            obj.animationStarted = true;
+        }
+    }
+    
 }])
 
 //http://stackoverflow.com/a/32366115/2747370
