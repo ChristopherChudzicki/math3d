@@ -73,6 +73,14 @@ app.directive('onShortPress', function($timeout) {
 	};
 })
 
+app.controller('dropValidateCtrl', function($scope)  {
+    $scope.treeOptions = {
+        accept: function(sourceNodeScope, destNodesScope, destIndex) {
+            return sourceNodeScope.depth() - 1 === destNodesScope.depth()
+        },
+    };
+});
+
 app.controller('saveCtrl', ['$scope', function($scope){
     $scope.saveURL = function(){
         var url = math3d.saveSettingsAsURL();
