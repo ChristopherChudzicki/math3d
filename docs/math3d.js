@@ -845,7 +845,12 @@ class AbstractVariable extends MathObject{
         return newName;
     }
     // addVarToMathScope(newName){} defined by all subclasses
-    
+    get defaultSettings(){
+        var defaults = {
+            description: ''
+        }
+        return defaults
+    }
     
     remove(){
         this.math3d.mathScope.removeVariable(this.lastValidName);
