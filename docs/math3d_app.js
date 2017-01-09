@@ -225,3 +225,8 @@ app.controller('popoverCtrl', ['$scope', function($scope) {
         }
     };
 }]);
+
+// Prevent key events from bubbling up to the 3d scene
+container.on("keypress keydown keyup", function(e) {
+    e.stopPropagation();
+});
