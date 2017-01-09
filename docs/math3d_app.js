@@ -199,6 +199,8 @@ app.controller('sliderCtrl', ['$scope', function($scope){
     }
     
     $scope.initSlider = function(obj){
+        var ele = document.getElementById("slider-"+obj.id);
+        ele.step = ((ele.max-ele.min)/200) * obj.speeds[obj.settings.speedIdx].value;
         if (obj.animationStarted === undefined && obj.settings.animationRunning){
             $scope.startAnimation(obj);
             obj.animationStarted = true;
