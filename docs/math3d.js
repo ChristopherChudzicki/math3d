@@ -1841,10 +1841,10 @@ class ParametricSurface extends AbstractSurface {
             order: this.math3d.swizzleOrder
         })
         
-        var surface = group.surface({
+        var surface = group.set('visible',this.settings.visible)
+        .surface({
             points:data,
             color: this.settings.color,
-            visible: this.settings.visible,
             opacity: this.settings.opacity,
             shaded: this.settings.shaded
         }).group().set('classes',['gridV'])
