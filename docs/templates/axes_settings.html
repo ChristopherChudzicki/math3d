@@ -1,140 +1,142 @@
-<h4>Axes</h4>
-<div class="axis-settings-single">
-  <div class="row">
-    <div class="col-xs-6">
-      <div class="checkbox" style="margin:0pt">
+<div ng-controller="axesSettingsCtrl">
+  <h4>Axes</h4>
+  <div class="axis-settings-single">
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="checkbox" style="margin:0pt">
+          <label>
+            <input type="checkbox"/> <strong>X-axis</strong>
+          </label>
+        </div>
+      </div>
+      <div class="col-xs-6">
         <label>
-          <input type="checkbox"/> <strong>X-axis</strong>
+          <input type="text" class="form-control input-xs" placeholder="Add label" ng-model = "settings.axes.x.axisLabel">
         </label>
       </div>
     </div>
-    <div class="col-xs-6">
-      <label>
-        <input type="text" class="form-control input-xs" placeholder="Add label">
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-6 col-xs-offset-1">
-      <input style="width:40px;display:inline-block" class="form-control input-xs">
-      <span>≤ X ≤</span>
-      <input style="width:40px;display:inline-block" class="form-control input-xs">
-    </div>
-    <div class="col-xs-5">
-      <label style="font-weight:normal">
-        Scale:
-        <input style="width:40px;display:inline-block" class="form-control input-xs" type="number">
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-5 col-xs-offset-7">
-      <div class="checkbox" style="margin:0pt">
-        <label>
-          <input type="checkbox"/> Ticks
+    <div class="row">
+      <div class="col-xs-6 col-xs-offset-1">
+        <input style="width:40px;display:inline-block" class="form-control input-xs" ng-model = "settings.range.xMin">
+        <span>≤ X ≤</span>
+        <input style="width:40px;display:inline-block" class="form-control input-xs" ng-model = "settings.range.xMax">
+      </div>
+      <div class="col-xs-5">
+        <label style="font-weight:normal">
+          Scale:
+          <input style="width:40px;display:inline-block" class="form-control input-xs" type="number" ng-model = "settings.scale.x">
         </label>
       </div>
     </div>
-  </div>
-</div>
-<div class="axis-settings-single">
-  <div class="row">
-    <div class="col-xs-6">
-      <div class="checkbox" style="margin:0pt">
-        <label>
-          <input type="checkbox"/> <strong>Y-axis</strong>
-        </label>
-      </div>
-    </div>
-    <div class="col-xs-6">
-      <label>
-        <input type="text" class="form-control input-xs" placeholder="Add label">
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-6 col-xs-offset-1">
-      <input style="width:40px;display:inline-block" class="form-control input-xs">
-      <span>≤ Y ≤</span>
-      <input style="width:40px;display:inline-block" class="form-control input-xs">
-    </div>
-    <div class="col-xs-5">
-      <label style="font-weight:normal">
-        Scale:
-        <input style="width:40px;display:inline-block" class="form-control input-xs" type="number">
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-5 col-xs-offset-7">
-      <div class="checkbox" style="margin:0pt">
-        <label>
-          <input type="checkbox"/> Ticks
-        </label>
+    <div class="row">
+      <div class="col-xs-5 col-xs-offset-7">
+        <div class="checkbox" style="margin:0pt">
+          <label>
+            <input type="checkbox"/> Ticks
+          </label>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<div class="axis-settings-single">
-  <div class="row">
-    <div class="col-xs-6">
-      <div class="checkbox" style="margin:0pt">
+  <div class="axis-settings-single">
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="checkbox" style="margin:0pt">
+          <label>
+            <input type="checkbox"/> <strong>Y-axis</strong>
+          </label>
+        </div>
+      </div>
+      <div class="col-xs-6">
         <label>
-          <input type="checkbox"/> <strong>Z-axis</strong>
+          <input type="text" class="form-control input-xs" placeholder="Add label" ng-model = "settings.axes.y.axisLabel">
         </label>
       </div>
     </div>
-    <div class="col-xs-6">
-      <label>
-        <input type="text" class="form-control input-xs" placeholder="Add label">
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-6 col-xs-offset-1">
-      <input style="width:40px;display:inline-block" class="form-control input-xs">
-      <span>≤ Z ≤</span>
-      <input style="width:40px;display:inline-block" class="form-control input-xs">
-    </div>
-    <div class="col-xs-5">
-      <label style="font-weight:normal">
-        Scale:
-        <input style="width:40px;display:inline-block" class="form-control input-xs" type="number">
-      </label>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-xs-5 col-xs-offset-7">
-      <div class="checkbox" style="margin:0pt">
-        <label>
-          <input type="checkbox"/> Ticks
+    <div class="row">
+      <div class="col-xs-6 col-xs-offset-1">
+        <input style="width:40px;display:inline-block" class="form-control input-xs" ng-model = "settings.range.yMin">
+        <span>≤ Y ≤</span>
+        <input style="width:40px;display:inline-block" class="form-control input-xs" ng-model = "settings.range.yMax">
+      </div>
+      <div class="col-xs-5">
+        <label style="font-weight:normal">
+          Scale:
+          <input style="width:40px;display:inline-block" class="form-control input-xs" type="number" ng-model = "settings.scale.y">
         </label>
       </div>
     </div>
+    <div class="row">
+      <div class="col-xs-5 col-xs-offset-7">
+        <div class="checkbox" style="margin:0pt">
+          <label>
+            <input type="checkbox"/> Ticks
+          </label>
+        </div>
+      </div>
+    </div>
   </div>
-</div>
-<div class="axis-settings-grids">
+  <div class="axis-settings-single">
+    <div class="row">
+      <div class="col-xs-6">
+        <div class="checkbox" style="margin:0pt">
+          <label>
+            <input type="checkbox"/> <strong>Z-axis</strong>
+          </label>
+        </div>
+      </div>
+      <div class="col-xs-6">
+        <label>
+          <input type="text" class="form-control input-xs" placeholder="Add label" ng-model = "settings.axes.z.axisLabel">
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-6 col-xs-offset-1">
+        <input style="width:40px;display:inline-block" class="form-control input-xs" ng-model = "settings.range.zMin">
+        <span>≤ Z ≤</span>
+        <input style="width:40px;display:inline-block" class="form-control input-xs" ng-model = "settings.range.zMax">
+      </div>
+      <div class="col-xs-5">
+        <label style="font-weight:normal">
+          Scale:
+          <input style="width:40px;display:inline-block" class="form-control input-xs" type="number" ng-model = "settings.scale.z">
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-xs-5 col-xs-offset-7">
+        <div class="checkbox" style="margin:0pt">
+          <label>
+            <input type="checkbox"/> Ticks
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
   <h4>Grids</h4>
-  <div class="row">
-    <div class="col-xs-4">
-      <div class="checkbox" style="margin:0pt">
-        <label>
-          <input type="checkbox"/> XY
-        </label>
+  <div class="axis-settings-grids">
+    <div class="row">
+      <div class="col-xs-4">
+        <div class="checkbox" style="margin:0pt">
+          <label>
+            <input type="checkbox" ng-model = "settings.grids.xy"/> XY
+          </label>
+        </div>
       </div>
-    </div>
-    <div class="col-xs-4">
-      <div class="checkbox" style="margin:0pt">
-        <label>
-          <input type="checkbox"/> YZ
-        </label>
+      <div class="col-xs-4">
+        <div class="checkbox" style="margin:0pt">
+          <label>
+            <input type="checkbox" ng-model = "settings.grids.yz" /> YZ
+          </label>
+        </div>
       </div>
-    </div>
-    <div class="col-xs-4">
-      <div class="checkbox" style="margin:0pt">
-        <label>
-          <input type="checkbox"/> ZX
-        </label>
+      <div class="col-xs-4">
+        <div class="checkbox" style="margin:0pt">
+          <label>
+            <input type="checkbox" ng-model = "settings.grids.xz"/> ZX
+          </label>
+        </div>
       </div>
     </div>
   </div>
