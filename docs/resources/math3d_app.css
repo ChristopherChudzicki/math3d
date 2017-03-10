@@ -1,3 +1,81 @@
+/**************************************************/
+/* Bootstrap Extension */
+/**************************************************/
+
+/* Similar to bootstrap's .input-sm, but for xs*/
+.input-xs {
+    height: 24px;
+    padding: 2px 5px;
+    font-size: 12px;
+    line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */
+    border-radius: 3px;
+}
+.pull-upper-right {
+    background: transparent;
+    margin-top: 1px;
+    margin-right: 2px;
+    position:absolute;
+    top:0;
+    right:0;
+}
+
+/*Subtle buttons*/
+.btn-quiet {
+    color:darkgray;
+}
+.btn-quiet:hover {
+    color:darkgray;
+}
+
+.btn:focus{
+    outline:none;
+}
+
+/*Theme Specific*/
+.btn.btn-link:hover{
+    background-color:#ecf0f1;
+    border-radius:4px;
+}
+
+span.settings:hover span.glyphicon{
+    color:#18bc9c;
+}
+
+/**************************************************/
+/* Color and visibility indicator */
+/**************************************************/
+div.visibility-indicator {
+    width:20px;
+    height:20px;
+    border-style:solid;
+    border-width:4px;
+}
+
+input.jscolor {
+    width:25px;
+}
+
+/*Used to hide jscolor selector*/
+.hide-in-place {
+    opacity:0;
+    width:1px;
+    height:1px;
+}
+
+/**************************************************/
+/* Other */
+/**************************************************/
+
+/*Hide spinners for number input*/
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input {
+    width:95%;
+}
+
 .math3d-controller {
     z-index:1000;
     width:275px;
@@ -9,118 +87,23 @@
     padding:4px;
 }
 
-input.jscolor {
-    width:25px;
-}
-
-input {
-    width:95%;
-}
-
-input[type=number]::-webkit-inner-spin-button, 
-input[type=number]::-webkit-outer-spin-button { 
-  -webkit-appearance: none; 
-  margin: 0; 
-}
-
-.input-xs {
-    height: 24px;
-    padding: 2px 5px;
-    font-size: 12px;
-    line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */
-    border-radius: 3px;
-}
-
-table td {
-    padding:4px;
-}
-
-div.visibility-indicator {
-    width:20px;
-    height:20px;
-    border-style:solid;
-    border-width:4px;
-}
-div.visibility-indicator.visibility-indicator-true {
-}
-div.visibility-indicator.visibility-indicator-false {
-}
-
-.hide-in-place {
-    opacity:0;
-    width:1px;
-    height:1px;
-}
-
-div.add-object {
-    display:inline-block;
-}
-
-li.save {
-    float:right;
-}
-
 #save-modal textarea {
     width:100%;
     height:100px;
 }
 
-.upper-right {
-    background: transparent;
-    margin-top: 1px;
-    margin-right: 2px;
-    position:absolute;
-    top:0;
-    right:0;
-}
-
-.btn-quiet {
-    color:darkgray;
-}
-.btn-quiet:hover {
-    color:darkgray;
-}
-
-span.remove-item {
-    color:darkgray;
-}
-span.edit-label{
-    visibility:hidden;
-}
-span.edit-label .glyphicon {
-    color:darkgray;
-}
-span.label-and-description:hover span.edit-label{
-    visibility:visible;
-}
-
-
-.btn:focus{
-    outline:none;
-}
-
-.btn.btn-link:hover{
-    background-color:#ecf0f1;
-    border-radius:4px;
-}
-span.settings:hover span.glyphicon{
-    color:#18bc9c;
-}
-
+/*Folder Stuff*/
 div.folder-container{
     overflow:hidden;
     margin-bottom:6px;
     display:flex;
 }
-
 div.folder-sidebar{
     flex:1;
 }
-
 div.folder-main{
     flex:20;
 }
-
 div.folder-main .folder-header{
     display:flex;
 }
@@ -134,24 +117,20 @@ div.folder-header-center{
 div.folder-header-right{
     flex:1;
 }
-
-.form-incognito {
-    border:none;
-}
-.form-bold {
-    font-weight:bold;
-}
-
 .folder-header-center input:hover + span {
     visibility:visible;
 }
-
 span.folder-name-editable{
     color:lightgray;
     visibility:hidden;
 }
 
-div.folder-main .folder-contents{
+/*REDO THIS*/
+.form-incognito {
+    border:none;
+}
+.form-bold {
+    font-weight:bold;
 }
 
 input.has-error.has-feedback {
@@ -180,15 +159,14 @@ span.grippy {
     color: #cccccc;
     text-shadow: 1px 0 1px #8c8c8c;
 }
-
 span.grippy::after {
     content: '.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ';
 }
-
 div.grippy-trigger:hover > * > span.grippy{
     visibility:visible;
 }
 
+/* Object cell structure */
 .object-cell {
     display:flex;
 }
@@ -220,4 +198,15 @@ div.grippy-trigger:hover > * > span.grippy{
 
 .axis-settings-single {
     margin-bottom:20pt;
+}
+
+/*TO BE REMOVED AFTER LABEL REDO*/
+span.edit-label{
+    visibility:hidden;
+}
+span.edit-label .glyphicon {
+    color:darkgray;
+}
+span.label-and-description:hover span.edit-label{
+    visibility:visible;
 }
