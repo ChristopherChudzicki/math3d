@@ -4,30 +4,11 @@
   </div>
   <form class="object-cell-main form-horizontal math-object-settings">
     <div class="row">
-      <div class="col-xs-10">
-        <span class="label-and-description">
-          <span ng-if="obj.type === 'Point' && obj.type === 'Vector' && obj.settings.label !== null && obj.settings.label !== '' " class="label-text">{{obj.settings.label}}: </span>
-          <span class="description-text">{{obj.settings.description}}</span>
-          <span class="edit-label">
-              <a class="popover-trigger btn btn-link btn-xs" 
-                  type="button"
-                  ng-controller="popoverCtrl"
-                  popover-is-open="myPopover.isOpen"  
-                  popover-class="popover-label"
-                  uib-popover-template="'templates/label_popover.html'" 
-                  popover-placement="right" 
-                  popover-trigger="outsideClick"
-                  popover-append-to-body="true"
-                  type="button"
-                  class="btn btn-default"
-                  >
-                  <span class="glyphicon glyphicon-pencil"></span>
-              </a>
-          </span>
-        </span>
+      <div class="col-xs-12">
+        <span class="object-description">{{obj.settings.description}}</span>
       </div>
     </div>
-    <div class="form-group">
+    <div class="row">
       <div class="col-xs-10">
         <div class="input-group input-group-sm">
           <input size="4" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" ng-model="obj.settings.rawName" ></input>

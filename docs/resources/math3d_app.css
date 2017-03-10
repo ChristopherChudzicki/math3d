@@ -146,14 +146,6 @@ span.folder-name-editable{
     visibility:hidden;
 }
 
-/*REDO THIS*/
-.form-incognito {
-    border:none;
-}
-.form-bold {
-    font-weight:bold;
-}
-
 input.has-error.has-feedback {
     outline: none;
     border-color: red;
