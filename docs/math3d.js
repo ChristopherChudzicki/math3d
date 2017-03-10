@@ -266,13 +266,15 @@ class Math3D {
             }
         
             var defaultAxisSettings = {
+                visible:true,
                 axisLabel: axisLabel,
                 labelOffset: [0,40,0],
                 axis: {width:2, axis: mathboxAxes[axisId]},
                 scale: {divide:10, nice:true, zero:false, axis: mathboxAxes[axisId] },
+                ticksVisible:true,
                 ticks: {width:2},
                 ticksFormat: {digits:2},
-                ticksLabel: {offset:tickLabelOffset, visible:true}
+                ticksLabel: {offset:tickLabelOffset}
             };
         
             return defaultAxisSettings
@@ -287,7 +289,12 @@ class Math3D {
         var dynamicSettings = {
             range: {},
             grids: {},
-            scale: {}
+            scale: {},
+            axes:{
+                x:{},
+                y:{},
+                z:{}
+            }
         }
     
         var _this = this;
@@ -359,6 +366,94 @@ class Math3D {
                 },
                 get: function(){
                     return this._z;
+                }
+            }
+        })
+        
+        Object.defineProperties(dynamicSettings.axes.x,{
+            visible: {
+                set: function(val){
+                    this._visible = val;
+                    _this.mathbox.select('#axis-x').set("visible", val);
+                },
+                get: function(){
+                    return this._visible;
+                }
+            },
+            ticksVisible: {
+                set: function(val){
+                    this._ticksVisible = val;
+                    _this.mathbox.select('#axis-x .ticks').set("visible", val);
+                },
+                get: function(){
+                    return this._ticksVisible;
+                }
+            },
+            axisLabel:{
+                set: function(val){
+                    this._axisLabel = val;
+                    _this.mathbox.select('#axis-x .axis-label text').set("data", [val]);
+                },
+                get: function(){
+                    return this._axisLabel;
+                }
+            }
+        })
+        Object.defineProperties(dynamicSettings.axes.y,{
+            visible: {
+                set: function(val){
+                    this._visible = val;
+                    _this.mathbox.select('#axis-y').set("visible", val);
+                },
+                get: function(){
+                    return this._visible;
+                }
+            },
+            ticksVisible: {
+                set: function(val){
+                    this._ticksVisible = val;
+                    _this.mathbox.select('#axis-y .ticks').set("visible", val);
+                },
+                get: function(){
+                    return this._ticksVisible;
+                }
+            },
+            axisLabel:{
+                set: function(val){
+                    this._axisLabel = val;
+                    _this.mathbox.select('#axis-y .axis-label text').set("data", [val]);
+                },
+                get: function(){
+                    return this._axisLabel;
+                }
+            }
+        })
+        Object.defineProperties(dynamicSettings.axes.z,{
+            visible: {
+                set: function(val){
+                    this._visible = val;
+                    _this.mathbox.select('#axis-z').set("visible", val);
+                },
+                get: function(){
+                    return this._visible;
+                }
+            },
+            ticksVisible: {
+                set: function(val){
+                    this._ticksVisible = val;
+                    _this.mathbox.select('#axis-z .ticks').set("visible", val);
+                },
+                get: function(){
+                    return this._ticksVisible;
+                }
+            },
+            axisLabel:{
+                set: function(val){
+                    this._axisLabel = val;
+                    _this.mathbox.select('#axis-z .axis-label text').set("data", [val]);
+                },
+                get: function(){
+                    return this._axisLabel;
                 }
             }
         })
@@ -458,10 +553,13 @@ class Math3D {
                 .set('classes',['axis'])
                 .axis(axisSettings.axis)
                 .scale(axisSettings.scale)
-                .ticks(axisSettings.ticks)
-                .format(axisSettings.ticksFormat)
-                .label(axisSettings.ticksLabel)
-                .set('classes',['tick-labels'])
+                .group()
+                    .set('classes',['ticks'])
+                    .ticks(axisSettings.ticks)
+                    .format(axisSettings.ticksFormat)
+                    .label(axisSettings.ticksLabel)
+                    .set('classes',['tick-labels'])
+                .end()
                 .group()
                     .set('classes',['axis-label'])
                     .array({
