@@ -1451,7 +1451,7 @@ class Point extends MathGraphic {
         
         this.settings = this.setDefaults(settings);
         this.userSettings = this.userSettings.concat([
-            {attribute:'size', format:'Number'}
+            {attribute:'size', format:'Number'},
         ])
         
         this.mathboxGroup = this.render();
