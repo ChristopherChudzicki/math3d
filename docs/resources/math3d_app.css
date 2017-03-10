@@ -13,6 +13,28 @@ input.jscolor {
     width:25px;
 }
 
+input {
+    width:95%;
+}
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+
+.input-xs {
+    height: 24px;
+    padding: 2px 5px;
+    font-size: 12px;
+    line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */
+    border-radius: 3px;
+}
+
+table td {
+    padding:4px;
+}
+
 div.visibility-indicator {
     width:20px;
     height:20px;
@@ -194,4 +216,8 @@ div.grippy-trigger:hover > * > span.grippy{
 .popover.popover-settings input {
     max-width:100%;
     background-color:rgba(255, 255, 255, 0.85);
+}
+
+.axis-settings-single {
+    margin-bottom:20pt;
 }
