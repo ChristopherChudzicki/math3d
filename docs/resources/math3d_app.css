@@ -1,7 +1,9 @@
 /**************************************************/
 /* Bootstrap Extension */
 /**************************************************/
-
+input.form-control:focus, textarea.form-control:focus{
+    border-color:#66c2ff;
+}
 /* Similar to bootstrap's .input-sm, but for xs*/
 .input-xs {
     height: 24px;
@@ -10,6 +12,24 @@
     line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */
     border-radius: 3px;
 }
+.form-horizontal .control-label.label-xs {
+    padding: 2px 5px;
+}
+.input-quiet {
+    border-top:none;
+    border-right:none;
+    border-left:none;
+    border-radius:0pt;
+    border-bottom:1pt solid darkgray;
+    margin-bottom:4pt;
+}
+.input-xs.input-quiet {
+    padding-bottom:0pt;
+}
+.input-quiet:focus {
+    border-bottom: 2pt solid #66c2ff;
+}
+
 .pull-upper-right {
     background: transparent;
     margin-top: 1px;
@@ -106,6 +126,7 @@ div.folder-main{
 }
 div.folder-main .folder-header{
     display:flex;
+    margin-bottom:4pt;
 }
 div.folder-header-left{
     flex:1;
@@ -181,10 +202,6 @@ div.grippy-trigger:hover > * > span.grippy{
     flex:9;
 }
 
-.description-text {
-    color:gray;
-}
-
 .popover.popover-settings {
     background-color:rgba(255, 255, 255, 0.75);
 }
@@ -201,6 +218,18 @@ div.grippy-trigger:hover > * > span.grippy{
 }
 
 /*TO BE REMOVED AFTER LABEL REDO*/
+input.object-description {
+    width:auto;
+    display:inline-block;
+    font-size:100%;
+}
+.object-description {
+    color:gray;
+}
+.folder-header input.object-description{
+    color:black;
+    font-weight:bold;
+}
 span.edit-label{
     visibility:hidden;
 }

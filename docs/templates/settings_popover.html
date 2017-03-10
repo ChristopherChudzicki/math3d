@@ -4,13 +4,32 @@
       <span class="glyphicon glyphicon-remove"></span>
   </button>
   <form class="form-horizontal">
+    <div class="form-group">
+      <div class="col-xs-12">
+        <textarea style="width:100%" class="form-control" ng-model="obj.settings.description"></textarea>
+      </div>
+    </div>
+    <div ng-if="(obj.type === 'Point' || obj.type === 'Vector')">
+      <div class="form-group">
+        <label class="control-label label-xs col-xs-6" >labelVisible</label>
+        <div class="col-xs-6">
+          <input type="checkbox" class="form-control input-xs" ng-model="obj.settings.labelVisible">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="control-label label-xs col-xs-6" >label</label>
+        <div class="col-xs-6">
+          <input type="text" class="form-control input-xs" ng-model="obj.settings.label">
+        </div>
+      </div>
+    </div>
     <div class="form-group" ng-repeat="setting in obj.userSettings">
-        <label class="control-label col-xs-6" >{{setting.attribute}}</label>  
+        <label class="control-label label-xs col-xs-6" >{{setting.attribute}}</label>  
       <div class="col-xs-6">
-        <input ng-if="setting.format==='Number'"  type="number"          class="form-control input-sm" ng-model="obj.settings[setting.attribute]">
-        <input ng-if="setting.format==='Integer'" type="number" step="1" class="form-control input-sm" ng-model="obj.settings[setting.attribute]">
-        <input ng-if="setting.format==='String'"  type="text"            class="form-control input-sm" ng-model="obj.settings[setting.attribute]">
-        <input ng-if="setting.format==='Boolean'" type="checkbox"        class="form-control input-sm" ng-model="obj.settings[setting.attribute]">
+        <input ng-if="setting.format==='Number'"  type="number"          class="form-control input-xs" ng-model="obj.settings[setting.attribute]">
+        <input ng-if="setting.format==='Integer'" type="number" step="1" class="form-control input-xs" ng-model="obj.settings[setting.attribute]">
+        <input ng-if="setting.format==='String'"  type="text"            class="form-control input-xs" ng-model="obj.settings[setting.attribute]">
+        <input ng-if="setting.format==='Boolean'" type="checkbox"        class="form-control input-xs" ng-model="obj.settings[setting.attribute]">
       </div>
     </div>
   </form>
