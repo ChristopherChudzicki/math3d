@@ -133,7 +133,8 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
-        
+        //Re-initialize textarea autosizing
+        autosize($("textarea.object-description"))
         return $sce.trustAsHtml(content)
     };
     

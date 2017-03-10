@@ -215,6 +215,10 @@ input.object-description {
     display:inline-block;
     font-size:100%;
 }
+textarea.object-description{
+    resize:none;
+    max-width:215px;
+}
 .object-description {
     color:gray;
 }
