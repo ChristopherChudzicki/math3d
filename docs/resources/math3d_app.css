@@ -146,14 +146,6 @@ span.folder-name-editable{
     visibility:hidden;
 }
 
-/*REDO THIS*/
-.form-incognito {
-    border:none;
-}
-.form-bold {
-    font-weight:bold;
-}
-
 input.has-error.has-feedback {
     outline: none;
     border-color: red;
@@ -222,6 +214,10 @@ input.object-description {
     width:auto;
     display:inline-block;
     font-size:100%;
+}
+textarea.object-description{
+    resize:none;
+    max-width:215px;
 }
 .object-description {
     color:gray;

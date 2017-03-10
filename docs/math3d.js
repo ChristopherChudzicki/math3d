@@ -1007,7 +1007,8 @@ class Variable extends AbstractVariable{
     get defaultSettings(){
         var defaults = {
             rawName: 'f(t)',
-            rawExpression: 'e^t'
+            rawExpression: 'e^t',
+            description:'Function'
         }
         return defaults
     }
@@ -1019,11 +1020,13 @@ class Variable extends AbstractVariable{
             this.holdEvaluation = true;
             this.argNames = expr.variables;
             this.settings.name = expr.functions[0];
+            if (this.settings.description='Variable'){this.settings.description='Function'};
         }
         else if (expr.functions.length === 0) {
             this.holdEvaluation = false;
             this.argNames = []
             this.settings.name = expr.variables[0];
+            if (this.settings.description='Function'){this.settings.description='Variable'};
         } else {}
         this.setRawExpression(this.settings.rawExpression);
     }
@@ -1130,6 +1133,7 @@ class VariableSlider extends AbstractVariable {
             name:'X',
             speedIdx:5,
             animationRunning:false,
+            description:this.type,
         }
         return defaults
     }
