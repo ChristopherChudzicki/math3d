@@ -19,7 +19,7 @@
         </div>
         <div class="col-xs-9">
             <div class="input-group input-group-sm">
-                <input type="text" class="form-control" ng-if="obj.type!=='Vector'" ng-model="obj.settings.rawExpression"></input>
+                <input type="text" class="form-control input-sm" ng-if="obj.type!=='Vector'" ng-model="obj.settings.rawExpression"></input>
                 <!-- Vectors have settings.rawExpression, but users should edit it through settings.components instead. -->
                 <input type="text" class="form-control" ng-if="obj.type==='Vector'" ng-model="obj.settings.components"></input>
                 <span class="input-group-btn">

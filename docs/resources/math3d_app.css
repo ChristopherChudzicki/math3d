@@ -1,8 +1,17 @@
+/*Bootstrap monkey patch: 
+z-index on inputs was causing trouble in chrome 57. 
+This seems to disable it. Not sure of consequences ...
+*/
+.input-group .form-control:focus, .input-group .form-control{
+    z-index:initial;
+}
+
 /**************************************************/
 /* Bootstrap Extension */
 /**************************************************/
 input.form-control:focus, textarea.form-control:focus{
     border-color:#66c2ff;
+    color:initial;
 }
 /* Similar to bootstrap's .input-sm, but for xs*/
 .input-xs {
