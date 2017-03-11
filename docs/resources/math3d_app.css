@@ -135,7 +135,6 @@ div.folder-main{
 }
 div.folder-main .folder-header{
     display:flex;
-    margin-bottom:4pt;
 }
 div.folder-header-left{
     flex:1;
