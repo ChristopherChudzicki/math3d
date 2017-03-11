@@ -4,11 +4,11 @@
   </div>
   <form class="object-cell-main" class="form-horizontal math-object-settings">
       <div ng-include="'templates/common.html'"></div>
-      <div class="row">
-          <div class="col-xs-2"></div>
-          <div class="col-xs-9">
-              <div class="input-group input-group-sm">
-                  t ∈ <input style="width:100px" type="text" ng-model="obj.settings.range"></input>
+      <div class="form-group">
+          <div class="col-xs-10 col-xs-offset-2">
+              <div class="input-group">
+                  <label class="pull-left">t ∈</label>
+                  <input class="form-control input-xs" style="width:75px" type="text" ng-model="obj.settings.range"></input>
               </div>
           </div>
       </div>
