@@ -123,10 +123,6 @@
       </div>
     </div>
     
-    
-    
-    
-    
     <!-- Save URL Modal -->
     <div class="modal fade" id="save-modal" role="dialog">
       <div class="modal-dialog">
@@ -201,39 +197,40 @@ var math3d = new Math3D(settings);
 
 <script>
 ele = $("div.math3d-controller");
+button = $("div.sidepanel");
 ele.resizable({
   handles: "e",
   minWidth: 225
 });
 
 
-function hideMnu(ele){
+function hideMnu(){
   var width = ele[0].offsetWidth;
   ele[0].style.width=`${width}px`;
   ele[0].style.left = `${-width}px`;
   ele.removeClass('menu-visible');
 };
-function showMenu(ele){
+function showMenu(){
   ele[0].style.width = "";
-  ele[0].style.left = "5%";
+  ele[0].style.left = "0%";
   ele.addClass('menu-visible');
 };
 function toggleMenu(){
   if (ele.hasClass('menu-visible')){
-    hideMnu(ele);
+    hideMnu();
   } else {
-    showMenu(ele)
+    showMenu()
   }
 };
 
-function hideForSmallWindow(ele){
+function hideForSmallWindow(){
   if (! window.matchMedia("(min-width: 768px)").matches) {
-    hideMnu(ele);
+    hideMnu();
   }
 }
 function showForLargeWindow(ele){
   if (window.matchMedia("(min-width: 768px)").matches) {
-    showMenu(ele);
+    showMenu();
   }
 }
 
@@ -242,9 +239,9 @@ ele.addClass("math3d-controller-animation")
 
 $(window).resize(function(e){
   if ($(ele).hasClass('menu-visible')){
-    hideForSmallWindow(ele);
+    hideForSmallWindow();
   } else {
-    showForLargeWindow(ele)
+    showForLargeWindow();
   }
 })
 

@@ -111,7 +111,7 @@ input {
     z-index:1000;
 }
 .math3d-controller {
-    left:5%;
+    margin-left:25px;
     width:275px;
     padding-left:0;
     display:inline-block;
@@ -259,5 +259,4 @@ span.label-and-description:hover span.edit-label{
 .menu-toggle {
     display:inline-block;
     vertical-align:top;
-    margin-left:10pt;
 }
