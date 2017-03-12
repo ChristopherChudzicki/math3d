@@ -107,6 +107,7 @@ input {
 
 .sidepanel {
     position:absolute;
+    left:0;
     z-index:1000;
 }
 .math3d-controller {
