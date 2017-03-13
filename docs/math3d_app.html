@@ -45,8 +45,8 @@
 
   <div class="container">
     
-    <div class="sidepanel">
-      <div class="math3d-controller menu-visible" >
+    <div class="sidepanel  menu-visible">
+      <div class="math3d-controller" >
       
         <div class="math3d-controller-header">
           <ul class="nav nav-tabs nav-justified">
@@ -117,7 +117,7 @@
       
       </div>
       <div class="menu-toggle">
-          <a href="#menu-toggle" class="btn btn-sm btn-link" id="menu-toggle">
+          <a class="btn btn-sm btn-link" id="menu-toggle">
             <span class="glyphicon glyphicon-menu-left"></span>
           </a>
       </div>
@@ -196,9 +196,9 @@ var math3d = new Math3D(settings);
 <script src="math3d_app.js"></script>
 
 <script>
-ele = $("div.math3d-controller");
-button = $("div.sidepanel");
-ele.resizable({
+ele = $("div.sidepanel");
+button = $('#menu-toggle span.glyphicon');
+$("div.math3d-controller").resizable({
   handles: "e",
   minWidth: 225
 });
@@ -207,13 +207,17 @@ ele.resizable({
 function hideMnu(){
   var width = ele[0].offsetWidth;
   ele[0].style.width=`${width}px`;
-  ele[0].style.left = `${-width}px`;
+  ele[0].style.left = `${-width+40}px`;
   ele.removeClass('menu-visible');
+  button.removeClass('glyphicon-menu-left');
+  button.addClass('glyphicon-menu-right');
 };
 function showMenu(){
   ele[0].style.width = "";
   ele[0].style.left = "0%";
   ele.addClass('menu-visible');
+  button.removeClass('glyphicon-menu-right');
+  button.addClass('glyphicon-menu-left');
 };
 function toggleMenu(){
   if (ele.hasClass('menu-visible')){

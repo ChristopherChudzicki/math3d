@@ -259,4 +259,7 @@ span.label-and-description:hover span.edit-label{
 .menu-toggle {
     display:inline-block;
     vertical-align:top;
+    width:30px;
+    height:30px;
+    margin-left:10px;
 }
