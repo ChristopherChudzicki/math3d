@@ -105,11 +105,16 @@ input {
     width:95%;
 }
 
-.math3d-controller {
-    z-index:1000;
-    width:275px;
+.sidepanel {
     position:absolute;
+    left:0;
+    z-index:1000;
+}
+.math3d-controller {
+    margin-left:25px;
+    width:275px;
     padding-left:0;
+    display:inline-block;
 }
 
 .math3d-controller-header {
@@ -242,4 +247,19 @@ span.edit-label .glyphicon {
 }
 span.label-and-description:hover span.edit-label{
     visibility:visible;
+}
+
+/**************************************************/
+/* Toggle Sidebar Controller */
+/**************************************************/
+.math3d-controller-animation {
+    transition: left 1s;
+}
+
+.menu-toggle {
+    display:inline-block;
+    vertical-align:top;
+    width:30px;
+    height:30px;
+    margin-left:10px;
 }

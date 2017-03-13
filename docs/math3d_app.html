@@ -13,6 +13,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   <script src="resources/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="resources/jquery-ui.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.3.1/ui-bootstrap-tpls.js"></script>
@@ -44,16 +45,16 @@
 
   <div class="container">
     
-    <div class="math3d-controller">
+    <div class="sidepanel  menu-visible">
+      <div class="math3d-controller" >
       
-      <div class="row">
         <div class="math3d-controller-header">
           <ul class="nav nav-tabs nav-justified">
             <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
             <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
           </ul>
         </div>
-
+      
         <div class="tab-content">
           <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
             <div class="math3d-controller-header">
@@ -65,19 +66,19 @@
                     <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu">
-                     <li ng-click="createNewObject('Point')" ><a href="">Point</a></li>
-                     <li ng-click="createNewObject('Line')" ><a href="">Line</a></li>
-                     <li ng-click="createNewObject('Vector')" ><a href="">Vector</a></li>
-                     <li ng-click="createNewObject('ParametricCurve')" ><a href="">Parametric Curve</a></li>
-                     <li ng-click="createNewObject('ParametricSurface')" ><a href="">Parametric Surface</a></li>
-                     <li class="disabled"><a href="">Explicit Surface (<em>coming soon</em>)</a></li>
-                     <li role="separator" class="divider"></li>
-                     <li ng-click="createNewFolder()"><a href="">Folder</a></li>
-                     <li ng-click="createNewObject('VariableSlider')"><a href="">Variable Slider</a></li>
-                     <li ng-click="createNewObject('Variable')">
-                       <a href="">Variable or Function</a>
-                     </li>
-                   </ul>
+                    <li ng-click="createNewObject('Point')" ><a href="">Point</a></li>
+                    <li ng-click="createNewObject('Line')" ><a href="">Line</a></li>
+                    <li ng-click="createNewObject('Vector')" ><a href="">Vector</a></li>
+                    <li ng-click="createNewObject('ParametricCurve')" ><a href="">Parametric Curve</a></li>
+                    <li ng-click="createNewObject('ParametricSurface')" ><a href="">Parametric Surface</a></li>
+                    <li class="disabled"><a href="">Explicit Surface (<em>coming soon</em>)</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li ng-click="createNewFolder()"><a href="">Folder</a></li>
+                    <li ng-click="createNewObject('VariableSlider')"><a href="">Variable Slider</a></li>
+                    <li ng-click="createNewObject('Variable')">
+                      <a href="">Variable or Function</a>
+                    </li>
+                  </ul>
                 </li>
                 <li ng-controller="saveCtrl" class="pull-right">
                   <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
@@ -113,8 +114,13 @@
             </div>
           </div>
         </div>
-      </div>
       
+      </div>
+      <div class="menu-toggle">
+          <a class="btn btn-sm btn-link" id="menu-toggle">
+            <span class="glyphicon glyphicon-menu-left"></span>
+          </a>
+      </div>
     </div>
     
     <!-- Save URL Modal -->
@@ -144,6 +150,7 @@
     <div id="my-math-box"></div>
 
   </div>
+  
 
 <script>
 
@@ -187,6 +194,66 @@ var math3d = new Math3D(settings);
 </script>
 
 <script src="math3d_app.js"></script>
+
+<script>
+ele = $("div.sidepanel");
+button = $('#menu-toggle span.glyphicon');
+$("div.math3d-controller").resizable({
+  handles: "e",
+  minWidth: 225
+});
+
+
+function hideMnu(){
+  var width = ele[0].offsetWidth;
+  ele[0].style.width=`${width}px`;
+  ele[0].style.left = `${-width+40}px`;
+  ele.removeClass('menu-visible');
+  button.removeClass('glyphicon-menu-left');
+  button.addClass('glyphicon-menu-right');
+};
+function showMenu(){
+  ele[0].style.width = "";
+  ele[0].style.left = "0%";
+  ele.addClass('menu-visible');
+  button.removeClass('glyphicon-menu-right');
+  button.addClass('glyphicon-menu-left');
+};
+function toggleMenu(){
+  if (ele.hasClass('menu-visible')){
+    hideMnu();
+  } else {
+    showMenu()
+  }
+};
+
+function hideForSmallWindow(){
+  if (! window.matchMedia("(min-width: 768px)").matches) {
+    hideMnu();
+  }
+}
+function showForLargeWindow(ele){
+  if (window.matchMedia("(min-width: 768px)").matches) {
+    showMenu();
+  }
+}
+
+hideForSmallWindow(ele);
+ele.addClass("math3d-controller-animation")
+
+$(window).resize(function(e){
+  if ($(ele).hasClass('menu-visible')){
+    hideForSmallWindow();
+  } else {
+    showForLargeWindow();
+  }
+})
+
+$("#menu-toggle").click(function(e) {
+  toggleMenu(e);
+});
+
+</script>
 
 </body>
 </html>
