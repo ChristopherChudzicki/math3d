@@ -133,7 +133,12 @@ div.folder-container{
     display:flex;
 }
 div.folder-sidebar{
+    /*I don't really understand why this works.
+    Goal is to have grippy handle fixed width,
+    but expand vertically to fill available space.*/
     flex:1;
+    min-width: 25px; 
+    max-width: 25px;
 }
 div.folder-main{
     flex:20;
@@ -143,6 +148,8 @@ div.folder-main .folder-header{
 }
 div.folder-header-left{
     flex:1;
+    min-width: 25px;
+    max-width: 25px;
     overflow:hidden;
 }
 div.folder-header-center{
@@ -199,6 +206,8 @@ div.grippy-trigger:hover > * > span.grippy{
 
 .object-cell-handle {
     flex:1;
+    min-width: 25px;
+    max-width: 25px;
     margin-bottom:4pt;
     overflow:hidden;
 }
