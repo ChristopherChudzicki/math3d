@@ -139,6 +139,14 @@ class Utility {
         }
     }
 
+    //http://stackoverflow.com/a/1144788/2747370
+    static escapeRegExp(str) {
+        return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
+    }
+    static replaceAll(str, find, replace) {
+      return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+    }
+
 }
 
 class MathUtility {
