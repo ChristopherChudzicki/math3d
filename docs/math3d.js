@@ -144,7 +144,7 @@ class Utility {
         return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
     static replaceAll(str, find, replace) {
-      return str.replace(new RegExp(escapeRegExp(find), 'g'), replace);
+      return str.replace(new RegExp(Utility.escapeRegExp(find), 'g'), replace);
     }
 
 }
@@ -1188,7 +1188,7 @@ class VariableSlider extends AbstractVariable {
 }
 
 // All classes below are used for rendering graphics with MathBox
-class MathGraphic extends MathObject{
+    class MathGraphic extends MathObject{
     constructor(math3d, settings){ 
         //Every sublcass should define these
         super(math3d, settings);
@@ -1976,4 +1976,49 @@ class ParametricSurface extends AbstractSurface {
         return group;
     }
     
+}
+
+//Customize MathQuill's MathField
+function texToMathJS(tex){
+    var expressions = [
+        {tex:'\\cdot', math:'*'},
+        {tex:'\\left', math:''},
+        {tex:'\\right', math:''},
+        {tex:'{',math:'('},
+        {tex:'}',math:')'},
+        {tex:'\\ ',math:' '},
+        {tex:'\\cos', math:'cos'},
+        {tex:'\\sin', math:'sin'},
+        {tex:'\\tan', math:'tan'},
+        {tex:'\\sec', math:'tan'},
+        {tex:'\\csc', math:'tan'},
+        {tex:'\\cot', math:'tan'},
+        {tex:'\\exp', math:'exp'},
+        {tex:'\\ln', math:'ln'},
+        {tex:'\\log', math:'log'},
+        {tex:'\\sqrt', math:'sqrt'}
+  ]
+  
+  for (let j=0; j<expressions.length; j++){
+    tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
+  }
+  return tex;
+}
+
+function MyMathField(el, config, mathobject){
+    
+    function onEdit(mathField){
+        console.log(texToMathJS(mathField.latex()));
+    }
+    
+    var defaultConfig = {
+        handlers: {
+            edit: function(mathField) {
+                onEdit(mathField);
+            }
+        }
+    }
+      
+    config = _.merge({}, defaultConfig, config);
+    MathQuill.getInterface(2).MathField(el, config);
 }

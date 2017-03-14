@@ -19,9 +19,10 @@
         </div>
         <div class="col-xs-10">
             <div class="input-group input-group-sm">
-                <input type="text" class="form-control input-sm" ng-if="obj.type!=='Vector'" ng-model="obj.settings.rawExpression"></input>
+                <span class="raw-expression">mc^2</span>
+                <!-- <input type="text" class="form-control input-sm" ng-if="obj.type!=='Vector'" ng-model="obj.settings.rawExpression"></input> -->
                 <!-- Vectors have settings.rawExpression, but users should edit it through settings.components instead. -->
-                <input type="text" class="form-control input-sm" ng-if="obj.type==='Vector'" ng-model="obj.settings.components"></input>
+                <!-- <input type="text" class="form-control input-sm" ng-if="obj.type==='Vector'" ng-model="obj.settings.components"></input> -->
                 <span class="input-group-btn">
                     <a class="popover-trigger btn btn-link btn-xs" 
                         type="button"

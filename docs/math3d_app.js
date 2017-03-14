@@ -128,9 +128,12 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     
     $scope.addOjbectToUi = function(obj){
         var content = `
-            <div ng-include="'templates/${obj.type.toLowerCase()}.html'">
+            <div id="object-${obj.id}" ng-include="'templates/${obj.type.toLowerCase()}.html'">
             </div>`;
-        
+            
+        //mathquillify
+        el = $(`#object-${obj.id} span.raw-expression`)[0];
+        MyMathField(el);
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
         //Re-initialize textarea autosizing
