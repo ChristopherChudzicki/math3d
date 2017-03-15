@@ -2355,6 +2355,7 @@ function MyMathField(el, config, mathobject) {
     }
 
     var defaultConfig = {
+        autoCommands: 'pi theta sqrt',
         handlers: {
             edit: function(mathField) {
                 onEdit(mathField);

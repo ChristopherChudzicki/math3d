@@ -134,7 +134,8 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         //mathquillify
         var el = $(`#object-${obj.id} span.raw-expression`)[0];
         if (el !== undefined) {
-            el.innerHTML = obj.settings.rawExpression;
+            var expression = Utility.replaceAll(obj.settings.rawExpression,' pi ', ' \\pi ')
+            el.innerHTML = expression;
         }
         var mf = MyMathField(el);
         //Re-initialize jscolor palletes. This seems hacky.
