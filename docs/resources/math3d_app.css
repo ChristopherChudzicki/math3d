@@ -139,6 +139,7 @@ div.folder-sidebar{
     flex:1;
     min-width: 25px; 
     max-width: 25px;
+    margin-left:15pt;
 }
 div.folder-main{
     flex:20;
