@@ -4,8 +4,8 @@ class Utility {
     static defaultVal(variable, defaultVal) {
         return typeof variable !== 'undefined' ? variable : defaultVal;
     }
-    
-    static detectObjectDifferences(a,b){
+
+    static detectObjectDifferences(a, b) {
         // Returns keys that appear in the difference a - b
         // http://stackoverflow.com/a/31686152/2747370
         var diffKeys = _.reduce(a, function(result, value, key) {
@@ -14,48 +14,47 @@ class Utility {
         return diffKeys
     }
 
-    static isPureObject(arg){
+    static isPureObject(arg) {
         // Test if something is an object. 
         // OK, [1,2,3] is an object in JS. I mean test if something is an object like {a:1,b:[1,2,3],c:{aa:5}}.
         return arg !== null && typeof arg === 'object' && !Array.isArray(arg)
     }
 
-    static deepObjectDiff(a, b){
+    static deepObjectDiff(a, b) {
         var diff = {};
-        var keys = Utility.detectObjectDifferences(a,b);
-        for (var j=0; j < keys.length; j++){
+        var keys = Utility.detectObjectDifferences(a, b);
+        for (var j = 0; j < keys.length; j++) {
             var key = keys[j];
             var aValue = a[key];
             var bValue = b[key];
-            if ( Utility.isPureObject(aValue) && Utility.isPureObject(bValue) ){
+            if (Utility.isPureObject(aValue) && Utility.isPureObject(bValue)) {
                 diff[key] = Utility.deepObjectDiff(aValue, bValue);
-            }
-            else {
+            } else {
                 diff[key] = aValue;
             }
         }
         return diff
     }
 
-    static deepCopyValuesOnly(obj){
+    static deepCopyValuesOnly(obj) {
         //Intended to help serialize objects with a getter named KEY that stores values in _KEY.
         // FIXME I'm not 100% sure this actually copies the object ... strings, numbers, arrays, will definitely be copied.
         var deepCopy = {};
-        for (var key in obj){
-            if (key[0]=='_'){
+        for (var key in obj) {
+            if (key[0] == '_') {
                 //In this case, the object should have a getter, but let's check
                 var subkey = key.substring(1)
-                if (obj[subkey] !== undefined && typeof Object.getOwnPropertyDescriptor(obj,subkey).get === 'function'){
+                if (obj[subkey] !== undefined && typeof Object.getOwnPropertyDescriptor(obj, subkey).get === 'function') {
                     key = subkey
                 }
             }
-            if (deepCopy.hasOwnProperty(key) ){
+            if (deepCopy.hasOwnProperty(key)) {
                 throw `Error: Input Object has both ${key} and _${key} properties.`
             }
-            
-            if (Utility.isPureObject(obj[key])){
+
+            if (Utility.isPureObject(obj[key])) {
                 deepCopy[key] = Utility.deepCopyValuesOnly(obj[key]);
-            } else if ( Array.isArray(obj[key]) ) {
+            } else if (Array.isArray(obj[key])) {
                 deepCopy[key] = obj[key].slice(); // if array, make a new copy
             } else {
                 deepCopy[key] = obj[key];
@@ -68,18 +67,18 @@ class Utility {
         // modified from http://stackoverflow.com/a/979995/2747370
         var query_string = {};
         var query = window.location.search.substring(1);
-        if (query === ""){
+        if (query === "") {
             return query_string
         }
         var vars = query.split("&");
-        for (var i=0;i<vars.length;i++) {
+        for (var i = 0; i < vars.length; i++) {
             var pair = vars[i].split("=");
             // If first entry with this name
             if (typeof query_string[pair[0]] === "undefined") {
                 query_string[pair[0]] = decodeURIComponent(pair[1]);
                 // If second entry with this name
             } else if (typeof query_string[pair[0]] === "string") {
-                var arr = [ query_string[pair[0]],decodeURIComponent(pair[1]) ];
+                var arr = [query_string[pair[0]], decodeURIComponent(pair[1])];
                 query_string[pair[0]] = arr;
                 // If third or later entry with this name
             } else {
@@ -88,48 +87,195 @@ class Utility {
         }
         return query_string;
     }
-    
-    static namedColorToHexColor(color){
+
+    static namedColorToHexColor(color) {
         color = color.toLowerCase();
         var namedColors = {
-            aliceblue: '#F0F8FF', antiquewhite: '#FAEBD7', aqua: '#00FFFF', aquamarine: '#7FFFD4', azure: '#F0FFFF', beige: '#F5F5DC', bisque: '#FFE4C4', black: '#000000', blanchedalmond: '#FFEBCD', blue: '#0000FF', blueviolet: '#8A2BE2', brown: '#A52A2A', burlywood: '#DEB887', cadetblue: '#5F9EA0', chartreuse: '#7FFF00', chocolate: '#D2691E', coral: '#FF7F50', cornflowerblue: '#6495ED', cornsilk: '#FFF8DC', crimson: '#DC143C', cyan: '#00FFFF', darkblue: '#00008B', darkcyan: '#008B8B', darkgoldenrod: '#B8860B', darkgray: '#A9A9A9', darkgrey: '#A9A9A9', darkgreen: '#006400', darkkhaki: '#BDB76B', darkmagenta: '#8B008B', darkolivegreen: '#556B2F', darkorange: '#FF8C00', darkorchid: '#9932CC', darkred: '#8B0000', darksalmon: '#E9967A', darkseagreen: '#8FBC8F', darkslateblue: '#483D8B', darkslategray: '#2F4F4F', darkslategrey: '#2F4F4F', darkturquoise: '#00CED1', darkviolet: '#9400D3', deeppink: '#FF1493', deepskyblue: '#00BFFF', dimgray: '#696969', dimgrey: '#696969', dodgerblue: '#1E90FF', firebrick: '#B22222', floralwhite: '#FFFAF0', forestgreen: '#228B22', fuchsia: '#FF00FF', gainsboro: '#DCDCDC', ghostwhite: '#F8F8FF', gold: '#FFD700', goldenrod: '#DAA520', gray: '#808080', grey: '#808080', green: '#008000', greenyellow: '#ADFF2F', honeydew: '#F0FFF0', hotpink: '#FF69B4', indianred: '#CD5C5C', indigo: '#4B0082', ivory: '#FFFFF0', khaki: '#F0E68C', lavender: '#E6E6FA', lavenderblush: '#FFF0F5', lawngreen: '#7CFC00', lemonchiffon: '#FFFACD', lightblue: '#ADD8E6', lightcoral: '#F08080', lightcyan: '#E0FFFF', lightgoldenrodyellow: '#FAFAD2', lightgray: '#D3D3D3', lightgrey: '#D3D3D3', lightgreen: '#90EE90', lightpink: '#FFB6C1', lightsalmon: '#FFA07A', lightseagreen: '#20B2AA', lightskyblue: '#87CEFA', lightslategray: '#778899', lightslategrey: '#778899', lightsteelblue: '#B0C4DE', lightyellow: '#FFFFE0', lime: '#00FF00', limegreen: '#32CD32', linen: '#FAF0E6', magenta: '#FF00FF', maroon: '#800000', mediumaquamarine: '#66CDAA', mediumblue: '#0000CD', mediumorchid: '#BA55D3', mediumpurple: '#9370DB', mediumseagreen: '#3CB371', mediumslateblue: '#7B68EE', mediumspringgreen: '#00FA9A', mediumturquoise: '#48D1CC', mediumvioletred: '#C71585', midnightblue: '#191970', mintcream: '#F5FFFA', mistyrose: '#FFE4E1', moccasin: '#FFE4B5', navajowhite: '#FFDEAD', navy: '#000080', oldlace: '#FDF5E6', olive: '#808000', olivedrab: '#6B8E23', orange: '#FFA500', orangered: '#FF4500', orchid: '#DA70D6', palegoldenrod: '#EEE8AA', palegreen: '#98FB98', paleturquoise: '#AFEEEE', palevioletred: '#DB7093', papayawhip: '#FFEFD5', peachpuff: '#FFDAB9', peru: '#CD853F', pink: '#FFC0CB', plum: '#DDA0DD', powderblue: '#B0E0E6', purple: '#800080', rebeccapurple: '#663399', red: '#FF0000', rosybrown: '#BC8F8F', royalblue: '#4169E1', saddlebrown: '#8B4513', salmon: '#FA8072', sandybrown: '#F4A460', seagreen: '#2E8B57', seashell: '#FFF5EE', sienna: '#A0522D', silver: '#C0C0C0', skyblue: '#87CEEB', slateblue: '#6A5ACD', slategray: '#708090', slategrey: '#708090', snow: '#FFFAFA', springgreen: '#00FF7F', steelblue: '#4682B4', tan: '#D2B48C', teal: '#008080', thistle: '#D8BFD8', tomato: '#FF6347', turquoise: '#40E0D0', violet: '#EE82EE', wheat: '#F5DEB3', white: '#FFFFFF', whitesmoke: '#F5F5F5', yellow: '#FFFF00', yellowgreen: '#9ACD32'
+            aliceblue: '#F0F8FF',
+            antiquewhite: '#FAEBD7',
+            aqua: '#00FFFF',
+            aquamarine: '#7FFFD4',
+            azure: '#F0FFFF',
+            beige: '#F5F5DC',
+            bisque: '#FFE4C4',
+            black: '#000000',
+            blanchedalmond: '#FFEBCD',
+            blue: '#0000FF',
+            blueviolet: '#8A2BE2',
+            brown: '#A52A2A',
+            burlywood: '#DEB887',
+            cadetblue: '#5F9EA0',
+            chartreuse: '#7FFF00',
+            chocolate: '#D2691E',
+            coral: '#FF7F50',
+            cornflowerblue: '#6495ED',
+            cornsilk: '#FFF8DC',
+            crimson: '#DC143C',
+            cyan: '#00FFFF',
+            darkblue: '#00008B',
+            darkcyan: '#008B8B',
+            darkgoldenrod: '#B8860B',
+            darkgray: '#A9A9A9',
+            darkgrey: '#A9A9A9',
+            darkgreen: '#006400',
+            darkkhaki: '#BDB76B',
+            darkmagenta: '#8B008B',
+            darkolivegreen: '#556B2F',
+            darkorange: '#FF8C00',
+            darkorchid: '#9932CC',
+            darkred: '#8B0000',
+            darksalmon: '#E9967A',
+            darkseagreen: '#8FBC8F',
+            darkslateblue: '#483D8B',
+            darkslategray: '#2F4F4F',
+            darkslategrey: '#2F4F4F',
+            darkturquoise: '#00CED1',
+            darkviolet: '#9400D3',
+            deeppink: '#FF1493',
+            deepskyblue: '#00BFFF',
+            dimgray: '#696969',
+            dimgrey: '#696969',
+            dodgerblue: '#1E90FF',
+            firebrick: '#B22222',
+            floralwhite: '#FFFAF0',
+            forestgreen: '#228B22',
+            fuchsia: '#FF00FF',
+            gainsboro: '#DCDCDC',
+            ghostwhite: '#F8F8FF',
+            gold: '#FFD700',
+            goldenrod: '#DAA520',
+            gray: '#808080',
+            grey: '#808080',
+            green: '#008000',
+            greenyellow: '#ADFF2F',
+            honeydew: '#F0FFF0',
+            hotpink: '#FF69B4',
+            indianred: '#CD5C5C',
+            indigo: '#4B0082',
+            ivory: '#FFFFF0',
+            khaki: '#F0E68C',
+            lavender: '#E6E6FA',
+            lavenderblush: '#FFF0F5',
+            lawngreen: '#7CFC00',
+            lemonchiffon: '#FFFACD',
+            lightblue: '#ADD8E6',
+            lightcoral: '#F08080',
+            lightcyan: '#E0FFFF',
+            lightgoldenrodyellow: '#FAFAD2',
+            lightgray: '#D3D3D3',
+            lightgrey: '#D3D3D3',
+            lightgreen: '#90EE90',
+            lightpink: '#FFB6C1',
+            lightsalmon: '#FFA07A',
+            lightseagreen: '#20B2AA',
+            lightskyblue: '#87CEFA',
+            lightslategray: '#778899',
+            lightslategrey: '#778899',
+            lightsteelblue: '#B0C4DE',
+            lightyellow: '#FFFFE0',
+            lime: '#00FF00',
+            limegreen: '#32CD32',
+            linen: '#FAF0E6',
+            magenta: '#FF00FF',
+            maroon: '#800000',
+            mediumaquamarine: '#66CDAA',
+            mediumblue: '#0000CD',
+            mediumorchid: '#BA55D3',
+            mediumpurple: '#9370DB',
+            mediumseagreen: '#3CB371',
+            mediumslateblue: '#7B68EE',
+            mediumspringgreen: '#00FA9A',
+            mediumturquoise: '#48D1CC',
+            mediumvioletred: '#C71585',
+            midnightblue: '#191970',
+            mintcream: '#F5FFFA',
+            mistyrose: '#FFE4E1',
+            moccasin: '#FFE4B5',
+            navajowhite: '#FFDEAD',
+            navy: '#000080',
+            oldlace: '#FDF5E6',
+            olive: '#808000',
+            olivedrab: '#6B8E23',
+            orange: '#FFA500',
+            orangered: '#FF4500',
+            orchid: '#DA70D6',
+            palegoldenrod: '#EEE8AA',
+            palegreen: '#98FB98',
+            paleturquoise: '#AFEEEE',
+            palevioletred: '#DB7093',
+            papayawhip: '#FFEFD5',
+            peachpuff: '#FFDAB9',
+            peru: '#CD853F',
+            pink: '#FFC0CB',
+            plum: '#DDA0DD',
+            powderblue: '#B0E0E6',
+            purple: '#800080',
+            rebeccapurple: '#663399',
+            red: '#FF0000',
+            rosybrown: '#BC8F8F',
+            royalblue: '#4169E1',
+            saddlebrown: '#8B4513',
+            salmon: '#FA8072',
+            sandybrown: '#F4A460',
+            seagreen: '#2E8B57',
+            seashell: '#FFF5EE',
+            sienna: '#A0522D',
+            silver: '#C0C0C0',
+            skyblue: '#87CEEB',
+            slateblue: '#6A5ACD',
+            slategray: '#708090',
+            slategrey: '#708090',
+            snow: '#FFFAFA',
+            springgreen: '#00FF7F',
+            steelblue: '#4682B4',
+            tan: '#D2B48C',
+            teal: '#008080',
+            thistle: '#D8BFD8',
+            tomato: '#FF6347',
+            turquoise: '#40E0D0',
+            violet: '#EE82EE',
+            wheat: '#F5DEB3',
+            white: '#FFFFFF',
+            whitesmoke: '#F5F5F5',
+            yellow: '#FFFF00',
+            yellowgreen: '#9ACD32'
         };
         return namedColors[color];
     }
-    
-    static lightenColor(color, amt){
-    //color should be hex or named. First get hex color if it is named
-    if (color[0] != "#"){
-        //http://www.w3schools.com/colors/colors_names.asp
-        color = Utility.namedColorToHexColor(color);
+
+    static lightenColor(color, amt) {
+        //color should be hex or named. First get hex color if it is named
+        if (color[0] != "#") {
+            //http://www.w3schools.com/colors/colors_names.asp
+            color = Utility.namedColorToHexColor(color);
+        }
+
+        if (color === undefined) {
+            return false
+        }
+
+        //Now that we have hex, let's lighten it
+        //http://stackoverflow.com/a/13532993/2747370
+        var R = parseInt(color.substring(1, 3), 16),
+            G = parseInt(color.substring(3, 5), 16),
+            B = parseInt(color.substring(5, 7), 16);
+
+        R = parseInt(R * (1 + amt));
+        G = parseInt(G * (1 + amt));
+        B = parseInt(B * (1 + amt));
+
+        R = (R < 255) ? R : 255;
+        G = (G < 255) ? G : 255;
+        B = (B < 255) ? B : 255;
+
+        var RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
+        var GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
+        var BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+
+        return "#" + RR + GG + BB;
     }
-    
-    if (color === undefined){
-        return false
-    }
-    
-    //Now that we have hex, let's lighten it
-    //http://stackoverflow.com/a/13532993/2747370
-    var R = parseInt(color.substring(1,3),16),
-        G = parseInt(color.substring(3,5),16),
-        B = parseInt(color.substring(5,7),16);
 
-    R = parseInt(R * (1 + amt) );
-    G = parseInt(G * (1 + amt) );
-    B = parseInt(B * (1 + amt) );
-
-    R = (R<255)?R:255;  
-    G = (G<255)?G:255;  
-    B = (B<255)?B:255;  
-
-    var RR = ((R.toString(16).length==1)?"0"+R.toString(16):R.toString(16));
-    var GG = ((G.toString(16).length==1)?"0"+G.toString(16):G.toString(16));
-    var BB = ((B.toString(16).length==1)?"0"+B.toString(16):B.toString(16));
-
-    return "#"+RR+GG+BB;
-    }
-
-    static assert(condition, message){
+    static assert(condition, message) {
         if (!condition) {
             var message = Utility.defaultVal(message, "Assertion Failed");
             if (typeof Error !== "undefined") {
@@ -144,92 +290,90 @@ class Utility {
         return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
     }
     static replaceAll(str, find, replace) {
-      return str.replace(new RegExp(Utility.escapeRegExp(find), 'g'), replace);
+        return str.replace(new RegExp(Utility.escapeRegExp(find), 'g'), replace);
     }
 
 }
 
 class MathUtility {
-    static diff(f, ...values){
+    static diff(f, ...values) {
         // If only function "f" is provided, return a new function that approximates the derivative of f
         // values are provided also, return the value of the derivative at those values;
         var eps = 0.008;
         var numberOfArguments = f.numberOfArguments ? f.numberOfArguments : f.length;
-        var derivative = function(){
+        var derivative = function() {
             var derivComponents = [];
-            for (let j=0; j<numberOfArguments; j++){
+            for (let j = 0; j < numberOfArguments; j++) {
                 arguments[j] = Number(arguments[j]) // When used inside mathJS expressions, argument might be a string. So convert to a number first.
-                arguments[j] += -0.5*eps
+                arguments[j] += -0.5 * eps
                 let initialValue = f(...arguments);
                 arguments[j] += eps
                 let finalValue = f(...arguments);
-                arguments[j] += -0.5*eps
-                derivComponents.push( math.divide(math.subtract(finalValue, initialValue),eps) )
+                arguments[j] += -0.5 * eps
+                derivComponents.push(math.divide(math.subtract(finalValue, initialValue), eps))
             }
-            if (derivComponents.length===1){
+            if (derivComponents.length === 1) {
                 return derivComponents[0]
-            } 
-            else {
+            } else {
                 return derivComponents
             }
         }
-        
-        if (values.length > 0){
+
+        if (values.length > 0) {
             return derivative(...values)
-        }
-        else {
+        } else {
             derivative.numberOfArguments = numberOfArguments;
             return derivative
         }
     }
-    
-    static clamp(min, val, max){
+
+    static clamp(min, val, max) {
         return Math.min(Math.max(min, val), max)
     }
 }
 
 class Math3D {
-    constructor(settings){
+    constructor(settings) {
         this.swizzleOrder = Utility.defaultVal(settings.swizzleOrder, 'yzx');
         this.settings = this.setDefaults(settings);
-    
+
         this.mathbox = this.initializeMathBox();
         this.scene = this.setupScene();
         this.updateRange();
-    
+
         // Initial Drawing
         this.drawAxes();
         this.drawGrids();
-        
+
         // Add getters and setters for updating after initial rendering
         this.settings = this.makeDynamicSettings();
-        
+
         // create math scope
         this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
         this.setDefaultMathScope();
-        
+
         //Render math objects; this will update this.mathTree
         this.renderMathObjects();
     }
-    
-    setDefaultMathScope(){
+
+    setDefaultMathScope() {
         var defaultMathScope = {
             'pi': Math.PI,
             'e': Math.E,
-            'i': [1,0,0],
-            'j': [0,1,0],
-            'k': [0,0,1],
-            'diff':MathUtility.diff,
+            'i': [1, 0, 0],
+            'j': [0, 1, 0],
+            'k': [0, 0, 1],
+            'diff': MathUtility.diff,
         };
         this.mathScope = new WatchedScope(this.settings.mathScope)
         var onVariableChange = this.onVariableChange.bind(this);
-        for (let key in defaultMathScope){
+        for (let key in defaultMathScope) {
             let val = defaultMathScope[key];
             this.mathScope.addVariable(key, val, onVariableChange)
         }
     }
-    
-    setDefaults(settings){
+
+    setDefaults(settings) {
         this.defaultSettings = {
             containerId: null,
             range: {
@@ -240,9 +384,13 @@ class Math3D {
                 zMin: -5,
                 zMax: +5
             },
-            scale: {x:1, y:1, z:0.5},
+            scale: {
+                x: 1,
+                y: 1,
+                z: 0.5
+            },
             camera: {
-                position: [-0.75,-1.5,0.25],
+                position: [-0.75, -1.5, 0.25],
             },
             grids: {
                 xy: true,
@@ -250,284 +398,358 @@ class Math3D {
                 yz: false
             },
             axes: {
-                'x': genDefaultAxisSettings.call(this,'x', 'x'),
-                'y': genDefaultAxisSettings.call(this,'y', 'y'),
-                'z': genDefaultAxisSettings.call(this,'z', 'z'),
+                'x': genDefaultAxisSettings.call(this, 'x', 'x'),
+                'y': genDefaultAxisSettings.call(this, 'y', 'y'),
+                'z': genDefaultAxisSettings.call(this, 'z', 'z'),
             },
-            wrappedMathTree: [
-                {
-                    name: "General",
-                    objects: []
-                }
-            ]
+            wrappedMathTree: [{
+                name: "General",
+                objects: []
+            }]
         }
-    
-        function genDefaultAxisSettings(axisId, axisLabel) {        
+
+        function genDefaultAxisSettings(axisId, axisLabel) {
             // swizzle: user ---> mathbox
             // double swizzle: mathbox ---> user
-            var mathboxAxes = this.swizzle(this.swizzle({x:'x', y:'y', z:'z'}))
-        
+            var mathboxAxes = this.swizzle(this.swizzle({
+                x: 'x',
+                y: 'y',
+                z: 'z'
+            }))
+
             if (axisId === 'z') {
-                var tickLabelOffset = [20,0,0];
+                var tickLabelOffset = [20, 0, 0];
             } else {
                 var tickLabelOffset = undefined;
             }
-        
+
             var defaultAxisSettings = {
-                visible:true,
+                visible: true,
                 axisLabel: axisLabel,
-                labelOffset: [0,40,0],
-                axis: {width:2, axis: mathboxAxes[axisId]},
-                scale: {divide:10, nice:true, zero:false, axis: mathboxAxes[axisId] },
-                ticksVisible:true,
-                ticks: {width:2},
-                ticksFormat: {digits:2},
-                ticksLabel: {offset:tickLabelOffset}
+                labelOffset: [0, 40, 0],
+                axis: {
+                    width: 2,
+                    axis: mathboxAxes[axisId]
+                },
+                scale: {
+                    divide: 10,
+                    nice: true,
+                    zero: false,
+                    axis: mathboxAxes[axisId]
+                },
+                ticksVisible: true,
+                ticks: {
+                    width: 2
+                },
+                ticksFormat: {
+                    digits: 2
+                },
+                ticksLabel: {
+                    offset: tickLabelOffset
+                }
             };
-        
+
             return defaultAxisSettings
         }
-    
-        settings = _.merge({},this.defaultSettings, settings);
+
+        settings = _.merge({}, this.defaultSettings, settings);
         return settings
     }
 
-    makeDynamicSettings(){
+    makeDynamicSettings() {
         var math3d = this;
         var dynamicSettings = {
             range: {},
             grids: {},
             scale: {},
-            axes:{
-                x:{},
-                y:{},
-                z:{}
+            axes: {
+                x: {},
+                y: {},
+                z: {}
             }
         }
-    
+
         var _this = this;
-        Object.defineProperties(dynamicSettings.range,{
+        Object.defineProperties(dynamicSettings.range, {
             xMin: {
-                set: function(val){ this._xMin = val; math3d.updateRange();},
-                get: function(){ return this._xMin; }
+                set: function(val) {
+                    this._xMin = val;
+                    math3d.updateRange();
+                },
+                get: function() {
+                    return this._xMin;
+                }
             },
             xMax: {
-                set: function(val){ this._xMax = val; math3d.updateRange(); math3d.updateAxisLabelPositions();},
-                get: function(){ return this._xMax; }
+                set: function(val) {
+                    this._xMax = val;
+                    math3d.updateRange();
+                    math3d.updateAxisLabelPositions();
+                },
+                get: function() {
+                    return this._xMax;
+                }
             },
             yMin: {
-                set: function(val){ this._yMin = val; math3d.updateRange();},
-                get: function(){ return this._yMin; }
+                set: function(val) {
+                    this._yMin = val;
+                    math3d.updateRange();
+                },
+                get: function() {
+                    return this._yMin;
+                }
             },
             yMax: {
-                set: function(val){ this._yMax = val; math3d.updateRange(); math3d.updateAxisLabelPositions(); },
-                get: function(){ return this._yMax; }
+                set: function(val) {
+                    this._yMax = val;
+                    math3d.updateRange();
+                    math3d.updateAxisLabelPositions();
+                },
+                get: function() {
+                    return this._yMax;
+                }
             },
             zMin: {
-                set: function(val){ this._zMin = val; math3d.updateRange();},
-                get: function(){ return this._zMin; }
+                set: function(val) {
+                    this._zMin = val;
+                    math3d.updateRange();
+                },
+                get: function() {
+                    return this._zMin;
+                }
             },
             zMax: {
-                set: function(val){ this._zMax = val; math3d.updateRange(); math3d.updateAxisLabelPositions(); },
-                get: function(){ return this._zMax; }
+                set: function(val) {
+                    this._zMax = val;
+                    math3d.updateRange();
+                    math3d.updateAxisLabelPositions();
+                },
+                get: function() {
+                    return this._zMax;
+                }
             },
         })
-    
-        Object.defineProperties(dynamicSettings.grids,{
+
+        Object.defineProperties(dynamicSettings.grids, {
             xy: {
-                set: function(val){ this._xy = val; math3d.scene.select('#xy-grid').set('visible',val);},
-                get: function(){ return this._xy; }
+                set: function(val) {
+                    this._xy = val;
+                    math3d.scene.select('#xy-grid').set('visible', val);
+                },
+                get: function() {
+                    return this._xy;
+                }
             },
             xz: {
-                set: function(val){ this._xz = val; math3d.scene.select('#xz-grid').set('visible',val);},
-                get: function(){ return this._xz; }
+                set: function(val) {
+                    this._xz = val;
+                    math3d.scene.select('#xz-grid').set('visible', val);
+                },
+                get: function() {
+                    return this._xz;
+                }
             },
             yz: {
-                set: function(val){ this._yz = val; math3d.scene.select('#yz-grid').set('visible',val);},
-                get: function(){ return this._yz; }
+                set: function(val) {
+                    this._yz = val;
+                    math3d.scene.select('#yz-grid').set('visible', val);
+                },
+                get: function() {
+                    return this._yz;
+                }
             }
         })
-        
-        Object.defineProperties(dynamicSettings.scale,{
+
+        Object.defineProperties(dynamicSettings.scale, {
             x: {
-                set: function(val){
+                set: function(val) {
                     this._x = val;
-                    _this.mathbox.select('#main-cartesian').set("scale", _this.swizzle(_this.settings.scale) );
+                    _this.mathbox.select('#main-cartesian').set("scale", _this.swizzle(_this.settings.scale));
                 },
-                get: function(){
+                get: function() {
                     return this._x;
                 }
             },
             y: {
-                set: function(val){
+                set: function(val) {
                     this._y = val;
-                    _this.mathbox.select('#main-cartesian').set("scale", _this.swizzle(_this.settings.scale) );
+                    _this.mathbox.select('#main-cartesian').set("scale", _this.swizzle(_this.settings.scale));
                 },
-                get: function(){
+                get: function() {
                     return this._y;
                 }
             },
             z: {
-                set: function(val){
+                set: function(val) {
                     this._z = val;
-                    _this.mathbox.select('#main-cartesian').set("scale", _this.swizzle(_this.settings.scale) );
+                    _this.mathbox.select('#main-cartesian').set("scale", _this.swizzle(_this.settings.scale));
                 },
-                get: function(){
+                get: function() {
                     return this._z;
                 }
             }
         })
-        
-        Object.defineProperties(dynamicSettings.axes.x,{
+
+        Object.defineProperties(dynamicSettings.axes.x, {
             visible: {
-                set: function(val){
+                set: function(val) {
                     this._visible = val;
                     _this.mathbox.select('#axis-x').set("visible", val);
                 },
-                get: function(){
+                get: function() {
                     return this._visible;
                 }
             },
             ticksVisible: {
-                set: function(val){
+                set: function(val) {
                     this._ticksVisible = val;
                     _this.mathbox.select('#axis-x .ticks').set("visible", val);
                 },
-                get: function(){
+                get: function() {
                     return this._ticksVisible;
                 }
             },
-            axisLabel:{
-                set: function(val){
+            axisLabel: {
+                set: function(val) {
                     this._axisLabel = val;
                     _this.mathbox.select('#axis-x .axis-label text').set("data", [val]);
                 },
-                get: function(){
+                get: function() {
                     return this._axisLabel;
                 }
             }
         })
-        Object.defineProperties(dynamicSettings.axes.y,{
+        Object.defineProperties(dynamicSettings.axes.y, {
             visible: {
-                set: function(val){
+                set: function(val) {
                     this._visible = val;
                     _this.mathbox.select('#axis-y').set("visible", val);
                 },
-                get: function(){
+                get: function() {
                     return this._visible;
                 }
             },
             ticksVisible: {
-                set: function(val){
+                set: function(val) {
                     this._ticksVisible = val;
                     _this.mathbox.select('#axis-y .ticks').set("visible", val);
                 },
-                get: function(){
+                get: function() {
                     return this._ticksVisible;
                 }
             },
-            axisLabel:{
-                set: function(val){
+            axisLabel: {
+                set: function(val) {
                     this._axisLabel = val;
                     _this.mathbox.select('#axis-y .axis-label text').set("data", [val]);
                 },
-                get: function(){
+                get: function() {
                     return this._axisLabel;
                 }
             }
         })
-        Object.defineProperties(dynamicSettings.axes.z,{
+        Object.defineProperties(dynamicSettings.axes.z, {
             visible: {
-                set: function(val){
+                set: function(val) {
                     this._visible = val;
                     _this.mathbox.select('#axis-z').set("visible", val);
                 },
-                get: function(){
+                get: function() {
                     return this._visible;
                 }
             },
             ticksVisible: {
-                set: function(val){
+                set: function(val) {
                     this._ticksVisible = val;
                     _this.mathbox.select('#axis-z .ticks').set("visible", val);
                 },
-                get: function(){
+                get: function() {
                     return this._ticksVisible;
                 }
             },
-            axisLabel:{
-                set: function(val){
+            axisLabel: {
+                set: function(val) {
                     this._axisLabel = val;
                     _this.mathbox.select('#axis-z .axis-label text').set("data", [val]);
                 },
-                get: function(){
+                get: function() {
                     return this._axisLabel;
                 }
             }
         })
-        
+
         return _.merge(dynamicSettings, this.settings);
-    
+
     }
 
-    swizzle(arg, swizzleOrder){
+    swizzle(arg, swizzleOrder) {
         // similar to mathbox swizzle operator, but for regular arrays and objects.
         // Example: swizzle([1,2,3], 'zyx') = [3,2,1]
         swizzleOrder = Utility.defaultVal(swizzleOrder, this.swizzleOrder);
-        if (Array.isArray(arg)){
+        if (Array.isArray(arg)) {
             return swizzleArray(arg, swizzleOrder)
-        }
-        else {
+        } else {
             return swizzleObject(arg, swizzleOrder)
         }
-        function swizzleArray(array, swizzleOrder){
-            var keys = {'x':0, 'y': 1, 'z': 2, 'w':3}
-            return swizzleOrder.split('').map(function(elem){return array[keys[elem]] })
+
+        function swizzleArray(array, swizzleOrder) {
+            var keys = {
+                'x': 0,
+                'y': 1,
+                'z': 2,
+                'w': 3
+            }
+            return swizzleOrder.split('').map(function(elem) {
+                return array[keys[elem]]
+            })
         }
-        function swizzleObject(object, swizzleOrder){
+
+        function swizzleObject(object, swizzleOrder) {
             var newObject = {};
-            var oldKeys = ['x','y','z','w'];
+            var oldKeys = ['x', 'y', 'z', 'w'];
             var newKeys = swizzleOrder.split('');
-            for (var j=0; j < newKeys.length; j++){
-                newObject[ oldKeys[j] ] = object[ newKeys[j] ];
+            for (var j = 0; j < newKeys.length; j++) {
+                newObject[oldKeys[j]] = object[newKeys[j]];
             }
             return newObject
         }
     }
 
-    initializeMathBox(){
+    initializeMathBox() {
         var settings = this.settings
-    
+
         // if necessary, add a container for mathbox
-        if ($("#"+settings.containerId).length === 0){
+        if ($("#" + settings.containerId).length === 0) {
             settings.containerId = _.uniqueId();
             this.container = $("<div class='mathbox-container'></div>");
-            this.container.attr('id',settings.containerId);
+            this.container.attr('id', settings.containerId);
             $('body').append(this.container);
         } else {
-            this.container = $("#"+settings.containerId)
+            this.container = $("#" + settings.containerId)
             this.container.addClass('mathbox-container');
         }
-    
-        var plugins = ['core', 'cursor','controls'];
-        var controls = {klass:THREE.OrbitControls};
+
+        var plugins = ['core', 'cursor', 'controls'];
+        var controls = {
+            klass: THREE.OrbitControls
+        };
         var mathbox = mathBox({
             plugins: plugins,
             controls: controls,
             element: this.container[0]
         });
-    
+
         // setup camera
         mathbox.camera({
             proxy: true,
             position: this.swizzle(settings.camera.position),
         });
         mathbox.three.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
-    
+
         return mathbox;
     }
 
-    setupScene(){
+    setupScene() {
         var scene = this.mathbox
             .set({
                 focus: this.settings.focus,
@@ -536,107 +758,119 @@ class Math3D {
                 id: 'main-cartesian',
                 scale: this.swizzle(this.settings.scale)
             });
-        
+
         return scene
     }
 
-    drawAxes(){
-    
+    drawAxes() {
+
         var axesGroup = this.scene.group().set('classes', ['axes-group']);
         drawSingleAxis.call(this, 'x');
         drawSingleAxis.call(this, 'y');
         drawSingleAxis.call(this, 'z');
-    
-        function drawSingleAxis(axisId){
+
+        function drawSingleAxis(axisId) {
             var axisSettings = this.settings.axes[axisId];
-        
-            var axisNums = {'x':0,'y':1,'z':2};
+
+            var axisNums = {
+                'x': 0,
+                'y': 1,
+                'z': 2
+            };
             var axisNum = axisNums[axisId];
-            var labelPos = [0,0,0];
-            labelPos[axisNum] = this.settings.range[axisId+'Max'];
+            var labelPos = [0, 0, 0];
+            labelPos[axisNum] = this.settings.range[axisId + 'Max'];
             labelPos = this.swizzle(labelPos);
-        
+
             axesGroup.group()
-                .set('id','axis-' + axisId)
-                .set('classes',['axis'])
+                .set('id', 'axis-' + axisId)
+                .set('classes', ['axis'])
                 .axis(axisSettings.axis)
                 .scale(axisSettings.scale)
                 .group()
-                    .set('classes',['ticks'])
-                    .ticks(axisSettings.ticks)
-                    .format(axisSettings.ticksFormat)
-                    .label(axisSettings.ticksLabel)
-                    .set('classes',['tick-labels'])
+                .set('classes', ['ticks'])
+                .ticks(axisSettings.ticks)
+                .format(axisSettings.ticksFormat)
+                .label(axisSettings.ticksLabel)
+                .set('classes', ['tick-labels'])
                 .end()
                 .group()
-                    .set('classes',['axis-label'])
-                    .array({
-                        data: [labelPos],
-                        channels: 3,
-                        live: false
-                    })
-                    .text({
-                        data: [ axisSettings.axisLabel ],
-                        weight: 'bold',
-                    })
-                    .label({
-                        offset: axisSettings.labelOffset
-                    })
+                .set('classes', ['axis-label'])
+                .array({
+                    data: [labelPos],
+                    channels: 3,
+                    live: false
+                })
+                .text({
+                    data: [axisSettings.axisLabel],
+                    weight: 'bold',
+                })
+                .label({
+                    offset: axisSettings.labelOffset
+                })
                 .end()
-            .end();
+                .end();
         }
     }
 
-    updateAxisLabelPositions(){
-        var axisNums = {'x':0,'y':1,'z':2};
-    
-        for (var axisId in axisNums){
+    updateAxisLabelPositions() {
+        var axisNums = {
+            'x': 0,
+            'y': 1,
+            'z': 2
+        };
+
+        for (var axisId in axisNums) {
             var axisNum = axisNums[axisId];
-            var labelPos = [0,0,0];
-            labelPos[axisNum] = this.settings.range[axisId+'Max'];
+            var labelPos = [0, 0, 0];
+            labelPos[axisNum] = this.settings.range[axisId + 'Max'];
             labelPos = this.swizzle(labelPos);
             this.scene.select("#axis-" + axisId + " .axis-label array").set('data', [labelPos]);
         }
     }
 
-    updateRange(){
+    updateRange() {
         var range = this.settings.range;
         this.scene.set("range", this.swizzle([
             [range.xMin, range.xMax],
             [range.yMin, range.yMax],
             [range.zMin, range.zMax]
-        ]) );
+        ]));
     }
 
-    drawGrids(){
+    drawGrids() {
         // TODO: enable drawing of other grids
         var divX = 10;
-        var divY = divX * this.settings.scale.y/this.settings.scale.x
-        var divZ = divZ * this.settings.scale.z/this.settings.scale.x
-    
-        var trueAxes = this.swizzle(this.swizzle({x:'x', y:'y', z:'z'}))
-    
+        var divY = divX * this.settings.scale.y / this.settings.scale.x
+        var divZ = divZ * this.settings.scale.z / this.settings.scale.x
+
+        var trueAxes = this.swizzle(this.swizzle({
+            x: 'x',
+            y: 'y',
+            z: 'z'
+        }))
+
         var grids = this.scene.group()
-            .set('classes',['grids']);
-        
+            .set('classes', ['grids']);
+
         grids.grid({
             id: 'xy-grid',
             axes: [trueAxes.x, trueAxes.y],
-            width: 1,  
+            width: 1,
             divideX: divX,
             divideY: divY,
-            opacity:0.5,
-            visible:this.settings.grids.xy
+            opacity: 0.5,
+            visible: this.settings.grids.xy
         });
-        
+
         grids.grid({
             id: 'xz-grid',
             axes: [trueAxes.x, trueAxes.z],
             width: 1,
             divideX: divX,
             divideY: divZ,
-            opacity:0.5,
-            visible:this.settings.grids.xz
+            opacity: 0.5,
+            visible: this.settings.grids.xz
         });
 
         grids.grid({
@@ -645,63 +879,63 @@ class Math3D {
             width: 1,
             divideX: divY,
             divideY: divZ,
-            opacity:0.5,
-            visible:this.settings.grids.yz
+            opacity: 0.5,
+            visible: this.settings.grids.yz
         });
-    
+
     }
-    
-    renderMathObjects(){
+
+    renderMathObjects() {
         var _this = this;
         // Variable Objects needs to be added to mathTree first because other objects might reference them. 
         // The following seems a bit hacky, but works well.
         // 1. Add only Variable objects to the mathTree. This will expand mathScope
         // 2. redefine mathTree as []
         // 3. Add all mathObjects to the mathTree. Delete Variable names from mathScope just before they are added.
-        
-        
-        _.forEach(this.settings.wrappedMathTree, function(branch, idx){
+
+
+        _.forEach(this.settings.wrappedMathTree, function(branch, idx) {
             var branchCopy = {
                 name: branch.name,
                 collapsed: branch.collapsed,
                 objects: []
             };
             _this.mathTree.push(branchCopy);
-            _.forEach(branch.objects, function(metaObj, idx){
+            _.forEach(branch.objects, function(metaObj, idx) {
                 // only add variables
-                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider'){
+                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider') {
                     var mathObj = MathObject.renderNewObject(_this, metaObj);
                 }
             });
         })
         this.mathTree = [];
-        _.forEach(this.settings.wrappedMathTree, function(branch, idx){
+        _.forEach(this.settings.wrappedMathTree, function(branch, idx) {
             var branchCopy = {
                 name: branch.name,
                 collapsed: branch.collapsed,
                 objects: []
             };
             _this.mathTree.push(branchCopy);
-            _.forEach(branch.objects, function(metaObj, idx){
+            _.forEach(branch.objects, function(metaObj, idx) {
                 // creating a new object appends to last branch
                 var mathObj = MathObject.renderNewObject(_this, metaObj);
-                if (mathObj.type==='VariableSlider' || mathObj.type === 'Variable'){
+                if (mathObj.type === 'VariableSlider' || mathObj.type === 'Variable') {
                     mathObj.valid = true;
                     mathObj.lastValidName = mathObj.name;
                 }
             });
         })
-        
+
         // Now, render all other objects
-        
+
         this.settings.wrappedMathTree = [];
     }
-    
-    onVariableChange(varName){
+
+    onVariableChange(varName) {
         // update objects where the variables have changed
-        _.forEach(this.mathTree, function(branch, idx){
-            _.forEach(branch.objects, function(obj, idx){
-                if ( _.contains( obj.variables, varName) ){
+        _.forEach(this.mathTree, function(branch, idx) {
+            _.forEach(branch.objects, function(obj, idx) {
+                if (_.contains(obj.variables, varName)) {
                     try {
                         obj.recalculateData();
                     } catch (e) {
@@ -711,74 +945,80 @@ class Math3D {
             })
         })
     }
-    
-    serialize(settings){
+
+    serialize(settings) {
         //Do not copy this.mathScope; those anything added to mathScope should be stored in mathTree;
-        
+
         settings = Utility.defaultVal(settings, this.settings);
         // copy settings values, no setters and getters
         var rawSettings = Utility.deepCopyValuesOnly(this.settings)
-        // camera is a THREE js Vec3 object
+            // camera is a THREE js Vec3 object
         var camera = this.mathbox.three.camera.position;
         // Round camera positions to keep encoded settings small.
-        rawSettings.camera.position = [camera.x, camera.y, camera.z].map( function(x){return Math.round(x*1000)/1000; } );
+        rawSettings.camera.position = [camera.x, camera.y, camera.z].map(function(x) {
+            return Math.round(x * 1000) / 1000;
+        });
         rawSettings.camera.position = this.swizzle(this.swizzle(rawSettings.camera.position));
         // add math objects
-        _.forEach(this.mathTree, function(branch){
-            rawSettings.wrappedMathTree.push({name:branch.name, collapsed:branch.collapsed, objects:[]});
-            var serialBranch = rawSettings.wrappedMathTree[rawSettings.wrappedMathTree.length-1];
-            _.forEach(branch.objects, function(mathObj){
-                serialBranch.objects.push( JSON.parse(mathObj.serialize()) ); // serialized then parsed to remove getters and setters
+        _.forEach(this.mathTree, function(branch) {
+            rawSettings.wrappedMathTree.push({
+                name: branch.name,
+                collapsed: branch.collapsed,
+                objects: []
+            });
+            var serialBranch = rawSettings.wrappedMathTree[rawSettings.wrappedMathTree.length - 1];
+            _.forEach(branch.objects, function(mathObj) {
+                serialBranch.objects.push(JSON.parse(mathObj.serialize())); // serialized then parsed to remove getters and setters
             });
         });
-        return JSON.stringify(Utility.deepObjectDiff(rawSettings,this.defaultSettings));
+        return JSON.stringify(Utility.deepObjectDiff(rawSettings, this.defaultSettings));
     }
-    
-    saveSettingsAsURL(settings){
+
+    saveSettingsAsURL(settings) {
         settings = Utility.defaultVal(settings, this.settings);
-        var settingsDiff64 = window.btoa( this.serialize(settings) );
+        var settingsDiff64 = window.btoa(this.serialize(settings));
         var url = window.location.href.split('#')[0].split("?")[0] + "?settings=" + settingsDiff64;
         return url
     }
-    
-    static decodeSettingsAsURL64(encodedSettings){
+
+    static decodeSettingsAsURL64(encodedSettings) {
         var settings = JSON.parse(window.atob(encodedSettings))
-        
+
         return settings
     }
 }
 
-class WatchedScope{
+class WatchedScope {
     //An object where each property is watched for change
-    constructor(){
-    }
-    
-    addVariable(key, val, onChangeFunction){
+    constructor() {}
+
+    addVariable(key, val, onChangeFunction) {
         // If key already defined, return false; else add variable and return true
-        if (this.hasOwnProperty(key) || key === ''){
+        if (this.hasOwnProperty(key) || key === '') {
             return false;
-        }
-        else {
+        } else {
             Object.defineProperty(this, key, {
-                get: function(){return this['_'+key];},
-                set: function(val){
-                    this['_'+key] = val;
+                get: function() {
+                    return this['_' + key];
+                },
+                set: function(val) {
+                    this['_' + key] = val;
                     onChangeFunction(key, val);
                 },
-                configurable:true
+                configurable: true
             })
             this[key] = val
             return true
         }
-        
+
     }
-    
-    removeVariable(key){
-        delete this["_"+key];
+
+    removeVariable(key) {
+        delete this["_" + key];
         delete this[key];
     }
 
-    serialize(){
+    serialize() {
         var rawSettings = Utility.deepCopyValuesOnly(this)
         return JSON.stringify(rawSettings);
     }
@@ -787,57 +1027,61 @@ class WatchedScope{
 
 class MathExpression {
     // Holds data for math expressions.
-    constructor(expression){
+    constructor(expression) {
         // store initial representation
         this.expression = expression;
-        
+
         var parsed = this.parse();
-        
+
         this.variables = []
         this.functions = []
-        
-        parsed.traverse(function(node){
-            if (node.type === 'SymbolNode'){ this.variables.push(node.name); }
-            if (node.type === 'FunctionNode'){ this.functions.push(node.name); }
+
+        parsed.traverse(function(node) {
+            if (node.type === 'SymbolNode') {
+                this.variables.push(node.name);
+            }
+            if (node.type === 'FunctionNode') {
+                this.functions.push(node.name);
+            }
         }.bind(this))
 
         var compiled = parsed.compile();
-        
-        if (expression[0]=="["){
-            this.eval = function(scope){
+
+        if (expression[0] == "[") {
+            this.eval = function(scope) {
                 return compiled.eval(scope).toArray();
             }
         } else {
-            this.eval = function(scope){
+            this.eval = function(scope) {
                 return compiled.eval(scope);
             }
         }
 
     }
-    
-    parse(){
+
+    parse() {
         // Cross and dot products are not built into mathjs express. Let's replace "cross" and "dot" by mathjs operators that we probably won't use. Then we'll reassign functionality to these operators.
         this.expression = this.expression.replace(/dot/g, '|');
         this.expression = this.expression.replace(/cross/g, '&');
         var parsed = math.parse(this.expression);
 
-        parsed.traverse(function(node){
-            if (node.type === 'OperatorNode' && node.op === '|'){
+        parsed.traverse(function(node) {
+            if (node.type === 'OperatorNode' && node.op === '|') {
                 node.fn = 'dot';
-            } 
-            if (node.type === 'OperatorNode' && node.op === '&'){
+            }
+            if (node.type === 'OperatorNode' && node.op === '&') {
                 node.fn = 'cross';
             }
         }.bind(this))
-        this.expression = this.expression.replace(/:/,'dot')
-        this.expression = this.expression.replace(/&/,'cross')
+        this.expression = this.expression.replace(/:/, 'dot')
+        this.expression = this.expression.replace(/&/, 'cross')
         return parsed
     }
 }
 
 // Abstract
 class MathObject {
-    constructor(math3d, settings){
+    constructor(math3d, settings) {
         /*Guidelines:
             this.settings: 
                 should only contain information intended for serialization.
@@ -846,129 +1090,129 @@ class MathObject {
         this.math3d = math3d;
         this.id = _.uniqueId();
         // Add new objects to newest mathTree branch
-        math3d.mathTree[math3d.mathTree.length-1].objects.push(this);
-        
+        math3d.mathTree[math3d.mathTree.length - 1].objects.push(this);
+
         this.type = this.constructor.name;
     }
-    
-    setDefaults(settings){
-        settings = _.merge({},this.defaultSettings, settings);
-        _.merge(this.settings,settings);
+
+    setDefaults(settings) {
+        settings = _.merge({}, this.defaultSettings, settings);
+        _.merge(this.settings, settings);
         return this.settings;
     }
-    
-    parseRawExpression(expr){
+
+    parseRawExpression(expr) {
         return new MathExpression(expr);
     }
-    
-    serialize(){
+
+    serialize() {
         // copy settings values, no setters and getters
         var rawSettings = Utility.deepCopyValuesOnly(this.settings)
         var metaObj = {
-            type: this.constructor.name,
-            settings: Utility.deepObjectDiff(rawSettings, this.defaultSettings)
-        }
-        // Our object setters store values in properties prefixed with '_'. Let's remove the underscores.
+                type: this.constructor.name,
+                settings: Utility.deepObjectDiff(rawSettings, this.defaultSettings)
+            }
+            // Our object setters store values in properties prefixed with '_'. Let's remove the underscores.
         return JSON.stringify(metaObj);
     };
-    
-    remove(){
+
+    remove() {
         var objIdx = -1;
         var branchIdx = -1;
-        while (objIdx < 0){
-            branchIdx+= 1;
+        while (objIdx < 0) {
+            branchIdx += 1;
             var objIdx = this.math3d.mathTree[branchIdx].objects.indexOf(this);
         }
         this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);
     }
-    
+
     static renderNewObject(math3d, metaObj) {
-        if (metaObj.type === 'MathObject'){
+        if (metaObj.type === 'MathObject') {
             return new MathObject(math3d, metaObj.settings)
         };
-        if (metaObj.type === 'Variable'){
+        if (metaObj.type === 'Variable') {
             return new Variable(math3d, metaObj.settings)
         };
-        if (metaObj.type === 'VariableSlider'){
+        if (metaObj.type === 'VariableSlider') {
             return new VariableSlider(math3d, metaObj.settings)
         };
-        
-        if (metaObj.type === 'Point'){
+
+        if (metaObj.type === 'Point') {
             return new Point(math3d, metaObj.settings)
         };
-        if (metaObj.type === 'Line'){
+        if (metaObj.type === 'Line') {
             return new Line(math3d, metaObj.settings)
         };
-        if (metaObj.type === 'Vector'){
+        if (metaObj.type === 'Vector') {
             return new Vector(math3d, metaObj.settings)
         };
-        if (metaObj.type === 'ParametricCurve'){
+        if (metaObj.type === 'ParametricCurve') {
             return new ParametricCurve(math3d, metaObj.settings)
         };
-        if (metaObj.type === 'ParametricSurface'){
+        if (metaObj.type === 'ParametricSurface') {
             return new ParametricSurface(math3d, metaObj.settings)
         };
     }
 }
 
-class AbstractVariable extends MathObject{
-    constructor(math3d, settings){
+class AbstractVariable extends MathObject {
+    constructor(math3d, settings) {
         super(math3d, settings);
-        
+
         this.name = null;
         this.lastValidName = null;
         this.variables = [];
-        
+
         var _this = this;
         this.settings = {};
-        Object.defineProperties(this.settings,{
+        Object.defineProperties(this.settings, {
             name: {
-                set: function(val){
+                set: function(val) {
                     // _this.name: current name
                     // val: new name
                     this._name = val;
                     val = _this.setName(val);
                 },
-                get: function(val){
+                get: function(val) {
                     return this._name;
                 }
             }
-        });     
+        });
     }
-    setName(newName){
-        this.math3d.mathScope.removeVariable(this.lastValidName);
-        this.valid = this.addVarToMathScope(newName);
+    setName(newName) {
+            this.math3d.mathScope.removeVariable(this.lastValidName);
+            this.valid = this.addVarToMathScope(newName);
 
-        if (this.valid) {
-            this.lastValidName = newName;
+            if (this.valid) {
+                this.lastValidName = newName;
+            }
+            this.name = newName;
+
+            // name change might cause other variables to be valid / invalid. Let's check
+
+            this.updateOthers();
+
+            return newName;
         }
-        this.name = newName;
-        
-        // name change might cause other variables to be valid / invalid. Let's check
-    
-        this.updateOthers();
-        
-        return newName;
-    }
-    // addVarToMathScope(newName){} defined by all subclasses
-    get defaultSettings(){
+        // addVarToMathScope(newName){} defined by all subclasses
+    get defaultSettings() {
         var defaults = {
             description: ''
         }
         return defaults
     }
-    
-    remove(){
+
+    remove() {
         this.math3d.mathScope.removeVariable(this.lastValidName);
         MathObject.prototype.remove.call(this);
     }
-    updateOthers(){
+    updateOthers() {
         var _this = this;
-        _.forEach(this.math3d.mathTree, function(branch){
-            _.forEach(branch.objects, function(obj){
-                if (obj.constructor.prototype instanceof AbstractVariable && obj !== _this && !obj.valid ){
+        _.forEach(this.math3d.mathTree, function(branch) {
+            _.forEach(branch.objects, function(obj) {
+                if (obj.constructor.prototype instanceof AbstractVariable && obj !== _this && !obj.valid) {
                     obj.valid = obj.addVarToMathScope(obj.name);
-                    if (obj.valid){
+                    if (obj.valid) {
                         obj.lastValidName = obj.name;
                         obj.recalculateData();
                     }
@@ -978,209 +1222,238 @@ class AbstractVariable extends MathObject{
     }
 }
 
-class Variable extends AbstractVariable{
-    constructor(math3d, settings){
+class Variable extends AbstractVariable {
+    constructor(math3d, settings) {
         super(math3d, settings);
         this.parsedExpression = null;
         this.argNames = null;
         this.holdEvaluation = null;
-        
+
         var _this = this;
-        Object.defineProperties(this.settings,{
+        Object.defineProperties(this.settings, {
             rawExpression: {
-                set: function(val){
+                set: function(val) {
                     this._rawExpression = val;
                     _this.parsedExpression = _this.parseRawExpression(val);
                     _this.updateVariablesList();
                     _this.setRawExpression(val);
                 },
-                get: function(){
+                get: function() {
                     return this._rawExpression;
                 }
             },
-            rawName:{
-                set: function(val){
+            rawName: {
+                set: function(val) {
                     this._rawName = val;
                     _this.setRawName(val);
                 },
-                get: function(){
+                get: function() {
                     return this._rawName;
                 }
             }
         });
         this.settings = this.setDefaults(settings);
-        
+
     }
-    
-    get defaultSettings(){
+
+    get defaultSettings() {
         var defaults = {
             rawName: 'f(t)',
             rawExpression: 'e^t',
-            description:'Function'
+            description: 'Function'
         }
         return defaults
     }
-    
-    setRawName(val){
+
+    setRawName(val) {
         var expr = this.parseRawExpression(val);
         // expr should be something like f_1(s,t); should have 1 function and 0+ variables
-        if (expr.functions.length === 1){
+        if (expr.functions.length === 1) {
             this.holdEvaluation = true;
             this.argNames = expr.variables;
             this.settings.name = expr.functions[0];
-            if (this.settings.description='Variable'){this.settings.description='Function'};
-        }
-        else if (expr.functions.length === 0) {
+            if (this.settings.description = 'Variable') {
+                this.settings.description = 'Function'
+            };
+        } else if (expr.functions.length === 0) {
             this.holdEvaluation = false;
             this.argNames = []
             this.settings.name = expr.variables[0];
-            if (this.settings.description='Function'){this.settings.description='Variable'};
+            if (this.settings.description = 'Function') {
+                this.settings.description = 'Variable'
+            };
         } else {}
         this.setRawExpression(this.settings.rawExpression);
     }
-    addVarToMathScope(newName){
-         var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
-         return this.math3d.mathScope.addVariable(newName, this.value, onVariableChange);
+    addVarToMathScope(newName) {
+        var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
+        return this.math3d.mathScope.addVariable(newName, this.value, onVariableChange);
     }
-    setRawExpression(val){
+    setRawExpression(val) {
         var expr = this.parsedExpression;
-        if (!this.valid || expr===null){
+        if (!this.valid || expr === null) {
             return
         }
-        
-        if (expr === null){
+
+        if (expr === null) {
             return
         }
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
-        if (this.holdEvaluation){
+        if (this.holdEvaluation) {
             let argNames = this.argNames;
-            this.value = function(){
+            this.value = function() {
                 //arguments and this.argNames should have same length
-                for (let j=0; j<argNames.length;j++){
+                for (let j = 0; j < argNames.length; j++) {
                     localMathScope[argNames[j]] = arguments[j];
                 }
                 return expr.eval(localMathScope);
             }
             this.value.numberOfArguments = argNames.length;
-        } 
-        else {
+        } else {
             this.value = expr.eval(localMathScope);
         }
         this.math3d.mathScope[this.name] = this.value;
     }
-    
-    updateVariablesList(){
+
+    updateVariablesList() {
         this.variables = []
-        if (this.parsedExpression !== null){
-            this.variables = this.variables.concat( this.parsedExpression.variables );
-            this.variables = this.variables.concat( this.parsedExpression.functions );
+        if (this.parsedExpression !== null) {
+            this.variables = this.variables.concat(this.parsedExpression.variables);
+            this.variables = this.variables.concat(this.parsedExpression.functions);
         }
     }
-    recalculateData(){
+    recalculateData() {
         this.settings.rawExpression = this.settings.rawExpression;
     }
 }
 
 class VariableSlider extends AbstractVariable {
-    constructor(math3d, settings){
+    constructor(math3d, settings) {
         super(math3d, settings);
-        
+
         this.parsedMin = null;
         this.parsedMax = null;
-        
-        this.speeds = [
-            {value:1/16, string:"1/16"},
-            {value:1/8, string:"1/8"},
-            {value:1/4, string:"1/4"},
-            {value:1/2, string:"1/2"},
-            {value:3/4, string:"3/4"},
-            {value:1, string:"1"},
-            {value:1.5, string:"1.5"},
-            {value:2, string:"2"},
-            {value:3, string:"3"},
-            {value:4, string:"4"},
-            {value:8, string:"8"},
-        ]
-        
+
+        this.speeds = [{
+            value: 1 / 16,
+            string: "1/16"
+        }, {
+            value: 1 / 8,
+            string: "1/8"
+        }, {
+            value: 1 / 4,
+            string: "1/4"
+        }, {
+            value: 1 / 2,
+            string: "1/2"
+        }, {
+            value: 3 / 4,
+            string: "3/4"
+        }, {
+            value: 1,
+            string: "1"
+        }, {
+            value: 1.5,
+            string: "1.5"
+        }, {
+            value: 2,
+            string: "2"
+        }, {
+            value: 3,
+            string: "3"
+        }, {
+            value: 4,
+            string: "4"
+        }, {
+            value: 8,
+            string: "8"
+        }, ]
+
         var _this = this;
-        Object.defineProperties(this.settings,{
+        Object.defineProperties(this.settings, {
             min: {
-                set: function(val){
+                set: function(val) {
                     this._min = val;
                     _this.setMin(val);
                 },
-                get: function(){return this._min;},
+                get: function() {
+                    return this._min;
+                },
             },
             max: {
-                set: function(val){
+                set: function(val) {
                     this._max = val;
                     _this.setMax(val);
                 },
-                get: function(){return this._max;},
+                get: function() {
+                    return this._max;
+                },
             },
             value: {
-                set: function(val){
+                set: function(val) {
                     this._value = val;
                     _this.setValue(val);
                 },
-                get: function(){return this._value;},
+                get: function() {
+                    return this._value;
+                },
             }
         });
-        
+
         this.settings = this.setDefaults(settings);
         var onVariableChange = math3d.onVariableChange.bind(math3d);
         math3d.mathScope.addVariable(this.settings.name, this.settings.value, onVariableChange);
-        
+
     }
-    
-    get defaultSettings(){
+
+    get defaultSettings() {
         var defaults = {
-            value:0.5,
-            min:'0',
-            max:'10',
-            name:'X',
-            speedIdx:5,
-            animationRunning:false,
-            description:this.type,
+            value: 0.5,
+            min: '0',
+            max: '10',
+            name: 'X',
+            speedIdx: 5,
+            animationRunning: false,
+            description: this.type,
         }
         return defaults
     }
-    
-    updateVariablesList(){
+
+    updateVariablesList() {
         this.variables = []
-        if (this.parsedMin !== null){
-            this.variables = this.variables.concat( this.parsedMin.variables );
-            this.variables = this.variables.concat( this.parsedMin.functions );
+        if (this.parsedMin !== null) {
+            this.variables = this.variables.concat(this.parsedMin.variables);
+            this.variables = this.variables.concat(this.parsedMin.functions);
         }
-        if (this.parsedMax !== null){
-            this.variables = this.variables.concat( this.parsedMax.variables );
-            this.variables = this.variables.concat( this.parsedMax.functions );
+        if (this.parsedMax !== null) {
+            this.variables = this.variables.concat(this.parsedMax.variables);
+            this.variables = this.variables.concat(this.parsedMax.functions);
         }
     }
-    
-    setMin(val){
+
+    setMin(val) {
         this.parsedMin = this.parseRawExpression(val);
         this.min = this.parsedMin.eval(this.math3d.mathScope);
         this.updateVariablesList();
     }
-    setMax(val){
+    setMax(val) {
         this.parsedMax = this.parseRawExpression(val);
         this.max = this.parsedMax.eval(this.math3d.mathScope);
         this.updateVariablesList();
     }
-    setValue(val){
-        if (!this.valid){
+    setValue(val) {
+        if (!this.valid) {
             return
         }
         this.math3d.mathScope[this.name] = val;
     }
-    
-    addVarToMathScope(newName){
-         var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
-         return this.math3d.mathScope.addVariable(newName, this.settings.value, onVariableChange);
+
+    addVarToMathScope(newName) {
+        var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
+        return this.math3d.mathScope.addVariable(newName, this.settings.value, onVariableChange);
     }
-    
-    recalculateData(){
+
+    recalculateData() {
         this.settings.min = this.settings.min;
         this.settings.value = this.settings.value;
         this.settings.max = this.settings.max;
@@ -1188,257 +1461,293 @@ class VariableSlider extends AbstractVariable {
 }
 
 // All classes below are used for rendering graphics with MathBox
-    class MathGraphic extends MathObject{
-    constructor(math3d, settings){ 
+class MathGraphic extends MathObject {
+    constructor(math3d, settings) {
         //Every sublcass should define these
         super(math3d, settings);
-        this.mathboxGroup = null; 
+        this.mathboxGroup = null;
         this.mathboxDataType = null; // e.g., 'array'
         this.mathboxRenderType = null; // e.g., 'point'
-        
+
         this.parsedExpression = null;
         this.parsedRange = null;
         this.variables = [];
-        
+
         this.settings = {};
         this.userSettings = [
             //{attribute:'visible',format:'Boolean'},
-            {attribute:'opacity',format:'Number'},
+            {
+                attribute: 'opacity',
+                format: 'Number'
+            },
             //{attribute:'color',format:'String'},
-            {attribute:'zIndex',format:'Number'},
+            {
+                attribute: 'zIndex',
+                format: 'Number'
+            },
             //{attribute:'rawExpression',format:'String'}
         ]
-        
+
         var _this = this;
-        Object.defineProperties(this.settings,{
+        Object.defineProperties(this.settings, {
             rawExpression: {
-                set: function(val){
+                set: function(val) {
                     this._rawExpression = val;
                     _this.parsedExpression = _this.parseRawExpression(val);
                     _this.updateVariablesList();
                     _this.recalculateData();
                 },
-                get: function(){return this._rawExpression;},
+                get: function() {
+                    return this._rawExpression;
+                },
             },
             color: {
-                set: function(val){
+                set: function(val) {
                     // test whether val is a valid hex color except for missing '#', e.g., 00FF2A. jscolor provides such colors.
                     var needsHash = /(^[0-9A-F]{6}$)|(^[0-9A-F]{3}$)/i.test(val);
-                    if (needsHash){val = "#" + val;}
+                    if (needsHash) {
+                        val = "#" + val;
+                    }
                     this._color = val[0] === '#' ? val : Utility.namedColorToHexColor(val);
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setColor(val);
                     }
                 },
-                get: function(){return this._color;},
+                get: function() {
+                    return this._color;
+                },
             },
             shaded: {
-                set: function(val){
+                set: function(val) {
                     this._shaded = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setShaded(val);
                     }
                 },
-                get: function(){return this._shaded;},
+                get: function() {
+                    return this._shaded;
+                },
             },
             opacity: {
-                set: function(val){
+                set: function(val) {
                     this._opacity = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setOpacity(val);
                     }
                 },
-                get: function(){return this._opacity;},
+                get: function() {
+                    return this._opacity;
+                },
             },
             zIndex: {
-                set: function(val){
+                set: function(val) {
                     this._zIndex = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setZIndex(val);
                     }
                 },
-                get: function(){return this._zIndex;},
+                get: function() {
+                    return this._zIndex;
+                },
             },
             visible: {
-                set: function(val){
+                set: function(val) {
                     this._visible = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setVisible(val);
                     }
                 },
-                get: function(){return this._visible;},
+                get: function() {
+                    return this._visible;
+                },
             },
             size: {
-                set: function(val){
+                set: function(val) {
                     this._size = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setSize(val);
                     }
                 },
-                get: function(){return this._size;},
+                get: function() {
+                    return this._size;
+                },
             },
             width: {
-                set: function(val){
+                set: function(val) {
                     this._width = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setWidth(val);
                     }
                 },
-                get: function(){return this._width;},
+                get: function() {
+                    return this._width;
+                },
             },
             range: {
-                set: function(val){
+                set: function(val) {
                     this._range = val;
                     _this.setRange(val);
                 },
-                get: function(){return this._range;},
+                get: function() {
+                    return this._range;
+                },
             },
             samples: {
-                set: function(val){
+                set: function(val) {
                     this._samples = val;
                     _this.setSamples(val);
                 },
-                get: function(){return this._samples;},
+                get: function() {
+                    return this._samples;
+                },
             },
             end: {
-                set: function(val){
+                set: function(val) {
                     this._end = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setEnd(val);
                     }
                 },
-                get: function(){return this._end;},
+                get: function() {
+                    return this._end;
+                },
             },
             start: {
-                set: function(val){
+                set: function(val) {
                     this._start = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setStart(val);
                     }
                 },
-                get: function(){return this._start;},
+                get: function() {
+                    return this._start;
+                },
             },
             size: {
-                set: function(val){
+                set: function(val) {
                     this._size = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setSize(val);
                     }
                 },
-                get: function(){return this._size;},
+                get: function() {
+                    return this._size;
+                },
             },
         });
-        
+
     };
-    
-    get defaultSettings(){
+
+    get defaultSettings() {
         var defaults = {
             visible: true,
             color: '#3090FF',
             zIndex: 0,
-            opacity:1,
-            description:this.type,
+            opacity: 1,
+            description: this.type,
         }
         return defaults
     }
-    
+
     //Define this for every subclass
-    recalculateData(){}
-    
-    updateVariablesList(){
+    recalculateData() {}
+
+    updateVariablesList() {
         this.variables = []
-        if (this.parsedExpression !== null){
-            this.variables = this.variables.concat( this.parsedExpression.variables );
-            this.variables = this.variables.concat( this.parsedExpression.functions );
+        if (this.parsedExpression !== null) {
+            this.variables = this.variables.concat(this.parsedExpression.variables);
+            this.variables = this.variables.concat(this.parsedExpression.functions);
         }
-        
-        if (this.parsedRange !== null){
-            this.variables = this.variables.concat( this.parsedRange.variables );
-            this.variables = this.variables.concat( this.parsedRange.functions );
+
+        if (this.parsedRange !== null) {
+            this.variables = this.variables.concat(this.parsedRange.variables);
+            this.variables = this.variables.concat(this.parsedRange.functions);
         }
     }
-    
-    get data() {return this._data;}
+
+    get data() {
+        return this._data;
+    }
     set data(val) {
-        this._data = val; 
-        if (this.mathboxGroup !== null){
+        this._data = val;
+        if (this.mathboxGroup !== null) {
             this.setData(val);
         };
     }
-    
-    setData(val){
-        this.mathboxGroup.select(this.mathboxDataType).set("data",val);
+
+    setData(val) {
+        this.mathboxGroup.select(this.mathboxDataType).set("data", val);
     }
-    
-    setColor(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("color",val);
+
+    setColor(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("color", val);
     }
-    
-    setShaded(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("shaded",val);
+
+    setShaded(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("shaded", val);
     }
-    
-    setOpacity(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("opacity",val);
+
+    setOpacity(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("opacity", val);
     }
-    
-    setZIndex(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("zIndex",val);
+
+    setZIndex(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("zIndex", val);
     }
-    
-    setSize(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("size",val);
+
+    setSize(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("size", val);
     }
-    
-    setVisible(val){
-        this.mathboxGroup.set("visible",val);
+
+    setVisible(val) {
+        this.mathboxGroup.set("visible", val);
     }
-    
-    setWidth(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("width",val);
+
+    setWidth(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("width", val);
     }
-    
-    setRange(val){
+
+    setRange(val) {
         this.parsedRange = this.parseRawExpression(val);
         this.range = this.parsedRange.eval(this.math3d.mathScope);
         this.updateVariablesList();
         this.recalculateData();
     }
-    
-    setSamples(val){
+
+    setSamples(val) {
         this.recalculateData();
     }
-    
-    setStart(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("start",val);
+
+    setStart(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("start", val);
     }
-    
-    setEnd(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("end",val);
+
+    setEnd(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("end", val);
     }
-    
-    setSize(val){
-        this.mathboxGroup.select(this.mathboxRenderType).set("size",val);
+
+    setSize(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("size", val);
     }
-    
-    remove(){
+
+    remove() {
         this.mathboxGroup.remove();
         MathObject.prototype.remove.call(this);
     }
 }
 
 class Point extends MathGraphic {
-    constructor(math3d, settings){
+    constructor(math3d, settings) {
         super(math3d, settings);
         this.mathboxDataType = 'array';
         this.mathboxRenderType = 'point';
 
         var _this = this;
-        Object.defineProperties(this.settings,{
+        Object.defineProperties(this.settings, {
             label: {
                 set: function(val) {
                     this._label = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setLabel(val);
                     }
                     return
@@ -1450,7 +1759,7 @@ class Point extends MathGraphic {
             labelVisible: {
                 set: function(val) {
                     this._labelVisible = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setLabelVisible(val);
                     }
                     return
@@ -1460,74 +1769,75 @@ class Point extends MathGraphic {
                 }
             }
         });
-        
+
         this.settings = this.setDefaults(settings);
-        this.userSettings = this.userSettings.concat([
-            {attribute:'size', format:'Number'},
-        ])
-        
+        this.userSettings = this.userSettings.concat([{
+            attribute: 'size',
+            format: 'Number'
+        }, ])
+
         this.mathboxGroup = this.render();
     }
-    
-    get defaultSettings(){
+
+    get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
             rawExpression: "[[0,0,0]]",
             size: 14,
-            labelVisible:false,
-            label:null,
+            labelVisible: false,
+            label: null,
         });
         return defaults
     }
-    
-    recalculateData(){
+
+    recalculateData() {
         this.data = this.parsedExpression.eval(this.math3d.mathScope);
     }
-    
-    render(){
+
+    render() {
         var group = this.math3d.scene.group().set('classes', ['point']);
-        
+
         var point = group.array({
-            data: this.data,
-            live:false,
-            items: 1,
-            channels: 3,
-        }).swizzle({
-          order: this.math3d.swizzleOrder
-        }).point({
-            color: this.settings.color,
-            size: this.settings.size,
-            visible: this.settings.visible,
-            zIndex: this.settings.zIndex,
-        })
-        .format({
-            data:[this.settings.label]
-        }).label({
-            size:20,
-            visible:this.settings.labelVisible,
-            offset:[0,20]
-        });
-        
+                data: this.data,
+                live: false,
+                items: 1,
+                channels: 3,
+            }).swizzle({
+                order: this.math3d.swizzleOrder
+            }).point({
+                color: this.settings.color,
+                size: this.settings.size,
+                visible: this.settings.visible,
+                zIndex: this.settings.zIndex,
+            })
+            .format({
+                data: [this.settings.label]
+            }).label({
+                size: 20,
+                visible: this.settings.labelVisible,
+                offset: [0, 20]
+            });
+
         return group;
     }
-    
-    setLabel(val){
-        this.mathboxGroup.select('format').set("data",[val]);
+
+    setLabel(val) {
+        this.mathboxGroup.select('format').set("data", [val]);
     }
-    setLabelVisible(val){
-        this.mathboxGroup.select('label').set("visible",val);
+    setLabelVisible(val) {
+        this.mathboxGroup.select('label').set("visible", val);
     }
-    
+
 }
 
 class AbstractCurve extends MathGraphic {
-    constructor(math3d, settings){
+    constructor(math3d, settings) {
         super(math3d, settings);
         this.mathboxDataType = 'interval';
         this.mathboxRenderType = 'line';
-        
+
     }
-    
-    get defaultSettings(){
+
+    get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
             width: 4,
             start: false,
@@ -1538,78 +1848,82 @@ class AbstractCurve extends MathGraphic {
 }
 
 class AbstractCurveFromData extends AbstractCurve {
-    constructor(math3d, settings){
+    constructor(math3d, settings) {
         super(math3d, settings);
         this.mathboxDataType = 'array';
-        
-        this.userSettings = this.userSettings.concat([
-            {attribute:'size', format:'Number'},
-            {attribute:'start', format:'Boolean'},
-            {attribute:'end', format:'Boolean'}
-        ])
+
+        this.userSettings = this.userSettings.concat([{
+            attribute: 'size',
+            format: 'Number'
+        }, {
+            attribute: 'start',
+            format: 'Boolean'
+        }, {
+            attribute: 'end',
+            format: 'Boolean'
+        }])
     }
-    
-    recalculateData(){
+
+    recalculateData() {
         this.data = this.parsedExpression.eval(this.math3d.mathScope);
     }
-    
-    render(){
+
+    render() {
         var group = this.math3d.scene.group().set('classes', ['curve']);
-        
+
         group.array({
-            data: this.data,
-            live:false,
-            items: 1,
-            channels: 3,
-        }).swizzle({
-          order: this.math3d.swizzleOrder
-        }).line({
-            color: this.settings.color,
-            width: this.settings.width,
-            visible: this.settings.visible,
-            start: this.settings.start,
-            end: this.settings.end,
-            size: this.settings.size,
-            zIndex: this.settings.zIndex
-        })
-        .format({
-            data:['',this.settings.label]
-        }).label({
-            size:20,
-            visible:this.settings.labelVisible,
-            offset:[0,20]
-        });
-        ;
-        
+                data: this.data,
+                live: false,
+                items: 1,
+                channels: 3,
+            }).swizzle({
+                order: this.math3d.swizzleOrder
+            }).line({
+                color: this.settings.color,
+                width: this.settings.width,
+                visible: this.settings.visible,
+                start: this.settings.start,
+                end: this.settings.end,
+                size: this.settings.size,
+                zIndex: this.settings.zIndex
+            })
+            .format({
+                data: ['', this.settings.label]
+            }).label({
+                size: 20,
+                visible: this.settings.labelVisible,
+                offset: [0, 20]
+            });;
+
         return group;
     }
 }
 
 class Line extends AbstractCurveFromData {
-    constructor(math3d, settings){
+    constructor(math3d, settings) {
         super(math3d, settings);
 
         this.settings = this.setDefaults(settings);
-        
+
         this.mathboxGroup = this.render();
     }
-    get defaultSettings(){
+    get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
             rawExpression: "[[0,0,0],[pi,0,0],[pi,pi,0],[0,pi,0]]",
-            start:false,
-            end:false,
-            size:6,
+            start: false,
+            end: false,
+            size: 6,
         });
         return defaults
     }
 }
 
 class Vector extends AbstractCurveFromData {
-    constructor(math3d, settings){
+    constructor(math3d, settings) {
         super(math3d, settings);
-        
+
         var _this = this;
-        Object.defineProperties(this.settings,{
+        Object.defineProperties(this.settings, {
             tail: {
                 set: function(val) {
                     this._tail = val;
@@ -1633,7 +1947,7 @@ class Vector extends AbstractCurveFromData {
             label: {
                 set: function(val) {
                     this._label = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setLabel(val);
                     }
                     return
@@ -1645,7 +1959,7 @@ class Vector extends AbstractCurveFromData {
             labelVisible: {
                 set: function(val) {
                     this._labelVisible = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setLabelVisible(val);
                     }
                     return
@@ -1655,115 +1969,118 @@ class Vector extends AbstractCurveFromData {
                 }
             }
         });
-        
+
         this.settings = this.setDefaults(settings);
-        this.userSettings = this.userSettings.concat([
-            {attribute:'tail', format:'String'},
+        this.userSettings = this.userSettings.concat([{
+                attribute: 'tail',
+                format: 'String'
+            },
             // {attribute:'components', format:'String'}
         ])
-        
+
         this.mathboxGroup = this.render();
     }
-    
-    get defaultSettings(){
+
+    get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
-            end:true,
-            start:false,
-            size:6,
-            rawExpression:"[[0,0,0],[1,2,3]]",
-            tail:"[0,0,0]",
-            components:"[1,2,3]",
-            labelVisible:false,
-            label:null,
+            end: true,
+            start: false,
+            size: 6,
+            rawExpression: "[[0,0,0],[1,2,3]]",
+            tail: "[0,0,0]",
+            components: "[1,2,3]",
+            labelVisible: false,
+            label: null,
         });
         return defaults
     }
-    
-    setTail(val){
-        if (this.settings.components !== undefined){
+
+    setTail(val) {
+        if (this.settings.components !== undefined) {
             this.settings.rawExpression = `[${val},${val}+${this.settings.components}]`
         }
     }
-    setComponents(val){
-        if (this.settings.tail !== undefined){
+    setComponents(val) {
+        if (this.settings.tail !== undefined) {
             this.settings.rawExpression = `[${this.settings.tail},${this.settings.tail}+${val}]`
         }
     }
-    
-    setLabel(val){
-        this.mathboxGroup.select('format').set("data",['',val]);
+
+    setLabel(val) {
+        this.mathboxGroup.select('format').set("data", ['', val]);
     }
-    setLabelVisible(val){
-        this.mathboxGroup.select('label').set("visible",val);
+    setLabelVisible(val) {
+        this.mathboxGroup.select('label').set("visible", val);
     }
 }
 
-class ParametricCurve extends AbstractCurve{
-    constructor(math3d, settings){
+class ParametricCurve extends AbstractCurve {
+    constructor(math3d, settings) {
         super(math3d, settings);
-        
+
         this.settings = this.setDefaults(settings);
-        this.userSettings = this.userSettings.concat([
-            {attribute:'samples', format:'Integer'}
-        ])
-        
+        this.userSettings = this.userSettings.concat([{
+            attribute: 'samples',
+            format: 'Integer'
+        }])
+
         this.mathboxGroup = this.render();
     }
-    get defaultSettings(){
+    get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
             parameter: 't',
             rawExpression: "[cos(t),sin(t),t]",
             range: "[-2*pi,2*pi]",
-            samples:64,
+            samples: 64,
         });
         return defaults
     }
-    
-    recalculateData(){
-        if (this.mathboxGroup !== null){
-            this.mathboxGroup.select("cartesian").set("range",[this.range, [0,1]]);
+
+    recalculateData() {
+        if (this.mathboxGroup !== null) {
+            this.mathboxGroup.select("cartesian").set("range", [this.range, [0, 1]]);
             var expr = this.parsedExpression;
             var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
             var param = this.settings.parameter;
-            
+
             this.range = this.parsedRange.eval(this.math3d.mathScope);
-            this.mathboxGroup.select("cartesian").set("range",[this.range, [0,1]]);
-            this.mathboxGroup.select("interval").set("width",this.settings.samples);
-            
-            this.mathboxGroup.select("interval").set("expr", function (emit, t, i, j, time) {
+            this.mathboxGroup.select("cartesian").set("range", [this.range, [0, 1]]);
+            this.mathboxGroup.select("interval").set("width", this.settings.samples);
+
+            this.mathboxGroup.select("interval").set("expr", function(emit, t, i, j, time) {
                 localMathScope[param] = t;
                 var xyz = expr.eval(localMathScope);
-                emit( ... xyz );
-            } );
+                emit(...xyz);
+            });
         }
         return
     }
-    
-    render(){
+
+    render() {
         // NOTE: Updating an <area>'s range does not work. However, it does work to make range a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
-        var group = this.math3d.scene.group().set('classes', ['curve','parametric']);
+        var group = this.math3d.scene.group().set('classes', ['curve', 'parametric']);
         var expr = this.parsedExpression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         var param = this.settings.parameter[0];
-        
-        var gridColor = Utility.defaultVal(this.settings.gridColor, Utility.lightenColor(this.settings.color,-0.5) );
-        
+
+        var gridColor = Utility.defaultVal(this.settings.gridColor, Utility.lightenColor(this.settings.color, -0.5));
+
         var data = group.cartesian({
-            range: [this.range, [0,1]]
+            range: [this.range, [0, 1]]
         }).interval({
-            width:this.settings.samples,
-            expr: function (emit, t, i, j, time) {
+            width: this.settings.samples,
+            expr: function(emit, t, i, j, time) {
                 localMathScope[param] = t;
                 var xyz = expr.eval(localMathScope);
-                emit( ... xyz );
+                emit(...xyz);
             },
-            channels:3,
-            axis:1,
-            live:false,
+            channels: 3,
+            axis: 1,
+            live: false,
         }).swizzle({
             order: this.math3d.swizzleOrder
         });
-        
+
         group.line({
             points: data,
             color: this.settings.color,
@@ -1775,122 +2092,139 @@ class ParametricCurve extends AbstractCurve{
             size: this.settings.size,
             zIndex: this.settings.zIndex
         });
-        
+
         return group;
     }
-    
+
 }
 
 class AbstractSurface extends MathGraphic {
-    constructor(math3d, settings){
+    constructor(math3d, settings) {
         super(math3d, settings);
         this.mathboxDataType = 'area';
         this.mathboxRenderType = 'surface';
-        this.userSettings = this.userSettings.concat([
-            {attribute:'gridU', format:'Integer'},
-            {attribute:'gridV', format:'Integer'},
-            {attribute:'gridOpacity', format:'Number'},
-            {attribute:'shaded', format:'Boolean'}
-        ])
-        
+        this.userSettings = this.userSettings.concat([{
+            attribute: 'gridU',
+            format: 'Integer'
+        }, {
+            attribute: 'gridV',
+            format: 'Integer'
+        }, {
+            attribute: 'gridOpacity',
+            format: 'Number'
+        }, {
+            attribute: 'shaded',
+            format: 'Boolean'
+        }])
+
         var _this = this;
-        Object.defineProperties(this.settings,{
+        Object.defineProperties(this.settings, {
             gridU: {
-                set: function(val){
+                set: function(val) {
                     this._gridU = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setGridX(val);
                     }
                 },
-                get: function(){return this._gridU;},
+                get: function() {
+                    return this._gridU;
+                },
             },
             gridV: {
-                set: function(val){
+                set: function(val) {
                     this._gridV = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setGridY(val);
                     }
                 },
-                get: function(){return this._gridV;},
+                get: function() {
+                    return this._gridV;
+                },
             },
             gridOpacity: {
-                set: function(val){
+                set: function(val) {
                     this._gridOpacity = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.setGridOpacity(val);
                     }
                 },
-                get: function(){return this._gridOpacity;},
+                get: function() {
+                    return this._gridOpacity;
+                },
             },
         })
-    
+
     }
-    get defaultSettings(){
+    get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
             opacity: 0.66,
             gridU: 8,
             gridV: 8,
-            gridOpacity:0.75,
-            shaded:false
+            gridOpacity: 0.75,
+            shaded: false
         });
         return defaults
     }
 
-    setGridX(val){
-        this.mathboxGroup.select('.gridU resample').set("width",val);
+    setGridX(val) {
+        this.mathboxGroup.select('.gridU resample').set("width", val);
     }
-    setGridY(val){
-        this.mathboxGroup.select('.gridV resample').set("height",val);
+    setGridY(val) {
+        this.mathboxGroup.select('.gridV resample').set("height", val);
     }
-    setGridOpacity(val){
-        this.mathboxGroup.select('line').set('opacity',val);
+    setGridOpacity(val) {
+        this.mathboxGroup.select('line').set('opacity', val);
     }
-    setColor(val){
+    setColor(val) {
         super.setColor(val);
-        var gridColor = Utility.lightenColor(val,-0.5);
-        this.mathboxGroup.select('line').set('color',gridColor);
+        var gridColor = Utility.lightenColor(val, -0.5);
+        this.mathboxGroup.select('line').set('color', gridColor);
     }
 }
 
 class ParametricSurface extends AbstractSurface {
-    constructor(math3d, settings){
+    constructor(math3d, settings) {
         super(math3d, settings);
-        
+
         var _this = this;
-        Object.defineProperties(this.settings,{
+        Object.defineProperties(this.settings, {
             samplesU: {
-                set: function(val){
+                set: function(val) {
                     this._samplesU = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.recalculateData();
                     }
                 },
-                get: function(){return this._samplesU;},
+                get: function() {
+                    return this._samplesU;
+                },
             },
             samplesV: {
-                set: function(val){
+                set: function(val) {
                     this._samplesV = val;
-                    if (_this.mathboxGroup !== null){
+                    if (_this.mathboxGroup !== null) {
                         _this.recalculateData();
                     }
                 },
-                get: function(){return this._samplesV;},
+                get: function() {
+                    return this._samplesV;
+                },
             },
         })
-        
+
         //TODO: samplesU and samplesV set OK, but are updating strangely.
         this.settings = this.setDefaults(settings);
         this.userSettings = this.userSettings.concat([
             //{attribute:'samplesU', format:'Integer'},
             //{attribute:'samplesV', format:'Integer'}
         ])
-        
+
         this.mathboxGroup = this.render();
     }
 
-    get defaultSettings(){
+    get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
-            parameters: ['u','v'],
+            parameters: ['u', 'v'],
             rawExpression: "[v*cos(u),v*sin(u),v]",
             range: "[[-pi,pi],[-1,1]]",
             samplesU: 64,
@@ -1898,119 +2232,128 @@ class ParametricSurface extends AbstractSurface {
         });
         return defaults
     }
-    
-    recalculateData(){
-        if (this.mathboxGroup !== null){
-            this.mathboxGroup.select("cartesian").set("range",this.range);
+
+    recalculateData() {
+        if (this.mathboxGroup !== null) {
+            this.mathboxGroup.select("cartesian").set("range", this.range);
 
             var expr = this.parsedExpression;
             var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
             var param0 = this.settings.parameters[0];
             var param1 = this.settings.parameters[1];
-            
+
             this.range = this.parsedRange.eval(this.math3d.mathScope);
-            this.mathboxGroup.select("cartesian").set("range",this.range);
-            
-            this.mathboxGroup.select("area").set("width",this.settings.samplesU);
-            this.mathboxGroup.select("area").set("height",this.settings.samplesV);
-            this.mathboxGroup.select("area").set("expr", function (emit, u, v, i, j, time) {
+            this.mathboxGroup.select("cartesian").set("range", this.range);
+
+            this.mathboxGroup.select("area").set("width", this.settings.samplesU);
+            this.mathboxGroup.select("area").set("height", this.settings.samplesV);
+            this.mathboxGroup.select("area").set("expr", function(emit, u, v, i, j, time) {
                 localMathScope[param0] = u;
                 localMathScope[param1] = v;
                 var xyz = expr.eval(localMathScope);
-                emit( ... xyz );
-            } );
+                emit(...xyz);
+            });
         }
         return
     }
-    
-    render(){
+
+    render() {
         // NOTE: Updating an <area>'s range does not work. However, it does work to make range a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
-        var group = this.math3d.scene.group().set('classes', ['surface','parametric']);
+        var group = this.math3d.scene.group().set('classes', ['surface', 'parametric']);
         var expr = this.parsedExpression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         var param0 = this.settings.parameters[0];
         var param1 = this.settings.parameters[1];
-        
-        var gridColor = Utility.defaultVal(this.settings.gridColor, Utility.lightenColor(this.settings.color,-0.5) );
-        
+
+        var gridColor = Utility.defaultVal(this.settings.gridColor, Utility.lightenColor(this.settings.color, -0.5));
+
         var data = group.cartesian({
             range: this.range
         }).area({
-            width:this.settings.samplesU,
-            height:this.settings.samplesV,
-            expr: function (emit, u, v, i, j, time) {
+            width: this.settings.samplesU,
+            height: this.settings.samplesV,
+            expr: function(emit, u, v, i, j, time) {
                 localMathScope[param0] = u;
                 localMathScope[param1] = v;
                 var xyz = expr.eval(localMathScope);
-                emit( ... xyz );
+                emit(...xyz);
             },
-            channels:3,
-            axes:[1,2],
-            live:false,
+            channels: 3,
+            axes: [1, 2],
+            live: false,
         }).swizzle({
             order: this.math3d.swizzleOrder
         })
-        
-        var surface = group.set('visible',this.settings.visible)
-        .surface({
-            points:data,
-            color: this.settings.color,
-            opacity: this.settings.opacity,
-            shaded: this.settings.shaded
-        }).group().set('classes',['gridV'])
-            .resample({height:this.settings.gridV,source:data})
-            .line({
-                color:gridColor,
-                opacity:this.settings.gridOpacity
+
+        var surface = group.set('visible', this.settings.visible)
+            .surface({
+                points: data,
+                color: this.settings.color,
+                opacity: this.settings.opacity,
+                shaded: this.settings.shaded
+            }).group().set('classes', ['gridV'])
+            .resample({
+                height: this.settings.gridV,
+                source: data
             })
-        .end()
-        .group().set('classes',['gridU'])
-            .resample({width:this.settings.gridU, source:data,})
-            .transpose({order:'yx'})
             .line({
-                color:gridColor,
-                opacity:this.settings.gridOpacity
+                color: gridColor,
+                opacity: this.settings.gridOpacity
             })
-        .end();
-        
+            .end()
+            .group().set('classes', ['gridU'])
+            .resample({
+                width: this.settings.gridU,
+                source: data,
+            })
+            .transpose({
+                order: 'yx'
+            })
+            .line({
+                color: gridColor,
+                opacity: this.settings.gridOpacity
+            })
+            .end();
+
         return group;
     }
-    
+
 }
 
 //Customize MathQuill's MathField
-function texToMathJS(tex){
-    var expressions = [
-        {tex:'\\cdot', math:'*'},
-        {tex:'\\left', math:''},
-        {tex:'\\right', math:''},
-        {tex:'{',math:'('},
-        {tex:'}',math:')'},
-        {tex:'\\ ',math:' '},
-        {tex:'\\cos', math:'cos'},
-        {tex:'\\sin', math:'sin'},
-        {tex:'\\tan', math:'tan'},
-        {tex:'\\sec', math:'tan'},
-        {tex:'\\csc', math:'tan'},
-        {tex:'\\cot', math:'tan'},
-        {tex:'\\exp', math:'exp'},
-        {tex:'\\ln', math:'ln'},
-        {tex:'\\log', math:'log'},
-        {tex:'\\sqrt', math:'sqrt'}
-  ]
-  
-  for (let j=0; j<expressions.length; j++){
-    tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
-  }
-  return tex;
+function texToMathJS(tex) {
+    var expressions = [{
+        tex: '\\cdot',
+        math: '*'
+    }, {
+        tex: '\\left',
+        math: ''
+    }, {
+        tex: '\\right',
+        math: ''
+    }, {
+        tex: '{',
+        math: '('
+    }, {
+        tex: '}',
+        math: ')'
+    }, {
+        tex: '\\ ',
+        math: ' '
+    }, ]
+
+    for (let j = 0; j < expressions.length; j++) {
+        tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
+    }
+    return tex;
 }
 
-function MyMathField(el, config, mathobject){
-    
-    function onEdit(mathField){
+function MyMathField(el, config, mathobject) {
+
+    function onEdit(mathField) {
         console.log(texToMathJS(mathField.latex()));
     }
-    
+
     var defaultConfig = {
         handlers: {
             edit: function(mathField) {
@@ -2018,7 +2361,7 @@ function MyMathField(el, config, mathobject){
             }
         }
     }
-      
+
     config = _.merge({}, defaultConfig, config);
     return MathQuill.getInterface(2).MathField(el, config);
 }
