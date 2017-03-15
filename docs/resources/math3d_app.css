@@ -87,8 +87,10 @@ input.jscolor {
 /*Used to hide jscolor selector*/
 .hide-in-place {
     opacity:0;
-    width:1px;
-    height:1px;
+    width:1px !important;
+    height:1px !important;
+    margin:0px !important;
+    padding:0px !important;
 }
 
 /**************************************************/
