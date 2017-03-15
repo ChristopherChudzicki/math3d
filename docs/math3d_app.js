@@ -132,8 +132,11 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             </div>`;
             
         //mathquillify
-        el = $(`#object-${obj.id} span.raw-expression`)[0];
-        MyMathField(el);
+        var el = $(`#object-${obj.id} span.raw-expression`)[0];
+        if (el !== undefined) {
+            el.innerHTML = obj.settings.rawExpression;
+        }
+        var mf = MyMathField(el);
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
         //Re-initialize textarea autosizing

@@ -5,15 +5,15 @@
   </button>
 </div>
 <div class="cell-row">
-  <div style="{{getStyle(obj)}};vertical-align:center"
+  <div style="{{getStyle(obj)}}"
     class = "visibility-indicator"
     on-long-press="setColor(obj)"
     on-short-press="obj.settings.visible = ! obj.settings.visible">
     <input id="{{'jscolor-'+obj.id}}" class="jscolor hide-in-place" ng-model="obj.settings.color" ></input>
   </div>
-  <span class="raw-expression" style="flex:5">mc^2</span>
-  <span class="input-group-btn settings-trigger">
-      <a class="popover-trigger btn btn-link btn-xs" 
+  <span class="raw-expression"></span>
+  <button class="btn btn-link btn-xs btn-quiet settings-trigger">
+      <a class="popover-trigger" 
           type="button"
           ng-controller="popoverCtrl"
           popover-is-open="myPopover.isOpen"  
@@ -27,5 +27,5 @@
           >
           <span class="glyphicon glyphicon-wrench"></span>
       </a>
-  </span>
+  </button>
 </div>

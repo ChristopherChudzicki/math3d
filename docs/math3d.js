@@ -2020,5 +2020,5 @@ function MyMathField(el, config, mathobject){
     }
       
     config = _.merge({}, defaultConfig, config);
-    MathQuill.getInterface(2).MathField(el, config);
+    return MathQuill.getInterface(2).MathField(el, config);
 }
