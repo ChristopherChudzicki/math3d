@@ -137,9 +137,9 @@ div.folder-sidebar{
     Goal is to have grippy handle fixed width,
     but expand vertically to fill available space.*/
     flex:1;
-    min-width: 25px; 
-    max-width: 25px;
-    margin-left:15pt;
+    min-width: 20px; 
+    max-width: 20px;
+    margin-left:20pt;
 }
 div.folder-main{
     flex:20;
