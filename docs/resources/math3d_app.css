@@ -133,7 +133,7 @@ input {
 
 /*Folder Stuff*/
 div.folder-container{
-    overflow:hidden;
+/*    overflow:hidden;*/
     margin-bottom:6px;
     display:flex;
 }
@@ -224,6 +224,10 @@ div.grippy-trigger:hover > * > span.grippy{
     max-width:calc(100% - 25px);
 }
 
+.object-cell-main.focused {
+    max-width:none;
+}
+
 .cell-row {
     display:flex;
 }
@@ -234,6 +238,7 @@ div.grippy-trigger:hover > * > span.grippy{
     margin-bottom:5px;
     flex:10;
     overflow:hidden;
+    padding:4px;
 }
 
 .settings-trigger {

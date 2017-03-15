@@ -2322,25 +2322,14 @@ class ParametricSurface extends AbstractSurface {
 
 //Customize MathQuill's MathField
 function texToMathJS(tex) {
-    var expressions = [{
-        tex: '\\cdot',
-        math: '*'
-    }, {
-        tex: '\\left',
-        math: ''
-    }, {
-        tex: '\\right',
-        math: ''
-    }, {
-        tex: '{',
-        math: '('
-    }, {
-        tex: '}',
-        math: ')'
-    }, {
-        tex: '\\ ',
-        math: ' '
-    }, ]
+    var expressions = [
+        {tex: '\\cdot', math: '*'},
+        {tex: '\\left', math: ''},
+        {tex: '\\right',math: ''},
+        {tex: '{', math: '('},
+        {tex: '}', math: ')'},
+        {tex: '\\', math: ' '}
+    ]
 
     for (let j = 0; j < expressions.length; j++) {
         tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
@@ -2348,10 +2337,27 @@ function texToMathJS(tex) {
     return tex;
 }
 
-function MyMathField(el, config, mathobject) {
-
+function MyMathField(el, obj, config) {
+    
+    var cellmain = $(`#object-${obj.id} .object-cell-main`);
+    var folder = $(el).closest('.folder-container');
+    
+    function onFocusIn(){
+        console.log('Hello!');
+        cellmain.addClass('focused');
+    }
+    
+    function onFocusOut(){
+        cellmain.removeClass('focused');
+    }
+    
     function onEdit(mathField) {
-        console.log(texToMathJS(mathField.latex()));
+        var mathString = texToMathJS(mathField.latex());
+        try {
+            obj.settings.rawExpression = mathString;
+        } catch (e) {
+            console.log(e.message);
+        }
     }
 
     var defaultConfig = {
@@ -2362,7 +2368,14 @@ function MyMathField(el, config, mathobject) {
             }
         }
     }
-
+    
+    $(el).unbind().on('focusin', function(){
+        onFocusIn();
+    })
+    .on('focusout', function(){
+        onFocusOut();
+    })
+    
     config = _.merge({}, defaultConfig, config);
     return MathQuill.getInterface(2).MathField(el, config);
 }

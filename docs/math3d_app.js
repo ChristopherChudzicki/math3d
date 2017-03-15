@@ -137,7 +137,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             var expression = Utility.replaceAll(obj.settings.rawExpression,' pi ', ' \\pi ')
             el.innerHTML = expression;
         }
-        var mf = MyMathField(el);
+        var mf = MyMathField(el,obj);
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
         //Re-initialize textarea autosizing
