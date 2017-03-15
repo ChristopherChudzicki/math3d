@@ -139,9 +139,9 @@ div.folder-sidebar{
     Goal is to have grippy handle fixed width,
     but expand vertically to fill available space.*/
     flex:1;
-    min-width: 25px; 
-    max-width: 25px;
-    margin-left:15pt;
+    min-width: 20px; 
+    max-width: 20px;
+    margin-left:5px;
 }
 div.folder-main{
     flex:20;
@@ -213,10 +213,26 @@ div.grippy-trigger:hover > * > span.grippy{
     max-width: 25px;
     margin-bottom:4pt;
     overflow:hidden;
-}
+}   
 
 .object-cell-main {
     flex:9;
+}
+
+.cell-row {
+    display:flex;
+}
+
+.raw-expression {
+    margin-left:5px;
+    margin-right:5px;
+    margin-bottom:5px;
+}
+
+.settings-trigger {
+    flex:1;
+    min-width:30px;
+    max-width:30px;
 }
 
 .popover.popover-settings {
