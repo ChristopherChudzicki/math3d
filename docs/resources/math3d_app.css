@@ -245,6 +245,7 @@ div.grippy-trigger:hover > * > span.grippy{
     flex:2;
     max-width:30px;
     min-width:30px;
+    height:30px;
 }
 
 .popover.popover-settings {
