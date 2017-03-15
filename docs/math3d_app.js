@@ -133,8 +133,13 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             
         //mathquillify
         var el = $(`#object-${obj.id} span.raw-expression`)[0];
-        if (el !== undefined) {
+        if (el !== undefined && obj.type !== 'Vector') {
             var expression = Utility.replaceAll(obj.settings.rawExpression,' pi ', ' \\pi ')
+            el.innerHTML = expression;
+        }
+        else if (el !== undefined && obj.type === 'Vector') {
+            //Vectors have rawExpression, but users should not touch it.
+            var expression = Utility.replaceAll(obj.settings.components,' pi ', ' \\pi ')
             el.innerHTML = expression;
         }
         var mf = MyMathField(el,obj);

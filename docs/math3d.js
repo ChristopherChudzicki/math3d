@@ -2354,7 +2354,13 @@ function MyMathField(el, obj, config) {
     function onEdit(mathField) {
         var mathString = texToMathJS(mathField.latex());
         try {
-            obj.settings.rawExpression = mathString;
+            if (obj.type!=='Vector'){
+                obj.settings.rawExpression = mathString;
+            }
+            else {
+                //Vectors have rawExpression, but users should not touch it.
+                obj.settings.components = mathString;
+            }
         } catch (e) {
             console.log(e.message);
         }
