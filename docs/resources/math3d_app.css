@@ -223,6 +223,7 @@ div.grippy-trigger:hover > * > span.grippy{
 .object-cell-main {
     flex:9;
     max-width:calc(100% - 25px);
+    padding-right:5pt;
 }
 
 .object-cell-main.focused {

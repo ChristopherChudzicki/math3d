@@ -2343,7 +2343,7 @@ function MyMathField(el, obj, config) {
     var item = $(el).closest('.list-group-item')[0];
     
     function updateItemWidth(){
-        item.style.width = `${cellMain[0].offsetWidth+25}px`;
+        item.style.width = `${cellMain[0].offsetWidth+30}px`;
     }
     function restoreItemWidth(){
         item.style.width = 'auto';
@@ -2385,7 +2385,7 @@ function MyMathField(el, obj, config) {
         }
     }
     
-    $(el).unbind().on('focusin', function(){
+    $(cellMain).unbind().on('focusin', function(){
         onFocusIn();
     })
     .on('focusout', function(){
