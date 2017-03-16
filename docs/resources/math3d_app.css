@@ -145,6 +145,7 @@ div.folder-sidebar{
     min-width: 20px; 
     max-width: 20px;
     margin-left:5px;
+    overflow:hidden; /*To hide handle overflow*/
 }
 div.folder-main{
     flex:20;
