@@ -204,6 +204,8 @@ button = $('#menu-toggle span.glyphicon');
 $("div.math3d-controller").resizable({
   handles: "e",
   minWidth: 225
+}).on('resize', function(){
+  $(":focus").blur();
 });
 
 
