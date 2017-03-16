@@ -2391,6 +2391,12 @@ function MyMathField(el, obj, config) {
     .on('focusout', function(){
         onFocusOut();
     })
+    .on('mouseenter', function(){
+        $("div.math3d-controller").resizable('disable');
+    })
+    .on('mouseleave', function(){
+        $("div.math3d-controller").resizable('enable');
+    })
     
     config = _.merge({}, defaultConfig, config);
     return MathQuill.getInterface(2).MathField(el, config);

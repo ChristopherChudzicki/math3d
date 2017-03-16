@@ -149,6 +149,7 @@ div.folder-sidebar{
 }
 div.folder-main{
     flex:20;
+    padding-right:2px;
     max-width:calc(100% - 30px);
 }
 div.folder-main .folder-header{
