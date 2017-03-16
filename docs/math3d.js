@@ -2339,16 +2339,24 @@ function texToMathJS(tex) {
 
 function MyMathField(el, obj, config) {
     
-    var cellmain = $(`#object-${obj.id} .object-cell-main`);
-    var folder = $(el).closest('.folder-container');
+    var cellMain = $(`#object-${obj.id} .object-cell-main`);
+    var item = $(el).closest('.list-group-item')[0];
+    
+    function updateItemWidth(){
+        item.style.width = `${cellMain[0].offsetWidth+25}px`;
+    }
+    function restoreItemWidth(){
+        item.style.width = 'auto';
+    }
     
     function onFocusIn(){
-        console.log('Hello!');
-        cellmain.addClass('focused');
+        cellMain.addClass('focused');
+        updateItemWidth();
     }
     
     function onFocusOut(){
-        cellmain.removeClass('focused');
+        cellMain.removeClass('focused');
+        restoreItemWidth();
     }
     
     function onEdit(mathField) {
@@ -2361,9 +2369,11 @@ function MyMathField(el, obj, config) {
                 //Vectors have rawExpression, but users should not touch it.
                 obj.settings.components = mathString;
             }
-        } catch (e) {
+        } 
+        catch (e) {
             console.log(e.message);
         }
+        updateItemWidth();
     }
 
     var defaultConfig = {
