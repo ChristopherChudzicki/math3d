@@ -2328,12 +2328,14 @@ class MathFieldForMathObject {
         this.settings = {};
         this.settings = this.setDefaults(settings);
         
-        if (el !==undefined){
-            var expression = MathFieldForMathObject.mathjsToTeX(mathObj.settings[mathObjKey]);
-            el.innerHTML = expression;
-        }
+        //Set the inner HTML
+        var expression = MathFieldForMathObject.mathjsToTeX(mathObj.settings[mathObjKey]);
+        el.innerHTML = expression;
         
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
+        if (this.mathfield){
+            $(el).addClass("has-mq");
+        }
         this.mathObj = mathObj;
         this.mathObjKey = mathObjKey;
 

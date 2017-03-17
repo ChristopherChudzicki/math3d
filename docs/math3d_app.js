@@ -1,6 +1,7 @@
 var globalScope = {};
 var container = $(".container")
 container.attr("ng-app", 'math3dApp')
+
 // container.attr("ng-controller", 'main')
 
 // app = angular.module('math3dApp', ['ui.sortable']);
@@ -94,7 +95,6 @@ app.controller('treeCtrl', function($scope)  {
             return sourceNodeScope.depth() - 1 === destNodesScope.depth()
         },
         toggle: function(collapsed, sourceNodeScope){
-            console.log(sourceNodeScope)
             sourceNodeScope.branch.collapsed = collapsed;
         }
     };
@@ -127,25 +127,17 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
     $scope.addOjbectToUi = function(obj){
-        console.log(`Adding Object ${obj.id}`)
         var content = `
             <div id="object-${obj.id}" ng-include="'templates/${obj.type.toLowerCase()}.html'">
             </div>`;
             
         //mathquillify MathGraphics
         if (obj.constructor.prototype instanceof MathGraphic){
-            var el = $(`#object-${obj.id} span.mathquill-large`)[0];
-            var key = obj.type !== 'Vector' ? 'rawExpression' : 'components';
-            var mf = new MathFieldCellMain(el,obj, key);
+            setupMathGraphicMF(obj);
         }
         //mathquilify Variable (or function)
         else if (obj.type === 'Variable'){
-            var elName = $(`#object-${obj.id} span.mathquill-large .variable-rawName`)[0];
-            var elEqual = $(`#object-${obj.id} span.mathquill-large .variable-equal`)[0];
-            var elExpression = $(`#object-${obj.id} span.mathquill-large .variable-rawExpression`)[0];
-            new MathFieldCellMain(elName, obj, 'rawName');
-            new MathQuill.getInterface(2).StaticMath(elEqual);
-            new MathFieldCellMain(elExpression, obj, 'rawExpression');
+            setupVariableMF(obj);
         }
         
         //Re-initialize jscolor palletes. This seems hacky.
@@ -155,6 +147,28 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         
         return $sce.trustAsHtml(content)
     };
+    
+    function setupMathGraphicMF(obj){
+        var el = $(`#object-${obj.id} span.mathquill-large`)
+        if (el[0] && !el.hasClass('has-mq')){
+            var key = obj.type !== 'Vector' ? 'rawExpression' : 'components';
+            var mf = new MathFieldCellMain(el[0],obj, key);
+        }
+        
+    }
+    function setupVariableMF(obj){
+        var elName = $(`#object-${obj.id} span.mathquill-large .variable-rawName`);
+        var elEqual = $(`#object-${obj.id} span.mathquill-large .variable-equal`);
+        var elExpression = $(`#object-${obj.id} span.mathquill-large .variable-rawExpression`);
+        
+        if (elName[0] && !elName.hasClass('has-mq')){
+            new MathFieldCellMain(elName[0], obj, 'rawName');
+            new MathQuill.getInterface(2).StaticMath(elEqual[0]);
+        }
+        if (elExpression[0] && !elExpression.hasClass('has-mq')){
+            new MathFieldCellMain(elExpression[0], obj, 'rawExpression');
+        }
+    }
     
     $scope.removeFolder = function(branch){
         // Should only be used if branch is empty
