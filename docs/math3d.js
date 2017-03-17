@@ -2320,6 +2320,7 @@ class ParametricSurface extends AbstractSurface {
 
 }
 
+// This should all really go into another file. It's specific to the math3d.org webapp design.
 //Customize MathQuill's MathField
 function texToMathJS(tex) {
     var expressions = [
@@ -2337,67 +2338,107 @@ function texToMathJS(tex) {
     return tex;
 }
 
-function MyMathField(el, obj, config) {
-    
-    var cellMain = $(`#object-${obj.id} .object-cell-main`);
-    var item = $(el).closest('.list-group-item')[0];
-    
-    function updateItemWidth(){
-        item.style.width = `${cellMain[0].offsetWidth+30}px`;
-    }
-    function restoreItemWidth(){
-        item.style.width = 'auto';
-    }
-    
-    function onFocusIn(){
-        cellMain.addClass('focused');
-        updateItemWidth();
+// Customize MathQuill's MathField; bind to math3d MathObject
+class MathFieldForMathObject {
+    constructor(el, mathObj, mathObjKey, settings) {
+        this.settings = {};
+        this.settings = this.setDefaults(settings);
+        this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
+        this.mathObj = mathObj;
+        this.mathObjKey = mathObjKey;
+
     }
     
-    function onFocusOut(){
-        cellMain.removeClass('focused');
-        restoreItemWidth();
+    setDefaults(settings) {
+        settings = _.merge({}, this.defaultSettings, settings);
+        _.merge(this.settings, settings);
+        return this.settings;
     }
     
-    function onEdit(mathField) {
-        var mathString = texToMathJS(mathField.latex());
+    get defaultSettings() {
+        var defaults = {
+            autoCommands: 'pi theta sqrt',
+        }
+        return defaults
+    }
+    
+    texToMathJS(tex) {
+        var expressions = [
+            {tex: '\\cdot', math: '*'},
+            {tex: '\\left', math: ''},
+            {tex: '\\right',math: ''},
+            {tex: '{', math: '('},
+            {tex: '}', math: ')'},
+            {tex: '\\', math: ' '}
+        ]
+
+        for (let j = 0; j < expressions.length; j++) {
+            tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
+        }
+        return tex;
+    }
+    
+    updateMathObj(key){
         try {
-            if (obj.type!=='Vector'){
-                obj.settings.rawExpression = mathString;
-            }
-            else {
-                //Vectors have rawExpression, but users should not touch it.
-                obj.settings.components = mathString;
-            }
+            this.mathObj.settings[key] = this.texToMathJS(this.mathfield.latex());
         } 
         catch (e) {
             console.log(e.message);
         }
-        updateItemWidth();
     }
+    
+}
 
-    var defaultConfig = {
-        autoCommands: 'pi theta sqrt',
-        handlers: {
-            edit: function(mathField) {
-                onEdit(mathField);
-            }
-        }
+class MathFieldCellMain extends MathFieldForMathObject {
+    constructor(el, mathObj, mathObjKey, settings){
+        super(el, mathObj, mathObjKey, settings);
+        
+        this.cellMain = $(`#object-${mathObj.id} .object-cell-main`);
+        this.item = $(el).closest('.list-group-item')[0];
+        
+        var _this=this;
+        $(this.cellMain).unbind().on('focusin', function(){
+            _this.onFocusIn();
+        })
+        .on('focusout', function(){
+            _this.onFocusOut();
+        })
+        .on('mouseenter', function(){
+            $("div.math3d-controller").resizable('disable');
+        })
+        .on('mouseleave', function(){
+            $("div.math3d-controller").resizable('enable');
+        })
     }
     
-    $(cellMain).unbind().on('focusin', function(){
-        onFocusIn();
-    })
-    .on('focusout', function(){
-        onFocusOut();
-    })
-    .on('mouseenter', function(){
-        $("div.math3d-controller").resizable('disable');
-    })
-    .on('mouseleave', function(){
-        $("div.math3d-controller").resizable('enable');
-    })
+    get defaultSettings() {
+        var _this = this;
+        var defaults = _.merge(super.defaultSettings, {
+            handlers:{
+                edit:function(){
+                    _this.onEditHandler();
+                }
+            }
+        });
+        return defaults
+    }
     
-    config = _.merge({}, defaultConfig, config);
-    return MathQuill.getInterface(2).MathField(el, config);
+    updateItemWidth(){
+        this.item.style.width = `${this.cellMain[0].offsetWidth+25}px`;
+    }
+    restoreItemWidth(){
+        this.item.style.width = 'auto';
+    }    
+    onFocusIn(){
+        this.cellMain.addClass('focused');
+        this.updateItemWidth();
+    }
+    onFocusOut(){
+        this.cellMain.removeClass('focused');
+        this.restoreItemWidth();
+    }
+    onEditHandler(){
+        this.updateItemWidth();
+        this.updateMathObj(this.mathObjKey);
+    }
 }

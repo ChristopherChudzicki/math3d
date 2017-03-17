@@ -132,17 +132,13 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             </div>`;
             
         //mathquillify
-        var el = $(`#object-${obj.id} span.raw-expression`)[0];
-        if (el !== undefined && obj.type !== 'Vector') {
-            var expression = Utility.replaceAll(obj.settings.rawExpression,' pi ', ' \\pi ')
+        var el = $(`#object-${obj.id} span.mathquill-large`)[0];
+        var key = obj.type !== 'Vector' ? 'rawExpression' : 'components';
+        if (el !==undefined){
+            var expression = Utility.replaceAll(obj.settings[key],' pi ', ' \\pi ')
             el.innerHTML = expression;
         }
-        else if (el !== undefined && obj.type === 'Vector') {
-            //Vectors have rawExpression, but users should not touch it.
-            var expression = Utility.replaceAll(obj.settings.components,' pi ', ' \\pi ')
-            el.innerHTML = expression;
-        }
-        var mf = MyMathField(el,obj);
+        var mf = new MathFieldCellMain(el,obj, key);
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
         //Re-initialize textarea autosizing

@@ -13,23 +13,15 @@
 <div id="my-math-box"></div>
 
 <div style="width:200px;border:1pt solid red;overflow:hidden">
-  <span id="ans0">x</span><span id="ans1">=</span><span id="ans2">a+b</span>
+  <span id="mf"></span>
 </div>
 
 <script>
-    MQ = MathQuill.getInterface(2)
-    var ans0 = document.getElementById('ans0');
-    var ans0mf = MQ.MathField(ans0,{});
-    
-    var ans1 = document.getElementById('ans1');
-    var ans1mf = MQ.StaticMath(ans1, {});
-    
-    var ans2 = document.getElementById('ans2');
-    var ans2mf = MyMathField(ans2, {});
-    
-    
-    var textArea = $("textarea");
+  MQ = MathQuill.getInterface(2);
+  var el = document.getElementById('mf');
+  var mf = MQ.StaticMath(document.getElementById('mf'));
   
+  mf.latex("\\MathQuillMathField{f(x,y)}=\\MathQuillMathField{x sin(x y)+y^2}")
   
 </script>
 
