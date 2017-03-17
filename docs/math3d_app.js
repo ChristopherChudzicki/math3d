@@ -130,15 +130,6 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         var content = `
             <div id="object-${obj.id}" ng-include="'templates/${obj.type.toLowerCase()}.html'">
             </div>`;
-            
-        //mathquillify MathGraphics
-        if (obj.constructor.prototype instanceof MathGraphic){
-            setupMathGraphicMF(obj);
-        }
-        //mathquilify Variable (or function)
-        else if (obj.type === 'Variable'){
-            setupVariableMF(obj);
-        }
         
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
@@ -148,32 +139,33 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         return $sce.trustAsHtml(content)
     };
     
-    function setupMathGraphicMF(obj){
+    $scope.removeFolder = function(branch){
+        // Should only be used if branch is empty
+        if (branch.objects.length===0){
+            _.remove(math3d.mathTree, function(arg){return arg===branch;});
+        }
+    }
+    
+    $scope.setupMathGraphicMF = function(obj){
         var el = $(`#object-${obj.id} span.mathquill-large`)
-        if (el[0] && !el.hasClass('has-mq')){
+        if (!el.hasClass('has-mq')){
             var key = obj.type !== 'Vector' ? 'rawExpression' : 'components';
             var mf = new MathFieldCellMain(el[0],obj, key);
         }
         
     }
-    function setupVariableMF(obj){
+    
+    $scope.setupVariableMF = function(obj){
         var elName = $(`#object-${obj.id} span.mathquill-large .variable-rawName`);
         var elEqual = $(`#object-${obj.id} span.mathquill-large .variable-equal`);
         var elExpression = $(`#object-${obj.id} span.mathquill-large .variable-rawExpression`);
         
-        if (elName[0] && !elName.hasClass('has-mq')){
+        if (!elName.hasClass('has-mq')){
             new MathFieldCellMain(elName[0], obj, 'rawName');
             new MathQuill.getInterface(2).StaticMath(elEqual[0]);
         }
-        if (elExpression[0] && !elExpression.hasClass('has-mq')){
+        if (!elExpression.hasClass('has-mq')){
             new MathFieldCellMain(elExpression[0], obj, 'rawExpression');
-        }
-    }
-    
-    $scope.removeFolder = function(branch){
-        // Should only be used if branch is empty
-        if (branch.objects.length===0){
-            _.remove(math3d.mathTree, function(arg){return arg===branch;});
         }
     }
     
