@@ -242,6 +242,13 @@ div.grippy-trigger:hover > * > span.grippy{
     flex:10;
     overflow:hidden;
     padding:4px;
+    display:flex;
+}
+.variable-rawName{
+    vertical-align:middle;
+}
+.variable-rawExpression {
+    flex:2;
 }
 
 .settings-trigger {

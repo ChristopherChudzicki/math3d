@@ -2321,28 +2321,18 @@ class ParametricSurface extends AbstractSurface {
 }
 
 // This should all really go into another file. It's specific to the math3d.org webapp design.
-//Customize MathQuill's MathField
-function texToMathJS(tex) {
-    var expressions = [
-        {tex: '\\cdot', math: '*'},
-        {tex: '\\left', math: ''},
-        {tex: '\\right',math: ''},
-        {tex: '{', math: '('},
-        {tex: '}', math: ')'},
-        {tex: '\\', math: ' '}
-    ]
-
-    for (let j = 0; j < expressions.length; j++) {
-        tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
-    }
-    return tex;
-}
 
 // Customize MathQuill's MathField; bind to math3d MathObject
 class MathFieldForMathObject {
     constructor(el, mathObj, mathObjKey, settings) {
         this.settings = {};
         this.settings = this.setDefaults(settings);
+        
+        if (el !==undefined){
+            var expression = MathFieldForMathObject.mathjsToTeX(mathObj.settings[mathObjKey]);
+            el.innerHTML = expression;
+        }
+        
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
         this.mathObj = mathObj;
         this.mathObjKey = mathObjKey;
@@ -2362,7 +2352,8 @@ class MathFieldForMathObject {
         return defaults
     }
     
-    texToMathJS(tex) {
+    // This is a heuristic regex converter
+    static texToMathJS(tex) {
         var expressions = [
             {tex: '\\cdot', math: '*'},
             {tex: '\\left', math: ''},
@@ -2377,10 +2368,23 @@ class MathFieldForMathObject {
         }
         return tex;
     }
+    // This is a temporary heuristic regex converter. Rewrite using mathjs parse tree
+    static mathjsToTeX(math) {
+        // These are the autoCommands we use in MathQuill config
+        var expressions = [
+            {math:'pi', tex:'\\pi'},
+            {math:'theta', tex:'\\theta'}
+        ]
+
+        for (let j = 0; j < expressions.length; j++) {
+            math = Utility.replaceAll(math, expressions[j]['math'], expressions[j]['tex'])
+        }
+        return math;
+    }
     
     updateMathObj(key){
         try {
-            this.mathObj.settings[key] = this.texToMathJS(this.mathfield.latex());
+            this.mathObj.settings[key] = MathFieldForMathObject.texToMathJS(this.mathfield.latex());
         } 
         catch (e) {
             console.log(e.message);
@@ -2438,6 +2442,7 @@ class MathFieldCellMain extends MathFieldForMathObject {
         this.restoreItemWidth();
     }
     onEditHandler(){
+        console.log("Edit");
         this.updateItemWidth();
         this.updateMathObj(this.mathObjKey);
     }

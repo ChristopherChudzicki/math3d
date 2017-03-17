@@ -127,22 +127,32 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
     $scope.addOjbectToUi = function(obj){
+        console.log(`Adding Object ${obj.id}`)
         var content = `
             <div id="object-${obj.id}" ng-include="'templates/${obj.type.toLowerCase()}.html'">
             </div>`;
             
-        //mathquillify
-        var el = $(`#object-${obj.id} span.mathquill-large`)[0];
-        var key = obj.type !== 'Vector' ? 'rawExpression' : 'components';
-        if (el !==undefined){
-            var expression = Utility.replaceAll(obj.settings[key],' pi ', ' \\pi ')
-            el.innerHTML = expression;
+        //mathquillify MathGraphics
+        if (obj.constructor.prototype instanceof MathGraphic){
+            var el = $(`#object-${obj.id} span.mathquill-large`)[0];
+            var key = obj.type !== 'Vector' ? 'rawExpression' : 'components';
+            var mf = new MathFieldCellMain(el,obj, key);
         }
-        var mf = new MathFieldCellMain(el,obj, key);
+        //mathquilify Variable (or function)
+        else if (obj.type === 'Variable'){
+            var elName = $(`#object-${obj.id} span.mathquill-large .variable-rawName`)[0];
+            var elEqual = $(`#object-${obj.id} span.mathquill-large .variable-equal`)[0];
+            var elExpression = $(`#object-${obj.id} span.mathquill-large .variable-rawExpression`)[0];
+            new MathFieldCellMain(elName, obj, 'rawName');
+            new MathQuill.getInterface(2).StaticMath(elEqual);
+            new MathFieldCellMain(elExpression, obj, 'rawExpression');
+        }
+        
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
         //Re-initialize textarea autosizing
         autosize($("textarea.object-description"))
+        
         return $sce.trustAsHtml(content)
     };
     
