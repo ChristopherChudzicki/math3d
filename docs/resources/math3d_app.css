@@ -243,6 +243,11 @@ div.grippy-trigger:hover > * > span.grippy{
     overflow:hidden;
     display:flex;
 }
+span.mq-math-mode {
+    display:inline-flex;
+    min-height:25px;
+    align-items:center;
+}
 span.mq-editable-field.mq-math-mode {
     border:1pt solid lightgray;
     padding:4px;
