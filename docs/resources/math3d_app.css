@@ -175,7 +175,7 @@ span.folder-name-editable{
     visibility:hidden;
 }
 
-input.has-error.has-feedback {
+span.has-error.has-feedback {
     outline: none;
     border-color: red;
     box-shadow: 0 0 10px red;
@@ -241,14 +241,19 @@ div.grippy-trigger:hover > * > span.grippy{
     margin-bottom:5px;
     flex:10;
     overflow:hidden;
-    padding:4px;
     display:flex;
 }
+span.mq-editable-field.mq-math-mode {
+    border:1pt solid lightgray;
+    padding:4px;
+}
+
 .variable-rawName{
-    vertical-align:middle;
+    margin:4px;
 }
 .variable-rawExpression {
     flex:2;
+    margin:4px;
 }
 
 .settings-trigger {
