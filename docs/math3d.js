@@ -2379,7 +2379,7 @@ class MathFieldForMathObject {
     if (node.type === 'ArrayNode'){
         var items = [];
         for (let j=0; j<node.items.length; j++){
-            items.push(node.items[j].toTex(options))
+            items.push(`\\ ${node.items[j].toTex(options)}`)
         }
         toTex = `[${String(items)}]`
     }
