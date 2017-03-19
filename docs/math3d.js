@@ -2329,7 +2329,7 @@ class MathFieldForMathObject {
         this.settings = this.setDefaults(settings);
         
         //Set the inner HTML
-        var expression = MathFieldForMathObject.mathjsToTex(mathObj.settings[mathObjKey]);
+        var expression = math.parse(mathObj.settings[mathObjKey]).toTex({handler:MathFieldForMathObject.toTexHandler});
         el.innerHTML = expression;
         
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
@@ -2355,6 +2355,7 @@ class MathFieldForMathObject {
     }
     
     // This is a heuristic regex converter
+    // User types --> mathquill --> texToMathJS --> mathjs
     static texToMathJS(tex) {
         var expressions = [
             {tex: '\\cdot', math: ' * '},
@@ -2372,34 +2373,58 @@ class MathFieldForMathObject {
         return tex;
     }
     
-    static mathjsToTex(node){
-        // can't use node.toTex() directly because it uses display-mode math for arrays.
-        // So parse trees for for arrays first, then parse each element
-        if (typeof node === 'string'){
-            node = math.parse(node);
+    // math3d.settings only stores mathjs-parseable expressions, not latex. This handler helps converts to latex for the initial load.
+    static toTexHandler(node, options){
+    var toTex = '';
+    if (node.type === 'ArrayNode'){
+        var items = [];
+        for (let j=0; j<node.items.length; j++){
+            items.push(node.items[j].toTex(options))
         }
-        if (node.type === 'ArrayNode'){
-            var out = [];
-            for (let j = 0; j < node.items.length; j++){
-                let subnode = node.items[j];
-                out.push(MathFieldForMathObject.mathjsToTex(subnode));
-            }
-            out = `[${String(out)}]`;
+        toTex = `[${String(items)}]`
+    }
+    else if (node.type==='SymbolNode'){
+        toTex = ` ${node.name} `; 
+    }
+    else if (node.type==='FunctionNode') {
+        var funcNames = {
+            sin: "\\sin",
+            cos: "\\cos",
+            tan: "\\tan",
+            csc: "\\csc",
+            sec: "\\sec",
+            cot: "\\cot",
+            asin: "\\asin",
+            acos: "\\acos",
+            atan: "\\atan",
+            exp: "\\exp",
+            log: "\\log",
+            ln: "\\ln",
+        }
+        if (node.name === "sqrt"){
+            toTex = ` \\sqrt{ ${node.args} } `
+        }
+        else if (funcNames[node.name] !== undefined){
+            toTex = ` ${funcNames[node.name]}\\left(${node.args}\\right) `;
         }
         else {
-            var out = node.toTex();
+            toTex = ` ${node.name}\\left(${node.args}\\right) `;
         }
-        
-        var replacements = [
-            {mathjs:'~', mathquill: ''},
-            {mathjs:',', mathquill: ',\\ '}
-        ]
-        for (let j = 0; j < replacements.length; j++) {
-            out = Utility.replaceAll(out, replacements[j]['mathjs'], replacements[j]['mathquill'])
-        }
-        
-        return out;
     }
+    
+    else {
+        toTex = node.toTex();
+    }
+    
+    var replacements = [
+        {mathjs:'~', mathquill: ''},
+    ]
+    for (let j = 0; j < replacements.length; j++) {
+        toTex = Utility.replaceAll(toTex, replacements[j]['mathjs'], replacements[j]['mathquill'])
+    }
+    
+    return toTex;
+}
     
     updateMathObj(key){
         try {
@@ -2466,5 +2491,3 @@ class MathFieldCellMain extends MathFieldForMathObject {
         this.updateMathObj(this.mathObjKey);
     }
 }
-
-var test1 = "[sin(pi x)+e^x,sqrt(1+x^2),4-x]";
