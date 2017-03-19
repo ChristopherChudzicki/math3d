@@ -39,6 +39,9 @@
   <script src="resources/angular-tree/source/directives/uiTreeNodes.js"></script>
   <script src="resources/angular-tree/source/services/helper.js"></script>
   
+  <script src="resources/mathquill/mathquill.js"></script>
+  <link rel="stylesheet" href="resources/mathquill/mathquill.css"/>
+  
   <meta name="viewport" content="initial-scale=1, maximum-scale=1">
 </head>
 <body>
@@ -180,7 +183,7 @@ var authorSettings = {
       objects: [
         {
           type: 'ParametricCurve',
-          settings: {rawExpression:'[2*cos(pi*t), 2*sin(pi*t),t]', range:"[-3, 3]", color:'orange'}
+          settings: {rawExpression:'[2cos(pi t), 2sin(pi t),t]', range:"[-3, 3]", color:'orange'}
         },
       ]
     }
@@ -201,6 +204,8 @@ button = $('#menu-toggle span.glyphicon');
 $("div.math3d-controller").resizable({
   handles: "e",
   minWidth: 225
+}).on('resize', function(){
+  $(":focus").blur();
 });
 
 

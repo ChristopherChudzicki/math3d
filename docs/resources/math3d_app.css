@@ -74,10 +74,13 @@ span.settings:hover span.glyphicon{
 /* Color and visibility indicator */
 /**************************************************/
 div.visibility-indicator {
-    width:20px;
+    flex:2;
+    max-width:20px;
+    min-width:20px;
     height:20px;
     border-style:solid;
     border-width:4px;
+    vertical-align:top;
 }
 
 input.jscolor {
@@ -87,8 +90,10 @@ input.jscolor {
 /*Used to hide jscolor selector*/
 .hide-in-place {
     opacity:0;
-    width:1px;
-    height:1px;
+    width:1px !important;
+    height:1px !important;
+    margin:0px !important;
+    padding:0px !important;
 }
 
 /**************************************************/
@@ -128,7 +133,7 @@ input {
 
 /*Folder Stuff*/
 div.folder-container{
-    overflow:hidden;
+/*    overflow:hidden;*/
     margin-bottom:6px;
     display:flex;
 }
@@ -139,10 +144,13 @@ div.folder-sidebar{
     flex:1;
     min-width: 20px; 
     max-width: 20px;
-    margin-left:20pt;
+    margin-left:5px;
+    overflow:hidden; /*To hide handle overflow*/
 }
 div.folder-main{
     flex:20;
+    padding-right:2px;
+    max-width:calc(100% - 30px);
 }
 div.folder-main .folder-header{
     display:flex;
@@ -167,7 +175,7 @@ span.folder-name-editable{
     visibility:hidden;
 }
 
-input.has-error.has-feedback {
+span.has-error.has-feedback {
     outline: none;
     border-color: red;
     box-shadow: 0 0 10px red;
@@ -211,10 +219,53 @@ div.grippy-trigger:hover > * > span.grippy{
     max-width: 25px;
     margin-bottom:4pt;
     overflow:hidden;
-}
+}   
 
 .object-cell-main {
     flex:9;
+    max-width:calc(100% - 25px);
+    padding-right:5pt;
+}
+
+.object-cell-main.focused {
+    max-width:none;
+}
+
+.cell-row {
+    display:flex;
+}
+
+.mathquill-large {
+    margin-left:5px;
+    margin-right:5px;
+    margin-bottom:5px;
+    flex:10;
+    overflow:hidden;
+    display:flex;
+}
+span.mq-math-mode {
+    display:inline-flex;
+    min-height:25px;
+    align-items:center;
+}
+span.mq-editable-field.mq-math-mode {
+    border:1pt solid lightgray;
+    padding:4px;
+}
+
+.variable-rawName{
+    margin:4px;
+}
+.variable-rawExpression {
+    flex:2;
+    margin:4px;
+}
+
+.settings-trigger {
+    flex:2;
+    max-width:30px;
+    min-width:30px;
+    height:30px;
 }
 
 .popover.popover-settings {
@@ -240,7 +291,7 @@ input.object-description {
 }
 textarea.object-description{
     resize:none;
-    max-width:215px;
+    max-width:215px ;
 }
 .object-description {
     color:gray;
@@ -271,5 +322,5 @@ span.label-and-description:hover span.edit-label{
     vertical-align:top;
     width:30px;
     height:30px;
-    margin-left:10px;
+    margin-left:15px;
 }

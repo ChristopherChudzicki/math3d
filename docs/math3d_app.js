@@ -1,6 +1,7 @@
 var globalScope = {};
 var container = $(".container")
 container.attr("ng-app", 'math3dApp')
+
 // container.attr("ng-controller", 'main')
 
 // app = angular.module('math3dApp', ['ui.sortable']);
@@ -94,7 +95,6 @@ app.controller('treeCtrl', function($scope)  {
             return sourceNodeScope.depth() - 1 === destNodesScope.depth()
         },
         toggle: function(collapsed, sourceNodeScope){
-            console.log(sourceNodeScope)
             sourceNodeScope.branch.collapsed = collapsed;
         }
     };
@@ -128,13 +128,14 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     
     $scope.addOjbectToUi = function(obj){
         var content = `
-            <div ng-include="'templates/${obj.type.toLowerCase()}.html'">
+            <div id="object-${obj.id}" ng-include="'templates/${obj.type.toLowerCase()}.html'">
             </div>`;
         
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
         //Re-initialize textarea autosizing
         autosize($("textarea.object-description"))
+        
         return $sce.trustAsHtml(content)
     };
     
@@ -142,6 +143,29 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         // Should only be used if branch is empty
         if (branch.objects.length===0){
             _.remove(math3d.mathTree, function(arg){return arg===branch;});
+        }
+    }
+    
+    $scope.setupMathGraphicMF = function(obj){
+        var el = $(`#object-${obj.id} span.mathquill-large`)
+        if (!el.hasClass('has-mq')){
+            var key = obj.type !== 'Vector' ? 'rawExpression' : 'components';
+            var mf = new MathFieldCellMain(el[0],obj, key);
+        }
+        
+    }
+    
+    $scope.setupVariableMF = function(obj){
+        var elName = $(`#object-${obj.id} span.mathquill-large .variable-rawName`);
+        var elEqual = $(`#object-${obj.id} span.mathquill-large .variable-equal`);
+        var elExpression = $(`#object-${obj.id} span.mathquill-large .variable-rawExpression`);
+        
+        if (!elName.hasClass('has-mq')){
+            new MathFieldCellMain(elName[0], obj, 'rawName');
+            new MathQuill.getInterface(2).StaticMath(elEqual[0]);
+        }
+        if (!elExpression.hasClass('has-mq')){
+            new MathFieldCellMain(elExpression[0], obj, 'rawExpression');
         }
     }
     
