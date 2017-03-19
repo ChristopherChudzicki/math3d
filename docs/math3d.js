@@ -2329,7 +2329,7 @@ class MathFieldForMathObject {
         this.settings = this.setDefaults(settings);
         
         //Set the inner HTML
-        var expression = MathFieldForMathObject.mathjsToTeX(mathObj.settings[mathObjKey]);
+        var expression = MathFieldForMathObject.mathjsToTex(mathObj.settings[mathObjKey]);
         el.innerHTML = expression;
         
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
@@ -2357,12 +2357,13 @@ class MathFieldForMathObject {
     // This is a heuristic regex converter
     static texToMathJS(tex) {
         var expressions = [
-            {tex: '\\cdot', math: '*'},
+            {tex: '\\cdot', math: ' * '},
             {tex: '\\left', math: ''},
             {tex: '\\right',math: ''},
             {tex: '{', math: '('},
             {tex: '}', math: ')'},
-            {tex: '\\', math: ' '}
+            {tex: '\\', math: ' '},
+            {tex: '~', math:' '}
         ]
 
         for (let j = 0; j < expressions.length; j++) {
@@ -2370,18 +2371,34 @@ class MathFieldForMathObject {
         }
         return tex;
     }
-    // This is a temporary heuristic regex converter. Rewrite using mathjs parse tree
-    static mathjsToTeX(math) {
-        // These are the autoCommands we use in MathQuill config
-        var expressions = [
-            {math:'pi', tex:'\\pi'},
-            {math:'theta', tex:'\\theta'}
-        ]
-
-        for (let j = 0; j < expressions.length; j++) {
-            math = Utility.replaceAll(math, expressions[j]['math'], expressions[j]['tex'])
+    
+    static mathjsToTex(node){
+        // can't use node.toTex() directly because it uses display-mode math for arrays.
+        // So parse trees for for arrays first, then parse each element
+        if (typeof node === 'string'){
+            node = math.parse(node);
         }
-        return math;
+        if (node.type === 'ArrayNode'){
+            var out = [];
+            for (let j = 0; j < node.items.length; j++){
+                let subnode = node.items[j];
+                out.push(MathFieldForMathObject.mathjsToTex(subnode));
+            }
+            out = `[${String(out)}]`;
+        }
+        else {
+            var out = node.toTex();
+        }
+        
+        var replacements = [
+            {mathjs:'~', mathquill: ''},
+            {mathjs:',', mathquill: ',\\ '}
+        ]
+        for (let j = 0; j < replacements.length; j++) {
+            out = Utility.replaceAll(out, replacements[j]['mathjs'], replacements[j]['mathquill'])
+        }
+        
+        return out;
     }
     
     updateMathObj(key){
@@ -2449,3 +2466,5 @@ class MathFieldCellMain extends MathFieldForMathObject {
         this.updateMathObj(this.mathObjKey);
     }
 }
+
+var test1 = "[sin(pi x)+e^x,sqrt(1+x^2),4-x]";
