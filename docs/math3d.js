@@ -398,6 +398,7 @@ class MathUtility {
     // converts ArrayNode to [,,,] rather than \begin{array}...\end{array}
     // puts most function names and symbols in italic
     static toTexHandler(node, options){
+        console.log(node.type);
         var toTex = '';
         if (node.type === 'ArrayNode'){
             var items = [];
@@ -436,7 +437,7 @@ class MathUtility {
         }
     
         else {
-            toTex = node.toTex();
+            return; //returning nothing falls back to default behavior
         }
     
         var replacements = [
