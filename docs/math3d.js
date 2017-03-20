@@ -330,6 +330,124 @@ class MathUtility {
     static clamp(min, val, max) {
         return Math.min(Math.max(min, val), max)
     }
+    
+    // This is a parser for converting from mathquill's latex to expressions mathjs can parse.
+    static texToMathJS(tex) {
+        var tex = fracToDivision(tex);
+        
+        var expressions = [
+            {tex: '\\cdot', math: ' * '},
+            {tex: '\\left', math: ''},
+            {tex: '\\right',math: ''},
+            {tex: '{', math: '('},
+            {tex: '}', math: ')'},
+            {tex: '\\', math: ' '},
+            {tex: '~', math:' '}
+        ]
+
+        for (let j = 0; j < expressions.length; j++) {
+            tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
+        }
+        return tex;
+        
+        function fracToDivision(string){
+            var frac = "\\frac",
+            fracStart = string.indexOf(frac), // numerator start
+            numStart = fracStart + frac.length,
+            divIndex,
+            stack;
+    
+            if (fracStart < 0){ return string; }
+    
+            stack = 1;
+
+            for (let j=numStart+1; j<string.length; j++){
+                if (string[j] === "{"){
+                    stack += +1;
+                }
+                else if (string[j]=="}"){
+                    stack += -1;
+                }
+                if (stack===0) {
+                    divIndex = j;
+                    break;
+                }
+            }
+    
+            if (stack !== 0 ){
+                throw `${string} has an unmatched fraction starting at position ${fracStart}`
+            }
+    
+            // Remove frac, and add "/"
+            string = string.slice(0,fracStart) + string.slice(numStart,divIndex+1) + "/" + string.slice(divIndex+1);
+
+            // Test if any fracs remain
+            fracStart = string.indexOf(frac)
+            if (fracStart < 0){
+                return string
+            }
+            else {
+                return fracToDivision(string);
+            }
+
+            return string
+        }
+    }
+    
+    // A latex handle for mathjs that:
+    // converts ArrayNode to [,,,] rather than \begin{array}...\end{array}
+    // puts most function names and symbols in italic
+    static toTexHandler(node, options){
+        var toTex = '';
+        if (node.type === 'ArrayNode'){
+            var items = [];
+            for (let j=0; j<node.items.length; j++){
+                items.push(`\\ ${node.items[j].toTex(options)}`)
+            }
+            toTex = `[${String(items)}]`
+        }
+        else if (node.type==='SymbolNode'){
+            toTex = ` ${node.name} `; 
+        }
+        else if (node.type==='FunctionNode') {
+            var funcNames = {
+                sin: "\\sin",
+                cos: "\\cos",
+                tan: "\\tan",
+                csc: "\\csc",
+                sec: "\\sec",
+                cot: "\\cot",
+                asin: "\\asin",
+                acos: "\\acos",
+                atan: "\\atan",
+                exp: "\\exp",
+                log: "\\log",
+                ln: "\\ln",
+            }
+            if (node.name === "sqrt"){
+                toTex = ` \\sqrt{ ${node.args} } `
+            }
+            else if (funcNames[node.name] !== undefined){
+                toTex = ` ${funcNames[node.name]}\\left(${node.args}\\right) `;
+            }
+            else {
+                toTex = ` ${node.name}\\left(${node.args}\\right) `;
+            }
+        }
+    
+        else {
+            toTex = node.toTex();
+        }
+    
+        var replacements = [
+            {mathjs:'~', mathquill: ''},
+        ]
+        for (let j = 0; j < replacements.length; j++) {
+            toTex = Utility.replaceAll(toTex, replacements[j]['mathjs'], replacements[j]['mathquill'])
+        }
+    
+        return toTex;
+    }
 }
 
 class Math3D {
@@ -2332,7 +2450,7 @@ class WrappedMathField {
         this.settings = this.setDefaults(settings);
         
         //Set the inner HTML
-        var expression = math.parse(mathObj.settings[mathObjKey]).toTex({handler:WrappedMathField.toTexHandler});
+        var expression = math.parse(mathObj.settings[mathObjKey]).toTex({handler:MathUtility.toTexHandler});
         el.innerHTML = expression;
         
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
@@ -2358,81 +2476,9 @@ class WrappedMathField {
         return defaults
     }
     
-    // This is a heuristic regex converter
-    // User types --> mathquill --> texToMathJS --> mathjs
-    static texToMathJS(tex) {
-        var expressions = [
-            {tex: '\\cdot', math: ' * '},
-            {tex: '\\left', math: ''},
-            {tex: '\\right',math: ''},
-            {tex: '{', math: '('},
-            {tex: '}', math: ')'},
-            {tex: '\\', math: ' '},
-            {tex: '~', math:' '}
-        ]
-
-        for (let j = 0; j < expressions.length; j++) {
-            tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
-        }
-        return tex;
-    }
-    
-    // math3d.settings only stores mathjs-parseable expressions, not latex. This handler helps converts to latex for the initial load.
-    static toTexHandler(node, options){
-    var toTex = '';
-    if (node.type === 'ArrayNode'){
-        var items = [];
-        for (let j=0; j<node.items.length; j++){
-            items.push(`\\ ${node.items[j].toTex(options)}`)
-        }
-        toTex = `[${String(items)}]`
-    }
-    else if (node.type==='SymbolNode'){
-        toTex = ` ${node.name} `; 
-    }
-    else if (node.type==='FunctionNode') {
-        var funcNames = {
-            sin: "\\sin",
-            cos: "\\cos",
-            tan: "\\tan",
-            csc: "\\csc",
-            sec: "\\sec",
-            cot: "\\cot",
-            asin: "\\asin",
-            acos: "\\acos",
-            atan: "\\atan",
-            exp: "\\exp",
-            log: "\\log",
-            ln: "\\ln",
-        }
-        if (node.name === "sqrt"){
-            toTex = ` \\sqrt{ ${node.args} } `
-        }
-        else if (funcNames[node.name] !== undefined){
-            toTex = ` ${funcNames[node.name]}\\left(${node.args}\\right) `;
-        }
-        else {
-            toTex = ` ${node.name}\\left(${node.args}\\right) `;
-        }
-    }
-    
-    else {
-        toTex = node.toTex();
-    }
-    
-    var replacements = [
-        {mathjs:'~', mathquill: ''},
-    ]
-    for (let j = 0; j < replacements.length; j++) {
-        toTex = Utility.replaceAll(toTex, replacements[j]['mathjs'], replacements[j]['mathquill'])
-    }
-    
-    return toTex;
-}
-    
     updateMathObj(key){
         try {
-            this.mathObj.settings[key] = WrappedMathField.texToMathJS(this.mathfield.latex());
+            this.mathObj.settings[key] = MathUtility.texToMathJS(this.mathfield.latex());
         } 
         catch (e) {
             console.log(e.message);
@@ -2495,3 +2541,11 @@ class WrappedMathFieldMain extends WrappedMathField {
         this.updateMathObj(this.mathObjKey);
     }
 }
+
+
+
+var test0 = "sin(x)";
+var test1 = "\\frac{a}{b}";
+var test2 = "\\frac{a+b}{\\sqrt{2+e^{x}}+1}";
+var test3 = "\\frac{\\frac{a}{b}}{c}";
+var test4 = "\\frac{a+b";
