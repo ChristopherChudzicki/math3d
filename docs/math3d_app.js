@@ -1,8 +1,6 @@
 var container = $(".container")
 container.attr("ng-app", 'math3dApp')
 
-// container.attr("ng-controller", 'main')
-
 // app = angular.module('math3dApp', ['ui.sortable']);
 app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ui.bootstrap']);
 
@@ -95,28 +93,35 @@ app.controller('treeCtrl', function($scope)  {
         },
         toggle: function(collapsed, sourceNodeScope){
             sourceNodeScope.branch.collapsed = collapsed;
-            var delayedReflow = _.debounce(reflowBranch, 100);
-            var failures = delayedReflow(sourceNodeScope['branch']);
+            var reflowInterval = setInterval(function(){
+                var failures = reflowBranch(sourceNodeScope['branch']);
+                if (failures===0){
+                    clearInterval(reflowInterval);
+                }
+            }, 100);
         }
     };
     
     function reflowBranch(branch){
         // If folders are collapsed on page load, mathquill mathfields are initialized in zero-height spans. We need to reflow each of them when the folder is expanded.
-        // Reflow only really needs to be done once; I'm doing on every toggle.
+        // Reflow only really needs to be done once, has the mq-reflow tracking class.
         var failures = 0;
         _.forEach(branch.objects, function(obj){
             _.forEach(obj.wrappedMathFields, function(wmf){
-                var mf = wmf.mathfield;
                 
-                if ( $(mf.el()).css('height')!=='0px' ){
-                    mf.reflow();
+                var mf = wmf.mathfield;
+                var el = $(mf.el());
+                if (el.css('height')==='0px'){
+                    failures += 1;
                 }
-                else{
-                    failures +=1;
+                else if ( !el.hasClass('mq-reflowed') ){
+                    mf.reflow();
+                    el.addClass('mq-reflowed');
                 }
                 
             })
         })
+        
         return failures;
     }
 });
