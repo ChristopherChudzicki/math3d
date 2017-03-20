@@ -1093,6 +1093,9 @@ class MathObject {
         math3d.mathTree[math3d.mathTree.length - 1].objects.push(this);
 
         this.type = this.constructor.name;
+        
+        // Record all MathQuill mathfields associated with with this object for the UI
+        this.wrappedMathFields = [];
     }
 
     setDefaults(settings) {
@@ -2323,13 +2326,13 @@ class ParametricSurface extends AbstractSurface {
 // This should all really go into another file. It's specific to the math3d.org webapp design.
 
 // Customize MathQuill's MathField; bind to math3d MathObject
-class MathFieldForMathObject {
+class WrappedMathField {
     constructor(el, mathObj, mathObjKey, settings) {
         this.settings = {};
         this.settings = this.setDefaults(settings);
         
         //Set the inner HTML
-        var expression = math.parse(mathObj.settings[mathObjKey]).toTex({handler:MathFieldForMathObject.toTexHandler});
+        var expression = math.parse(mathObj.settings[mathObjKey]).toTex({handler:WrappedMathField.toTexHandler});
         el.innerHTML = expression;
         
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
@@ -2337,6 +2340,7 @@ class MathFieldForMathObject {
             $(el).addClass("has-mq");
         }
         this.mathObj = mathObj;
+        mathObj.wrappedMathFields.push(this);
         this.mathObjKey = mathObjKey;
 
     }
@@ -2428,7 +2432,7 @@ class MathFieldForMathObject {
     
     updateMathObj(key){
         try {
-            this.mathObj.settings[key] = MathFieldForMathObject.texToMathJS(this.mathfield.latex());
+            this.mathObj.settings[key] = WrappedMathField.texToMathJS(this.mathfield.latex());
         } 
         catch (e) {
             console.log(e.message);
@@ -2437,7 +2441,7 @@ class MathFieldForMathObject {
     
 }
 
-class MathFieldCellMain extends MathFieldForMathObject {
+class WrappedMathFieldMain extends WrappedMathField {
     constructor(el, mathObj, mathObjKey, settings){
         super(el, mathObj, mathObjKey, settings);
         
