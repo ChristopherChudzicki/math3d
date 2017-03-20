@@ -398,7 +398,6 @@ class MathUtility {
     // converts ArrayNode to [,,,] rather than \begin{array}...\end{array}
     // puts most function names and symbols in italic
     static toTexHandler(node, options){
-        console.log(node.type);
         var toTex = '';
         if (node.type === 'ArrayNode'){
             var items = [];
@@ -2537,7 +2536,6 @@ class WrappedMathFieldMain extends WrappedMathField {
         this.restoreItemWidth();
     }
     onEditHandler(){
-        console.log("Edit");
         this.updateItemWidth();
         this.updateMathObj(this.mathObjKey);
     }
