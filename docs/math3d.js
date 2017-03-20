@@ -410,8 +410,6 @@ class MathUtility {
         else {
             return; //returning nothing falls back to default behavior
         }
-    
-        return toTex;
         
         function arrayNodeHandler(node, options){
             var items = [];
