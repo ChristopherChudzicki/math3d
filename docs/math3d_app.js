@@ -1,4 +1,3 @@
-var globalScope = {};
 var container = $(".container")
 container.attr("ng-app", 'math3dApp')
 
@@ -96,8 +95,30 @@ app.controller('treeCtrl', function($scope)  {
         },
         toggle: function(collapsed, sourceNodeScope){
             sourceNodeScope.branch.collapsed = collapsed;
+            var delayedReflow = _.debounce(reflowBranch, 100);
+            var failures = delayedReflow(sourceNodeScope['branch']);
         }
     };
+    
+    function reflowBranch(branch){
+        // If folders are collapsed on page load, mathquill mathfields are initialized in zero-height spans. We need to reflow each of them when the folder is expanded.
+        // Reflow only really needs to be done once; I'm doing on every toggle.
+        var failures = 0;
+        _.forEach(branch.objects, function(obj){
+            _.forEach(obj.wrappedMathFields, function(wmf){
+                var mf = wmf.mathfield;
+                
+                if ( $(mf.el()).css('height')!=='0px' ){
+                    mf.reflow();
+                }
+                else{
+                    failures +=1;
+                }
+                
+            })
+        })
+        return failures;
+    }
 });
 
 app.controller('saveCtrl', ['$scope', function($scope){
@@ -150,7 +171,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         var el = $(`#object-${obj.id} span.mathquill-large`)
         if (!el.hasClass('has-mq')){
             var key = obj.type !== 'Vector' ? 'rawExpression' : 'components';
-            var mf = new MathFieldCellMain(el[0],obj, key);
+            var mf = new WrappedMathFieldMain(el[0],obj, key);
         }
         
     }
@@ -161,11 +182,11 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         var elExpression = $(`#object-${obj.id} span.mathquill-large .variable-rawExpression`);
         
         if (!elName.hasClass('has-mq')){
-            new MathFieldCellMain(elName[0], obj, 'rawName');
+            new WrappedMathFieldMain(elName[0], obj, 'rawName');
             new MathQuill.getInterface(2).StaticMath(elEqual[0]);
         }
         if (!elExpression.hasClass('has-mq')){
-            new MathFieldCellMain(elExpression[0], obj, 'rawExpression');
+            new WrappedMathFieldMain(elExpression[0], obj, 'rawExpression');
         }
     }
     
