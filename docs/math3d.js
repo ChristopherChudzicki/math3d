@@ -398,18 +398,45 @@ class MathUtility {
     // converts ArrayNode to [,,,] rather than \begin{array}...\end{array}
     // puts most function names and symbols in italic
     static toTexHandler(node, options){
-        var toTex = '';
         if (node.type === 'ArrayNode'){
+            return arrayNodeHandler(node, options);
+        }
+        else if (node.type==='SymbolNode'){
+            return symbolNodeHandler(node, options);
+        }
+        else if (node.type==='FunctionNode') {
+            return functionNodeHandler(node, options);
+        }
+        else {
+            return; //returning nothing falls back to default behavior
+        }
+    
+        return toTex;
+        
+        function arrayNodeHandler(node, options){
             var items = [];
             for (let j=0; j<node.items.length; j++){
                 items.push(`\\ ${node.items[j].toTex(options)}`)
             }
-            toTex = `[${String(items)}]`
+            return replacements(`[${String(items)}]`);
         }
-        else if (node.type==='SymbolNode'){
-            toTex = ` ${node.name} `; 
+        function symbolNodeHandler(node, options){
+            var toTex;
+            var symbolNames = {
+                pi: "\\pi",
+                theta: "\\theta"
+            }
+            
+            if (symbolNames[node.name] !== undefined){
+                toTex = ` ${symbolNames[node.name]}`;
+            }
+            else {
+                toTex = ` ${node.name} `;
+            }
+            return replacements(toTex);
         }
-        else if (node.type==='FunctionNode') {
+        function functionNodeHandler(node, options){
+            var toTex;
             var funcNames = {
                 sin: "\\sin",
                 cos: "\\cos",
@@ -424,29 +451,35 @@ class MathUtility {
                 log: "\\log",
                 ln: "\\ln",
             }
+            var args = argsHandler(node, options);
             if (node.name === "sqrt"){
-                toTex = ` \\sqrt{ ${node.args} } `
+                toTex = ` \\sqrt{ ${args} } `
             }
             else if (funcNames[node.name] !== undefined){
-                toTex = ` ${funcNames[node.name]}\\left(${node.args}\\right) `;
+                toTex = ` ${node.name}\\left(${args}\\right) `;
             }
             else {
-                toTex = ` ${node.name}\\left(${node.args}\\right) `;
+                toTex = ` ${node.name}\\left(${args}\\right) `;
             }
+            
+            return replacements(toTex);
         }
-    
-        else {
-            return; //returning nothing falls back to default behavior
+        function argsHandler(node, options){
+            var args = [];
+            for (let j = 0; j<node.args.length; j++){
+                args.push(node.args[j].toTex(options));
+            }
+            return replacements(String(args));
+        };
+        function replacements(toTex){
+            var replacements = [
+                {mathjs:'~', mathquill: ''},
+            ]
+            for (let j = 0; j < replacements.length; j++) {
+                toTex = Utility.replaceAll(toTex, replacements[j]['mathjs'], replacements[j]['mathquill'])
+            }
+            return toTex;
         }
-    
-        var replacements = [
-            {mathjs:'~', mathquill: ''},
-        ]
-        for (let j = 0; j < replacements.length; j++) {
-            toTex = Utility.replaceAll(toTex, replacements[j]['mathjs'], replacements[j]['mathquill'])
-        }
-    
-        return toTex;
     }
 }
 
@@ -2472,6 +2505,7 @@ class WrappedMathField {
     get defaultSettings() {
         var defaults = {
             autoCommands: 'pi theta sqrt',
+            autoOperatorNames: 'diff cos sin tan sec csc cot log ln exp'
         }
         return defaults
     }
