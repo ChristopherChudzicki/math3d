@@ -2358,9 +2358,10 @@ class WrappedMathField {
         return defaults
     }
     
-    // This is a heuristic regex converter
-    // User types --> mathquill --> texToMathJS --> mathjs
+    // This is a parser for converting from mathquill's latex to expressions mathjs can parse.
     static texToMathJS(tex) {
+        var tex = fracToDivision(tex);
+        
         var expressions = [
             {tex: '\\cdot', math: ' * '},
             {tex: '\\left', math: ''},
@@ -2375,6 +2376,50 @@ class WrappedMathField {
             tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
         }
         return tex;
+        
+        function fracToDivision(string){
+            var frac = "\\frac",
+                fracStart = string.indexOf(frac), // numerator start
+                numStart = fracStart + frac.length,
+                divIndex,
+                stack;
+    
+            if (fracStart < 0){ return string; }
+    
+            stack = 1;
+
+            for (let j=numStart+1; j<string.length; j++){
+                if (string[j] === "{"){
+                    stack += +1;
+                }
+                else if (string[j]=="}"){
+                    stack += -1;
+                }
+                if (stack===0) {
+                    divIndex = j;
+                    break;
+                }
+            }
+    
+            if (stack !== 0 ){
+                throw `${string} has an unmatched fraction starting at position ${fracStart}`
+            }
+    
+            // Remove frac, and add "/"
+            string = string.slice(0,fracStart) + string.slice(numStart,divIndex+1) + "/" + string.slice(divIndex+1);
+
+            // Test if any fracs remain
+            fracStart = string.indexOf(frac)
+            if (fracStart < 0){
+                return string
+            }
+            else {
+                return fracToDivision(string);
+            }
+    
+
+            return string
+        }
     }
     
     // math3d.settings only stores mathjs-parseable expressions, not latex. This handler helps converts to latex for the initial load.
@@ -2495,3 +2540,11 @@ class WrappedMathFieldMain extends WrappedMathField {
         this.updateMathObj(this.mathObjKey);
     }
 }
+
+
+
+var test0 = "sin(x)";
+var test1 = "\\frac{a}{b}";
+var test2 = "\\frac{a+b}{\\sqrt{2+e^{x}}+1}";
+var test3 = "\\frac{\\frac{a}{b}}{c}";
+var test4 = "\\frac{a+b";
