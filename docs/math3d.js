@@ -310,12 +310,13 @@ class Utility {
         var stack = 1;
         
         for (let j=startIdx+1; j<string.length; j++){
-            console.log(string[j],closingBrace)
             if (string[j] === openingBrace){
                 stack += +1;
             }
             else if (string[j]==closingBrace){
                 stack += -1;
+            }
+            if (stack === 0){
                 return j;
             }
         }
@@ -330,7 +331,7 @@ class Utility {
 class MathUtility {
     static diff(f, ...values) {
         // If only function "f" is provided, return a new function that approximates the derivative of f
-        // values are provided also, return the value of the derivative at those values;
+        // If values are provided also, return the value of the derivative at those values;
         var eps = 0.008;
         var numberOfArguments = f.numberOfArguments ? f.numberOfArguments : f.length;
         var derivative = function() {
@@ -2586,8 +2587,41 @@ class WrappedMathFieldMain extends WrappedMathField {
 
 
 
-var test0 = "sin(x)";
-var test1 = "\\frac{a}{b}";
-var test2 = "\\frac{a+b}{\\sqrt{2+e^{x}}+1}";
-var test3 = "\\frac{\\frac{a}{b}}{c}";
-var test4 = "\\frac{a+b";
+function diffParser(string){
+    // MathUtility.diff has two syntaxes:
+    //      diff(f) ... returns a function
+    //      diff(f,t) ... returns value of derivative at t
+    // Mathematically, we prefer function syntax followed by evaluation: diff(f)(t), but MathJS parser can't handle this. (It thinks multiplication)
+    // This function converts from function syntax to diff syntax
+    
+    // Examples:
+    // diff(f1)(u,v) --> diff(f1,u,v)
+    // diff(diff(f1))(u,v) --> diff( diff(f1), u, v )
+    
+    // Note that diff(f) w/o a subsequent evaluation needs to remain unchanged. This could show up in second+ derivatives.
+    
+    var match = 'diff',
+        diffStart = string.indexOf(match),
+        funcStart = diffStart + match.length,
+        funcClose = Utility.findClosingBrace(string, funcStart);
+    
+    // 'DIFF' marks a diff as finished.
+    if (string[funcClose+1] !== '('){
+        string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,string.length);
+    }
+    else{
+        var argStart = funcClose+1;
+        var argClose = Utility.findClosingBrace(string, argStart);
+        string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,funcClose) + ',' + string.slice(argStart+1,string.length);
+    }
+    
+    // Test if diffs remain
+    diffStart = string.indexOf(match)
+    if (diffStart < 0){
+        return Utility.replaceAll(string,'DIFF','diff');
+    }
+    else {
+        return diffParser(string);
+    }
+
+}
