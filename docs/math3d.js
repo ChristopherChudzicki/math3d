@@ -292,13 +292,46 @@ class Utility {
     static replaceAll(str, find, replace) {
         return str.replace(new RegExp(Utility.escapeRegExp(find), 'g'), replace);
     }
+    
+    static findClosingBrace(string, startIdx){
+        var braces = {
+            '[':']',
+            '<':'>',
+            '(':')',
+            '{':'}'
+        };
+        var openingBrace = string[startIdx];
+        var closingBrace = braces[openingBrace];
+        
+        if (closingBrace===undefined){
+            throw `${string} does not contain an opening brace at position ${startIdx}.`
+        }
+        
+        var stack = 1;
+        
+        for (let j=startIdx+1; j<string.length; j++){
+            if (string[j] === openingBrace){
+                stack += +1;
+            }
+            else if (string[j]==closingBrace){
+                stack += -1;
+            }
+            if (stack === 0){
+                return j;
+            }
+        }
 
+        if (stack !== 0 ){
+            throw `${string} has a brace that opens at position ${startIdx} but does not close.`
+        }
+        
+    }
 }
 
 class MathUtility {
     static diff(f, ...values) {
         // If only function "f" is provided, return a new function that approximates the derivative of f
-        // values are provided also, return the value of the derivative at those values;
+        // If values are provided also, return the value of the derivative at those values;
         var eps = 0.008;
         var numberOfArguments = f.numberOfArguments ? f.numberOfArguments : f.length;
         var derivative = function() {
@@ -333,53 +366,36 @@ class MathUtility {
     
     // This is a parser for converting from mathquill's latex to expressions mathjs can parse.
     static texToMathJS(tex) {
-        var tex = fracToDivision(tex);
-        
-        var expressions = [
+        var replacements = [
+            {tex:'\\operatorname{diff}',math:'diff'},
             {tex: '\\cdot', math: ' * '},
             {tex: '\\left', math: ''},
             {tex: '\\right',math: ''},
             {tex: '{', math: '('},
             {tex: '}', math: ')'},
+            {tex: '~', math:' '},
             {tex: '\\', math: ' '},
-            {tex: '~', math:' '}
         ]
 
-        for (let j = 0; j < expressions.length; j++) {
-            tex = Utility.replaceAll(tex, expressions[j]['tex'], expressions[j]['math'])
+        for (let j = 0; j < replacements.length; j++) {
+            tex = Utility.replaceAll(tex, replacements[j]['tex'], replacements[j]['math'])
         }
+        
+        tex = fracToDivision(tex);
+        
         return tex;
         
         function fracToDivision(string){
             var frac = "\\frac",
-            fracStart = string.indexOf(frac), // numerator start
-            numStart = fracStart + frac.length,
-            divIndex,
-            stack;
-    
-            if (fracStart < 0){ return string; }
-    
-            stack = 1;
-
-            for (let j=numStart+1; j<string.length; j++){
-                if (string[j] === "{"){
-                    stack += +1;
-                }
-                else if (string[j]=="}"){
-                    stack += -1;
-                }
-                if (stack===0) {
-                    divIndex = j;
-                    break;
-                }
-            }
-    
-            if (stack !== 0 ){
-                throw `${string} has an unmatched fraction starting at position ${fracStart}`
-            }
+            fracStart = string.indexOf(frac), 
+            numStart = fracStart + frac.length; // numerator start
+            
+            if (fracStart < 0) { return string;}
+            
+            var divIdx = Utility.findClosingBrace(string,numStart)
     
             // Remove frac, and add "/"
-            string = string.slice(0,fracStart) + string.slice(numStart,divIndex+1) + "/" + string.slice(divIndex+1);
+            string = string.slice(0,fracStart) + string.slice(numStart,divIdx+1) + "/" + string.slice(divIdx+1);
 
             // Test if any fracs remain
             fracStart = string.indexOf(frac)
@@ -1212,6 +1228,9 @@ class MathExpression {
         // Cross and dot products are not built into mathjs express. Let's replace "cross" and "dot" by mathjs operators that we probably won't use. Then we'll reassign functionality to these operators.
         this.expression = this.expression.replace(/dot/g, '|');
         this.expression = this.expression.replace(/cross/g, '&');
+        
+        this.expression = diffParser(this.expression);
+        
         var parsed = math.parse(this.expression);
 
         parsed.traverse(function(node) {
@@ -1225,6 +1244,52 @@ class MathExpression {
         this.expression = this.expression.replace(/:/, 'dot')
         this.expression = this.expression.replace(/&/, 'cross')
         return parsed
+        
+        function diffParser(string){
+            // MathUtility.diff has two syntaxes:
+            //      diff(f) ... returns a function
+            //      diff(f,t) ... returns value of derivative at t
+            // Mathematically, we prefer function syntax followed by evaluation: diff(f)(t), but MathJS parser can't handle this. (It thinks multiplication)
+            // This function converts from function syntax to diff syntax
+    
+            // Examples:
+            // diff(f1)(u,v) --> diff(f1,u,v)
+            // diff(diff(f1))(u,v) --> diff( diff(f1), u, v )
+    
+            // Note that diff(f) w/o a subsequent evaluation needs to remain unchanged. This could show up in second+ derivatives.
+    
+            // Remove whitespace preceeding or following parentheses
+            string = string.replace(/\s+\)/g, '\)').replace(/\s+\(/g, '\(');
+            string = string.replace(/\)\s+/g, '\)').replace(/\(\s+/g, '\(');
+    
+            var match = 'diff',
+                diffStart = string.indexOf(match);
+                
+            if (diffStart < 0) {return string;}
+
+            var funcStart = diffStart + match.length,
+                funcClose = Utility.findClosingBrace(string, funcStart);
+    
+            // 'DIFF' marks a diff as finished.
+            if (string[funcClose+1] !== '('){
+                string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,string.length);
+            }
+            else{
+                var argStart = funcClose+1;
+                var argClose = Utility.findClosingBrace(string, argStart);
+                string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,funcClose) + ',' + string.slice(argStart+1,string.length);
+            }
+    
+            // Test if diffs remain
+            diffStart = string.indexOf(match)
+            if (diffStart < 0){
+                return Utility.replaceAll(string,'DIFF','diff');
+            }
+            else {
+                return diffParser(string);
+            }
+
+        }
     }
 }
 
@@ -2482,6 +2547,7 @@ class WrappedMathField {
         
         //Set the inner HTML
         var expression = math.parse(mathObj.settings[mathObjKey]).toTex({handler:MathUtility.toTexHandler});
+        expression = Utility.replaceAll(expression,'~','');
         el.innerHTML = expression;
         
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
@@ -2572,11 +2638,3 @@ class WrappedMathFieldMain extends WrappedMathField {
         this.updateMathObj(this.mathObjKey);
     }
 }
-
-
-
-var test0 = "sin(x)";
-var test1 = "\\frac{a}{b}";
-var test2 = "\\frac{a+b}{\\sqrt{2+e^{x}}+1}";
-var test3 = "\\frac{\\frac{a}{b}}{c}";
-var test4 = "\\frac{a+b";
