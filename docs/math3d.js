@@ -366,7 +366,10 @@ class MathUtility {
     
     // This is a parser for converting from mathquill's latex to expressions mathjs can parse.
     static texToMathJS(tex) {
-        var tex = fracToDivision(tex);
+        tex = fracToDivision(tex);
+        console.log(tex);
+        tex = diffParser(tex);
+        console.log(tex);
         
         var expressions = [
             {tex: '\\cdot', math: ' * '},
@@ -388,6 +391,8 @@ class MathUtility {
             fracStart = string.indexOf(frac), 
             numStart = fracStart + frac.length; // numerator start
             
+            if (fracStart < 0) { return string;}
+            
             var divIdx = Utility.findClosingBrace(string,numStart)
     
             // Remove frac, and add "/"
@@ -403,6 +408,52 @@ class MathUtility {
             }
 
             return string
+        }
+    
+        function diffParser(string){
+            // MathUtility.diff has two syntaxes:
+            //      diff(f) ... returns a function
+            //      diff(f,t) ... returns value of derivative at t
+            // Mathematically, we prefer function syntax followed by evaluation: diff(f)(t), but MathJS parser can't handle this. (It thinks multiplication)
+            // This function converts from function syntax to diff syntax
+    
+            // Examples:
+            // diff(f1)(u,v) --> diff(f1,u,v)
+            // diff(diff(f1))(u,v) --> diff( diff(f1), u, v )
+    
+            // Note that diff(f) w/o a subsequent evaluation needs to remain unchanged. This could show up in second+ derivatives.
+    
+            // Remove whitespace preceeding or following parentheses
+            string = string.replace(/\s+\)/g, '\)').replace(/\s+\(/g, '\(');
+            string = string.replace(/\)\s+/g, '\)').replace(/\(\s+/g, '\(');
+    
+            var match = 'diff',
+                diffStart = string.indexOf(match);
+                
+            if (diffStart < 0) {return string;}
+
+            var funcStart = diffStart + match.length,
+                funcClose = Utility.findClosingBrace(string, funcStart);
+    
+            // 'DIFF' marks a diff as finished.
+            if (string[funcClose+1] !== '('){
+                string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,string.length);
+            }
+            else{
+                var argStart = funcClose+1;
+                var argClose = Utility.findClosingBrace(string, argStart);
+                string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,funcClose) + ',' + string.slice(argStart+1,string.length);
+            }
+    
+            // Test if diffs remain
+            diffStart = string.indexOf(match)
+            if (diffStart < 0){
+                return Utility.replaceAll(string,'DIFF','diff');
+            }
+            else {
+                return diffParser(string);
+            }
+
         }
     }
     
@@ -2494,6 +2545,7 @@ class WrappedMathField {
         
         //Set the inner HTML
         var expression = math.parse(mathObj.settings[mathObjKey]).toTex({handler:MathUtility.toTexHandler});
+        expression = Utility.replaceAll(expression,'~','');
         el.innerHTML = expression;
         
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
@@ -2583,45 +2635,4 @@ class WrappedMathFieldMain extends WrappedMathField {
         this.updateItemWidth();
         this.updateMathObj(this.mathObjKey);
     }
-}
-
-
-
-function diffParser(string){
-    // MathUtility.diff has two syntaxes:
-    //      diff(f) ... returns a function
-    //      diff(f,t) ... returns value of derivative at t
-    // Mathematically, we prefer function syntax followed by evaluation: diff(f)(t), but MathJS parser can't handle this. (It thinks multiplication)
-    // This function converts from function syntax to diff syntax
-    
-    // Examples:
-    // diff(f1)(u,v) --> diff(f1,u,v)
-    // diff(diff(f1))(u,v) --> diff( diff(f1), u, v )
-    
-    // Note that diff(f) w/o a subsequent evaluation needs to remain unchanged. This could show up in second+ derivatives.
-    
-    var match = 'diff',
-        diffStart = string.indexOf(match),
-        funcStart = diffStart + match.length,
-        funcClose = Utility.findClosingBrace(string, funcStart);
-    
-    // 'DIFF' marks a diff as finished.
-    if (string[funcClose+1] !== '('){
-        string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,string.length);
-    }
-    else{
-        var argStart = funcClose+1;
-        var argClose = Utility.findClosingBrace(string, argStart);
-        string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,funcClose) + ',' + string.slice(argStart+1,string.length);
-    }
-    
-    // Test if diffs remain
-    diffStart = string.indexOf(match)
-    if (diffStart < 0){
-        return Utility.replaceAll(string,'DIFF','diff');
-    }
-    else {
-        return diffParser(string);
-    }
-
 }
