@@ -292,7 +292,39 @@ class Utility {
     static replaceAll(str, find, replace) {
         return str.replace(new RegExp(Utility.escapeRegExp(find), 'g'), replace);
     }
+    
+    static findClosingBrace(string, startIdx){
+        var braces = {
+            '[':']',
+            '<':'>',
+            '(':')',
+            '{':'}'
+        };
+        var openingBrace = string[startIdx];
+        var closingBrace = braces[openingBrace];
+        
+        if (closingBrace===undefined){
+            throw `${string} does not contain an opening brace at position ${startIdx}.`
+        }
+        
+        var stack = 1;
+        
+        for (let j=startIdx+1; j<string.length; j++){
+            console.log(string[j],closingBrace)
+            if (string[j] === openingBrace){
+                stack += +1;
+            }
+            else if (string[j]==closingBrace){
+                stack += -1;
+                return j;
+            }
+        }
 
+        if (stack !== 0 ){
+            throw `${string} has a brace that opens at position ${startIdx} but does not close.`
+        }
+        
+    }
 }
 
 class MathUtility {
@@ -352,34 +384,13 @@ class MathUtility {
         
         function fracToDivision(string){
             var frac = "\\frac",
-            fracStart = string.indexOf(frac), // numerator start
-            numStart = fracStart + frac.length,
-            divIndex,
-            stack;
-    
-            if (fracStart < 0){ return string; }
-    
-            stack = 1;
-
-            for (let j=numStart+1; j<string.length; j++){
-                if (string[j] === "{"){
-                    stack += +1;
-                }
-                else if (string[j]=="}"){
-                    stack += -1;
-                }
-                if (stack===0) {
-                    divIndex = j;
-                    break;
-                }
-            }
-    
-            if (stack !== 0 ){
-                throw `${string} has an unmatched fraction starting at position ${fracStart}`
-            }
+            fracStart = string.indexOf(frac), 
+            numStart = fracStart + frac.length; // numerator start
+            
+            var divIdx = Utility.findClosingBrace(string,numStart)
     
             // Remove frac, and add "/"
-            string = string.slice(0,fracStart) + string.slice(numStart,divIndex+1) + "/" + string.slice(divIndex+1);
+            string = string.slice(0,fracStart) + string.slice(numStart,divIdx+1) + "/" + string.slice(divIdx+1);
 
             // Test if any fracs remain
             fracStart = string.indexOf(frac)
