@@ -366,6 +366,8 @@ class MathUtility {
     
     // This is a parser for converting from mathquill's latex to expressions mathjs can parse.
     static texToMathJS(tex) {
+        tex = fracToDivision(tex);
+        
         var replacements = [
             {tex:'\\operatorname{diff}',math:'diff'},
             {tex: '\\cdot', math: ' * '},
@@ -380,8 +382,6 @@ class MathUtility {
         for (let j = 0; j < replacements.length; j++) {
             tex = Utility.replaceAll(tex, replacements[j]['tex'], replacements[j]['math'])
         }
-        
-        tex = fracToDivision(tex);
         
         return tex;
         
