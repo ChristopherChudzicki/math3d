@@ -175,7 +175,7 @@ span.folder-name-editable{
     visibility:hidden;
 }
 
-span.has-error.has-feedback {
+.has-error.has-feedback {
     outline: none;
     border-color: red;
     box-shadow: 0 0 10px red;
