@@ -2428,6 +2428,28 @@ class ParametricSurface extends AbstractSurface {
                     return this._samplesV;
                 },
             },
+            rangeU: {
+                set: function(val) {
+                    this._rangeU = val;
+                    if (this.rangeV !== undefined){
+                        this.range = `[${val},${this.rangeV}]`;
+                    }
+                },
+                get: function() {
+                    return this._rangeU;
+                },
+            },
+            rangeV: {
+                set: function(val) {
+                    this._rangeV = val;
+                    if (this.rangeU !== undefined){
+                        this.range = `[${this.rangeU},${val}]`;
+                    }
+                },
+                get: function() {
+                    return this._rangeV;
+                },
+            }
         })
 
         //TODO: samplesU and samplesV set OK, but are updating strangely.
@@ -2444,7 +2466,8 @@ class ParametricSurface extends AbstractSurface {
         var defaults = _.merge(super.defaultSettings, {
             parameters: ['u', 'v'],
             rawExpression: "[v*cos(u),v*sin(u),v]",
-            range: "[[-pi,pi],[-1,1]]",
+            rangeU: "[-pi, pi]",
+            rangeV: "[-1, 1]",
             samplesU: 64,
             samplesV: 64
         });
