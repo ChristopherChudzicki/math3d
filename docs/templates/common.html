@@ -12,20 +12,17 @@
     <input id="{{'jscolor-'+obj.id}}" class="jscolor hide-in-place" ng-model="obj.settings.color" ></input>
   </div>
   <span class="mathquill-large"></span>
-  <button class="btn btn-link btn-xs btn-quiet settings-trigger">
-      <a class="popover-trigger" 
-          type="button"
-          ng-controller="popoverCtrl"
-          popover-is-open="myPopover.isOpen"  
-          popover-class="popover-settings"
-          uib-popover-template="'templates/settings_popover.html'" 
-          popover-placement="right" 
-          popover-trigger="outsideClick"
-          popover-append-to-body="true"
-          type="button"
-          class="btn btn-default"
-          >
-          <span class="glyphicon glyphicon-wrench"></span>
+  <button class="btn btn-link btn-xs btn-quiet settings-trigger"
+    ng-controller="popoverCtrl"
+    popover-is-open="myPopover.isOpen"  
+    popover-class="popover-settings"
+    uib-popover-template="'templates/settings_popover.html'" 
+    popover-placement="right" 
+    popover-trigger="outsideClick"
+    popover-append-to-body="true"
+    >
+      <a class="popover-trigger" class="btn btn-default" >
+        <span class="glyphicon glyphicon-wrench"></span>
       </a>
   </button>
 </div>
