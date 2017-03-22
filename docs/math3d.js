@@ -2588,7 +2588,7 @@ class WrappedMathField {
     }
     
 }
-
+var test;
 class WrappedMathFieldMain extends WrappedMathField {
     constructor(el, mathObj, mathObjKey, $scope, settings){
         super(el, mathObj, mathObjKey, $scope, settings);
@@ -2597,8 +2597,11 @@ class WrappedMathFieldMain extends WrappedMathField {
         this.item = $(el).closest('.list-group-item')[0];
         
         var _this=this;
-        $(this.cellMain).unbind().on('focusin', function(){
-            _this.onFocusIn();
+        $(this.cellMain).unbind().on('focusin', function(e){
+            test = e.target;
+            if ( !$(e.target).hasClass('btn')){
+                _this.onFocusIn();
+            }
         })
         .on('focusout', function(){
             _this.onFocusOut();
