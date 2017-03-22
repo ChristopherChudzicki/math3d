@@ -1369,6 +1369,12 @@ class MathObject {
         if (metaObj.type === 'ParametricSurface') {
             return new ParametricSurface(math3d, metaObj.settings)
         };
+        if (metaObj.type === 'ExplicitSurface') {
+            return new ExplicitSurface(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'ExplicitSurfacePolar') {
+            return new ExplicitSurfacePolar(math3d, metaObj.settings)
+        };
     }
 }
 
@@ -2482,7 +2488,7 @@ class ParametricSurface extends AbstractSurface {
             var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
             var param0 = this.settings.parameters[0];
             var param1 = this.settings.parameters[1];
-
+            
             this.range = this.parsedRange.eval(this.math3d.mathScope);
             this.mathboxGroup.select("cartesian").set("range", this.range);
 
@@ -2559,6 +2565,72 @@ class ParametricSurface extends AbstractSurface {
         return group;
     }
 
+}
+
+class ExplicitSurface extends ParametricSurface {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        
+        var _this = this;
+        Object.defineProperties(this.settings, {
+            rawExpressionZ: {
+                set: function(val) {
+                    this._rawExpressionZ = val;
+                    this.rawExpression = `[x,y,${val}]`;
+                },
+                get: function() {
+                    return this._rawExpressionZ;
+                },
+            },
+        })
+        
+        // Need to set defaults again, since Object.defineProperties just overrode rawExpressionZ
+        this.settings = this.setDefaults(settings);
+    }
+    
+    get defaultSettings() {
+        var defaults = _.merge(super.defaultSettings, {
+            parameters:['x','y'],
+            rawExpression: "[x, y, x^2 + y^2]",
+            rawExpressionZ: "x^2 + y^2",
+            rangeU: "[-2, 2]",
+            rangeV: "[-2, 2]",
+        });
+        return defaults
+    }
+}
+
+class ExplicitSurfacePolar extends ParametricSurface {
+    constructor(math3d, settings){
+        super(math3d, settings);
+        
+        var _this = this;
+        Object.defineProperties(this.settings, {
+            rawExpressionZ: {
+                set: function(val) {
+                    this._rawExpressionZ = val;
+                    this.rawExpression = `[r*cos(theta),r*sin(theta),${val}]`;
+                },
+                get: function() {
+                    return this._rawExpressionZ;
+                },
+            },
+        })
+        
+        // Need to set defaults again, since Object.defineProperties just overrode rawExpressionZ
+        this.settings = this.setDefaults(settings);
+    }
+    
+    get defaultSettings() {
+        var defaults = _.merge(super.defaultSettings, {
+            parameters:['r','theta'],
+            rawExpression: "[r*cos(theta), r*sin(theta), 3*e^-r]",
+            rawExpressionZ: "3*e^-r",
+            rangeU: "[0, 4]",
+            rangeV: "[0, 2pi]",
+        });
+        return defaults
+    }
 }
 
 // This should all really go into another file. It's specific to the math3d.org webapp design.

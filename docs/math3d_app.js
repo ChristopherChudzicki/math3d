@@ -175,7 +175,13 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     $scope.setupMathGraphicMF = function(obj){
         var el = $(`#object-${obj.id} span.mathquill-large`)
         if (!el.hasClass('has-mq')){
-            var key = obj.type !== 'Vector' ? 'rawExpression' : 'components';
+            var keys = {
+                Vector: 'components',
+                ExplicitSurface: 'rawExpressionZ',
+                ExplicitSurfacePolar:'rawExpressionZ',
+            }
+            var key = keys[obj.type];
+            if (key === undefined){ key = 'rawExpression' };
             var mf = new WrappedMathFieldMain(el[0],obj, key);
         }
         
