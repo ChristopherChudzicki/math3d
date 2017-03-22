@@ -5,9 +5,15 @@
   <div class="object-cell-main" ng-controller="mathObjectCtrl">
     <div ng-include="'templates/common.html'"></div>
     <div class="cell-row">
-      <div style="margin-left:25px">
-        <label class="pull-left">u, v ∈ </label>
-        <input class="form-control input-xs" style="width:100px" type="text" ng-model="obj.settings.range"></input>
+      <div style="margin-left:25px;">
+        <label class="pull-left">u ∈ </label>
+        <input class="form-control input-xs" style="width:75px" type="text" ng-model="obj.settings.rangeU"></input>
+      </div>
+    </div>
+    <div class="cell-row">
+      <div style="margin-left:25px;">
+        <label class="pull-left">v ∈ </label>
+        <input class="form-control input-xs" style="width:75px" type="text" ng-model="obj.settings.rangeV"></input>
       </div>
     </div>
   </div>
