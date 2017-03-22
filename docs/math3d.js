@@ -2541,7 +2541,9 @@ class ParametricSurface extends AbstractSurface {
 
 // Customize MathQuill's MathField; bind to math3d MathObject
 class WrappedMathField {
-    constructor(el, mathObj, mathObjKey, settings) {
+    constructor(el, mathObj, mathObjKey, $scope, settings) {
+        this.$scope = $scope; //angular scope. We need to $scope.$apply() during mathquill edit events
+        
         this.settings = {};
         this.settings = this.setDefaults(settings);
         
@@ -2577,6 +2579,7 @@ class WrappedMathField {
     updateMathObj(key){
         try {
             this.mathObj.settings[key] = MathUtility.texToMathJS(this.mathfield.latex());
+            this.$scope.$apply();
         } 
         catch (e) {
             console.log(e.message);
@@ -2586,8 +2589,8 @@ class WrappedMathField {
 }
 
 class WrappedMathFieldMain extends WrappedMathField {
-    constructor(el, mathObj, mathObjKey, settings){
-        super(el, mathObj, mathObjKey, settings);
+    constructor(el, mathObj, mathObjKey, $scope, settings){
+        super(el, mathObj, mathObjKey, $scope, settings);
         
         this.cellMain = $(`#object-${mathObj.id} .object-cell-main`);
         this.item = $(el).closest('.list-group-item')[0];

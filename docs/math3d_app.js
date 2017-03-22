@@ -187,7 +187,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         var elExpression = $(`#object-${obj.id} span.mathquill-large .variable-rawExpression`);
         
         if (!elName.hasClass('has-mq')){
-            new WrappedMathFieldMain(elName[0], obj, 'rawName');
+            new WrappedMathFieldMain(elName[0], obj, 'rawName', $scope);
             new MathQuill.getInterface(2).StaticMath(elEqual[0]);
         }
         if (!elExpression.hasClass('has-mq')){
