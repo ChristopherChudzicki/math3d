@@ -1421,6 +1421,7 @@ class AbstractVariable extends MathObject {
 
     remove() {
         this.math3d.mathScope.removeVariable(this.lastValidName);
+        this.updateOthers();
         MathObject.prototype.remove.call(this);
     }
     updateOthers() {
@@ -1531,7 +1532,7 @@ class Variable extends AbstractVariable {
         }
         this.math3d.mathScope[this.name] = this.value;
     }
-
+    
     updateVariablesList() {
         this.variables = []
         if (this.parsedExpression !== null) {
