@@ -48,7 +48,7 @@ app.directive('onLongPress', function($timeout) {
                 }, 600);
             });
 
-            elem.bind('mouseup touchup', function() {
+            elem.bind('mouseup touchend', function() {
                 $timeout.cancel(timeoutHandler);
             });
 		}
