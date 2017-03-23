@@ -76,7 +76,7 @@ app.directive('onShortPress', function($timeout) {
                     $scope.prevent = true;
     				$timeout(function() {
     					$scope.prevent=false;
-    				}, 300);
+    				}, 500);
                 }
                 // Prevent the onShortPress event from firing
                 if ($scope.shortPress){
