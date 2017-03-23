@@ -42,13 +42,13 @@ app.directive('onLongPress', function($timeout) {
         link: function(scope, elem, attrs) {
             var timeoutHandler;
             
-            elem.bind('mousedown', function() {
+            elem.bind('mousedown touchstart', function() {
                 timeoutHandler = $timeout(function() {
                     scope.$eval(attrs.onLongPress);
                 }, 600);
             });
 
-            elem.bind('mouseup', function() {
+            elem.bind('mouseup touchup', function() {
                 $timeout.cancel(timeoutHandler);
             });
 		}
@@ -58,7 +58,7 @@ app.directive('onShortPress', function($timeout) {
 	return {
 		restrict: 'A',
 		link: function($scope, $elm, $attrs) {
-			$elm.bind('mousedown', function(evt) {
+			$elm.bind('mousedown touchstart', function(evt) {
 				// Locally scoped variable that will keep track of the short press
 				$scope.shortPress = true;
 
@@ -68,7 +68,7 @@ app.directive('onShortPress', function($timeout) {
 				}, 600);
 			});
 
-			$elm.bind('mouseup', function(evt) {
+			$elm.bind('mouseup touchend', function(evt) {
 				// Prevent the onShortPress event from firing
                 if ($scope.shortPress){
 					$scope.$apply(function() {
