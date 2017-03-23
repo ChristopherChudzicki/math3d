@@ -42,13 +42,13 @@ app.directive('onLongPress', function($timeout) {
         link: function(scope, elem, attrs) {
             var timeoutHandler;
             
-            elem.bind('pointerdown', function() {
+            elem.bind('mousedown touchstart', function() {
                 timeoutHandler = $timeout(function() {
                     scope.$eval(attrs.onLongPress);
                 }, 600);
             });
 
-            elem.bind('pointerup', function() {
+            elem.bind('mouseup touchend', function() {
                 $timeout.cancel(timeoutHandler);
             });
 		}
@@ -58,8 +58,8 @@ app.directive('onShortPress', function($timeout) {
 	return {
 		restrict: 'A',
 		link: function($scope, $elm, $attrs) {
-			$elm.bind('pointerdown', function(evt) {
-				// Locally scoped variable that will keep track of the short press
+			$elm.bind('mousedown touchstart', function(evt) {                
+                // Locally scoped variable that will keep track of the short press
 				$scope.shortPress = true;
 
 				// After a timeout of 600 ms, shortPress is false;
@@ -68,8 +68,17 @@ app.directive('onShortPress', function($timeout) {
 				}, 600);
 			});
 
-			$elm.bind('pointerup', function(evt) {
-				// Prevent the onShortPress event from firing
+			$elm.bind('mouseup touchend', function(evt) {
+                // Some touchscreens seem to trigger both events, so let's prevent onShortPress action from occuring too often (100ms).
+                if ($scope.prevent){
+                    return;
+                } else {
+                    $scope.prevent = true;
+    				$timeout(function() {
+    					$scope.prevent=false;
+    				}, 100);
+                }
+                // Prevent the onShortPress event from firing
                 if ($scope.shortPress){
 					$scope.$apply(function() {
 						$scope.$eval($attrs.onShortPress)
