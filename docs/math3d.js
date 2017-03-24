@@ -1229,7 +1229,7 @@ class MathExpression {
         this.expression = this.expression.replace(/dot/g, '|');
         this.expression = this.expression.replace(/cross/g, '&');
         
-        this.expression = diffParser(this.expression);
+        this.expression = functionOperatorParser(this.expression, 'diff');
         
         var parsed = math.parse(this.expression);
 
@@ -1245,12 +1245,13 @@ class MathExpression {
         this.expression = this.expression.replace(/&/, 'cross')
         return parsed
         
-        function diffParser(string){
-            // MathUtility.diff has two syntaxes:
+        function functionOperatorParser(string, opName){
+            // MathJS's parse function does not deal well with functions that return functions. 
+            // Math3D supports functions that have two related syntax. diff is one example:
             //      diff(f) ... returns a function
-            //      diff(f,t) ... returns value of derivative at t
-            // Mathematically, we prefer function syntax followed by evaluation: diff(f)(t), but MathJS parser can't handle this. (It thinks multiplication)
-            // This function converts from function syntax to diff syntax
+            //      diff(f,args) ... returns value of derivative evaluated at args
+            // Mathematically, we prefer the function operator syntax followed by evaluation: diff(f)(args), but MathJS parser can't handle this. (It thinks multiplication)
+            // functionOperatorParser converts between the two syntaxes
     
             // Examples:
             // diff(f1)(u,v) --> diff(f1,u,v)
@@ -1261,32 +1262,31 @@ class MathExpression {
             // Remove whitespace preceeding or following parentheses
             string = string.replace(/\s+\)/g, '\)').replace(/\s+\(/g, '\(');
             string = string.replace(/\)\s+/g, '\)').replace(/\(\s+/g, '\(');
-    
-            var match = 'diff',
-                diffStart = string.indexOf(match);
-                
-            if (diffStart < 0) {return string;}
 
-            var funcStart = diffStart + match.length,
+            var opStart = string.indexOf(opName);
+                
+            if (opStart < 0) {return string;}
+
+            var funcStart = opStart + opName.length,
                 funcClose = Utility.findClosingBrace(string, funcStart);
     
-            // 'DIFF' marks a diff as finished.
+            // 'PLACEHOLDER' marks a opName as finished.
             if (string[funcClose+1] !== '('){
-                string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,string.length);
+                string = string.slice(0, opStart) + "PLACEHOLDER" + string.slice(funcStart,string.length);
             }
             else{
                 var argStart = funcClose+1;
                 var argClose = Utility.findClosingBrace(string, argStart);
-                string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,funcClose) + ',' + string.slice(argStart+1,string.length);
+                string = string.slice(0, opStart) + "PLACEHOLDER" + string.slice(funcStart,funcClose) + ',' + string.slice(argStart+1,string.length);
             }
     
             // Test if diffs remain
-            diffStart = string.indexOf(match)
-            if (diffStart < 0){
-                return Utility.replaceAll(string,'DIFF','diff');
+            funcStart = string.indexOf(opName)
+            if (funcStart < 0){
+                return Utility.replaceAll(string,'PLACEHOLDER',opName);
             }
             else {
-                return diffParser(string);
+                return functionOperatorParser(string, opName);
             }
 
         }
