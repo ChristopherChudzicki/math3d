@@ -359,7 +359,29 @@ class MathUtility {
             return derivative
         }
     }
-
+    
+    static normalize(array1d) {
+        var norm = Math.sqrt( array1d.reduce( (acc, val) => acc+val*val, 0 ) );
+        return array1d.map( x => x/norm );
+    }
+    static unitT(f, t) {
+        t = Number(t);
+        var eps = 0.008;
+        return MathUtility.normalize(math.subtract(f(t+eps/2), f(t-eps/2)));
+    }
+    static unitN(f, t) {
+        t = Number(t);
+        var eps = 0.008;
+        return MathUtility.normalize(math.subtract(MathUtility.unitT(f,t+eps/2), MathUtility.unitT(f,t-eps/2)));
+    }
+    static unitB(f,t){
+        t = Number(t);
+        var T = MathUtility.unitT(f,t);
+        var N = MathUtility.unitN(f,t);
+        
+        return [ N[2]*T[1]-N[1]*T[2], N[0]*T[2]-N[2]*T[0], N[1]*T[0] - N[0]*T[1]  ]
+    }
+    
     static clamp(min, val, max) {
         return Math.min(Math.max(min, val), max)
     }
@@ -529,6 +551,9 @@ class Math3D {
             'j': [0, 1, 0],
             'k': [0, 0, 1],
             'diff': MathUtility.diff,
+            'unitT': MathUtility.unitT,
+            'unitN': MathUtility.unitN,
+            'unitB': MathUtility.unitB,
         };
         this.mathScope = new WatchedScope(this.settings.mathScope)
         var onVariableChange = this.onVariableChange.bind(this);
