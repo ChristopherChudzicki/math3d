@@ -392,6 +392,9 @@ class MathUtility {
         
         var replacements = [
             {tex:'\\operatorname{diff}',math:'diff'},
+            {tex:'\\operatorname{unitT}',math:'unitT'},
+            {tex:'\\operatorname{unitN}',math:'unitN'},
+            {tex:'\\operatorname{unitB}',math:'unitB'},
             {tex: '\\cdot', math: ' * '},
             {tex: '\\left', math: ''},
             {tex: '\\right',math: ''},
@@ -1255,6 +1258,9 @@ class MathExpression {
         this.expression = this.expression.replace(/cross/g, '&');
         
         this.expression = functionOperatorParser(this.expression, 'diff');
+        this.expression = functionOperatorParser(this.expression, 'unitT');
+        this.expression = functionOperatorParser(this.expression, 'unitN');
+        this.expression = functionOperatorParser(this.expression, 'unitB');
         
         var parsed = math.parse(this.expression);
 
@@ -2692,7 +2698,7 @@ class WrappedMathField {
     get defaultSettings() {
         var defaults = {
             autoCommands: 'pi theta sqrt',
-            autoOperatorNames: 'diff cos sin tan sec csc cot log ln exp'
+            autoOperatorNames: 'diff unitT unitN unitB cos sin tan sec csc cot log ln exp'
         }
         return defaults
     }
@@ -2708,7 +2714,7 @@ class WrappedMathField {
     }
     
 }
-var test;
+
 class WrappedMathFieldMain extends WrappedMathField {
     constructor(el, mathObj, mathObjKey, $scope, settings){
         super(el, mathObj, mathObjKey, $scope, settings);
@@ -2718,7 +2724,6 @@ class WrappedMathFieldMain extends WrappedMathField {
         
         var _this=this;
         $(this.cellMain).unbind().on('focusin', function(e){
-            test = e.target;
             if ( !$(e.target).hasClass('btn')){
                 _this.onFocusIn();
             }
