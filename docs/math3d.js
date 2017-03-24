@@ -359,7 +359,29 @@ class MathUtility {
             return derivative
         }
     }
-
+    
+    static normalize(array1d) {
+        var norm = Math.sqrt( array1d.reduce( (acc, val) => acc+val*val, 0 ) );
+        return array1d.map( x => x/norm );
+    }
+    static unitT(f, t) {
+        t = Number(t);
+        var eps = 0.008;
+        return MathUtility.normalize(math.subtract(f(t+eps/2), f(t-eps/2)));
+    }
+    static unitN(f, t) {
+        t = Number(t);
+        var eps = 0.008;
+        return MathUtility.normalize(math.subtract(MathUtility.unitT(f,t+eps/2), MathUtility.unitT(f,t-eps/2)));
+    }
+    static unitB(f,t){
+        t = Number(t);
+        var T = MathUtility.unitT(f,t);
+        var N = MathUtility.unitN(f,t);
+        
+        return [ N[2]*T[1]-N[1]*T[2], N[0]*T[2]-N[2]*T[0], N[1]*T[0] - N[0]*T[1]  ]
+    }
+    
     static clamp(min, val, max) {
         return Math.min(Math.max(min, val), max)
     }
@@ -370,6 +392,9 @@ class MathUtility {
         
         var replacements = [
             {tex:'\\operatorname{diff}',math:'diff'},
+            {tex:'\\operatorname{unitT}',math:'unitT'},
+            {tex:'\\operatorname{unitN}',math:'unitN'},
+            {tex:'\\operatorname{unitB}',math:'unitB'},
             {tex: '\\cdot', math: ' * '},
             {tex: '\\left', math: ''},
             {tex: '\\right',math: ''},
@@ -529,6 +554,9 @@ class Math3D {
             'j': [0, 1, 0],
             'k': [0, 0, 1],
             'diff': MathUtility.diff,
+            'unitT': MathUtility.unitT,
+            'unitN': MathUtility.unitN,
+            'unitB': MathUtility.unitB,
         };
         this.mathScope = new WatchedScope(this.settings.mathScope)
         var onVariableChange = this.onVariableChange.bind(this);
@@ -1229,7 +1257,10 @@ class MathExpression {
         this.expression = this.expression.replace(/dot/g, '|');
         this.expression = this.expression.replace(/cross/g, '&');
         
-        this.expression = diffParser(this.expression);
+        this.expression = functionOperatorParser(this.expression, 'diff');
+        this.expression = functionOperatorParser(this.expression, 'unitT');
+        this.expression = functionOperatorParser(this.expression, 'unitN');
+        this.expression = functionOperatorParser(this.expression, 'unitB');
         
         var parsed = math.parse(this.expression);
 
@@ -1245,12 +1276,13 @@ class MathExpression {
         this.expression = this.expression.replace(/&/, 'cross')
         return parsed
         
-        function diffParser(string){
-            // MathUtility.diff has two syntaxes:
+        function functionOperatorParser(string, opName){
+            // MathJS's parse function does not deal well with functions that return functions. 
+            // Math3D supports functions that have two related syntax. diff is one example:
             //      diff(f) ... returns a function
-            //      diff(f,t) ... returns value of derivative at t
-            // Mathematically, we prefer function syntax followed by evaluation: diff(f)(t), but MathJS parser can't handle this. (It thinks multiplication)
-            // This function converts from function syntax to diff syntax
+            //      diff(f,args) ... returns value of derivative evaluated at args
+            // Mathematically, we prefer the function operator syntax followed by evaluation: diff(f)(args), but MathJS parser can't handle this. (It thinks multiplication)
+            // functionOperatorParser converts between the two syntaxes
     
             // Examples:
             // diff(f1)(u,v) --> diff(f1,u,v)
@@ -1261,32 +1293,31 @@ class MathExpression {
             // Remove whitespace preceeding or following parentheses
             string = string.replace(/\s+\)/g, '\)').replace(/\s+\(/g, '\(');
             string = string.replace(/\)\s+/g, '\)').replace(/\(\s+/g, '\(');
-    
-            var match = 'diff',
-                diffStart = string.indexOf(match);
-                
-            if (diffStart < 0) {return string;}
 
-            var funcStart = diffStart + match.length,
+            var opStart = string.indexOf(opName);
+                
+            if (opStart < 0) {return string;}
+
+            var funcStart = opStart + opName.length,
                 funcClose = Utility.findClosingBrace(string, funcStart);
     
-            // 'DIFF' marks a diff as finished.
+            // 'PLACEHOLDER' marks a opName as finished.
             if (string[funcClose+1] !== '('){
-                string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,string.length);
+                string = string.slice(0, opStart) + "PLACEHOLDER" + string.slice(funcStart,string.length);
             }
             else{
                 var argStart = funcClose+1;
                 var argClose = Utility.findClosingBrace(string, argStart);
-                string = string.slice(0,diffStart) + "DIFF" + string.slice(funcStart,funcClose) + ',' + string.slice(argStart+1,string.length);
+                string = string.slice(0, opStart) + "PLACEHOLDER" + string.slice(funcStart,funcClose) + ',' + string.slice(argStart+1,string.length);
             }
     
             // Test if diffs remain
-            diffStart = string.indexOf(match)
-            if (diffStart < 0){
-                return Utility.replaceAll(string,'DIFF','diff');
+            funcStart = string.indexOf(opName)
+            if (funcStart < 0){
+                return Utility.replaceAll(string,'PLACEHOLDER',opName);
             }
             else {
-                return diffParser(string);
+                return functionOperatorParser(string, opName);
             }
 
         }
@@ -2667,7 +2698,7 @@ class WrappedMathField {
     get defaultSettings() {
         var defaults = {
             autoCommands: 'pi theta sqrt',
-            autoOperatorNames: 'diff cos sin tan sec csc cot log ln exp'
+            autoOperatorNames: 'diff unitT unitN unitB cos sin tan sec csc cot log ln exp'
         }
         return defaults
     }
@@ -2683,7 +2714,7 @@ class WrappedMathField {
     }
     
 }
-var test;
+
 class WrappedMathFieldMain extends WrappedMathField {
     constructor(el, mathObj, mathObjKey, $scope, settings){
         super(el, mathObj, mathObjKey, $scope, settings);
@@ -2693,7 +2724,6 @@ class WrappedMathFieldMain extends WrappedMathField {
         
         var _this=this;
         $(this.cellMain).unbind().on('focusin', function(e){
-            test = e.target;
             if ( !$(e.target).hasClass('btn')){
                 _this.onFocusIn();
             }
