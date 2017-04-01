@@ -175,10 +175,12 @@ span.folder-name-editable{
     visibility:hidden;
 }
 
-.has-error.has-feedback {
+.has-error.has-feedback, .has-error.has-feedback:focus,
+.mq-editable-field.has-error.has-feedback,
+.mq-editable-field.mq-focused.has-error.has-feedback {
     outline: none;
     border-color: red;
-    box-shadow: 0 0 10px red;
+    box-shadow: 0 0 5px red;
 }
 
 /*https://codepen.io/zachariab/pen/wkrbc*/
