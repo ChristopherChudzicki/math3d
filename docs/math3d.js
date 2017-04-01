@@ -448,6 +448,9 @@ class MathUtility {
         else if (node.type==='FunctionNode') {
             return functionNodeHandler(node, options);
         }
+        else if (node.type==='OperatorNode'){
+            return operatorNodeHandler(node, options);
+        }
         else {
             return; //returning nothing falls back to default behavior
         }
@@ -510,6 +513,16 @@ class MathUtility {
             }
             return replacements(String(args));
         };
+        function operatorNodeHandler(node, options){
+            // adjust handling of exponentiation.
+            // e^(-t) --> e^{-t} not e^{(-t)}.
+            if (node.op === '^' && node.args[1].type === 'ParenthesisNode'){
+                return `${node.args[0].toTex(options)}^{${node.args[1].content.toTex(options)}}`;
+            }
+            else {
+                return ;
+            }
+        }
         function replacements(toTex){
             var replacements = [
                 {mathjs:'~', mathquill: ''},
