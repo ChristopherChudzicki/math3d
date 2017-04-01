@@ -1542,14 +1542,14 @@ class Variable extends AbstractVariable {
             this.holdEvaluation = true;
             this.argNames = expr.variables;
             this.settings.name = expr.functions[0];
-            if (this.settings.description = 'Variable') {
+            if (this.settings.description === 'Variable') {
                 this.settings.description = 'Function'
             };
         } else if (expr.functions.length === 0) {
             this.holdEvaluation = false;
             this.argNames = []
             this.settings.name = expr.variables[0];
-            if (this.settings.description = 'Function') {
+            if (this.settings.description === 'Function') {
                 this.settings.description = 'Variable'
             };
         } else {}
