@@ -284,7 +284,30 @@ class Utility {
             throw message; // Fallback
         }
     }
-
+    
+    static extendSetter(obj, prop, afterSet){
+        // Original property must be configurable, which is not default
+        // afterSet(val) ... val is value passed to original setter
+        var originalSetter = Object.getOwnPropertyDescriptor(obj, prop).set;
+        Object.defineProperty(obj, prop, {
+            set: function(val){
+                originalSetter.call(obj, val);
+                afterSet.call(obj, val);
+            }
+        })
+    }
+    static extendGetter(obj, prop, afterGet){
+        // Original property must be configurable, which is not default
+        // afterGet(val) ... val is the value returned by original getter. afterGet should return the new get value.
+        var originalGetter = Object.getOwnPropertyDescriptor(obj, prop).get;
+        Object.defineProperty(obj, prop, {
+            get: function(){
+                var val = originalGetter.call(obj);
+                return afterGet.call(obj, val);
+            }
+        })
+    }
+    
     //http://stackoverflow.com/a/1144788/2747370
     static escapeRegExp(str) {
         return str.replace(/([.*+?^=!:${}()|\[\]\/\\])/g, "\\$1");
@@ -2785,3 +2808,22 @@ class WrappedMathFieldMain extends WrappedMathField {
         this.updateMathObj(this.mathObjKey);
     }
 }
+
+var test = {}
+Object.defineProperties(test,
+{
+    a: {
+        set: function(val){
+            this._a = val;
+            console.log(`Setting 'a' to value ${val}`)
+        },
+        get: function(){
+            console.log(`Getting 'a' with value ${this._a}`)
+            return this._a
+        },
+        configurable:true
+    }
+})
+
+Utility.extendSetter(test, 'a', function(){console.log('ROAR')});
+Utility.extendGetter(test, 'a', function(val){return val+1;});
