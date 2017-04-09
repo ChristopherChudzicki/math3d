@@ -2,7 +2,7 @@ var container = $(".container")
 container.attr("ng-app", 'math3dApp')
 
 // app = angular.module('math3dApp', ['ui.sortable']);
-app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ui.bootstrap']);
+app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ui.bootstrap', 'ui.toggle']);
 
 app.directive('compileTemplate', ["$compile", "$parse", function($compile, $parse) {
     // http://stackoverflow.com/a/25407201/2747370
@@ -230,6 +230,7 @@ app.controller('mathObjectCtrl',['$scope','$timeout', function($scope, $timeout)
         }
         return `background-color:${backgroundColor}; border-color:${borderColor}`
     }
+    
     function initialize(obj){
         if (obj instanceof MathGraphic){
             Utility.extendSetter(obj.settings, 'visible', function(){

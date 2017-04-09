@@ -1136,7 +1136,7 @@ class Math3D {
             _this.mathTree.push(branchCopy);
             _.forEach(branch.objects, function(metaObj, idx) {
                 // only add variables
-                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider' || metaObj.type === 'Toggle') {
+                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider' || metaObj.type === 'VariableToggle') {
                     var mathObj = MathObject.renderNewObject(_this, metaObj);
                 }
             });
@@ -1152,7 +1152,7 @@ class Math3D {
             _.forEach(branch.objects, function(metaObj, idx) {
                 // creating a new object appends to last branch
                 var mathObj = MathObject.renderNewObject(_this, metaObj);
-                if (mathObj.type === 'VariableSlider' || mathObj.type === 'Variable' || mathObj.type === 'Toggle') {
+                if (mathObj.type === 'VariableSlider' || mathObj.type === 'Variable' || mathObj.type === 'VariableToggle') {
                     mathObj.valid = true;
                     mathObj.lastValidName = mathObj.name;
                 }
@@ -1446,6 +1446,9 @@ class MathObject {
         };
         if (metaObj.type === 'ExplicitSurfacePolar') {
             return new ExplicitSurfacePolar(math3d, metaObj.settings)
+        };
+        if (metaObj.type === 'VariableToggle') {
+            return new VariableToggle(math3d, metaObj.settings)
         };
     }
 }
@@ -1762,7 +1765,7 @@ class VariableSlider extends AbstractVariable {
 }
 
 // TODO: Adjust onVariableChange for use with toggle variables; MathObjects will need to store list of mathVariables and toggleVariables separately
-class Toggle extends AbstractVariable{
+class VariableToggle extends AbstractVariable{
     constructor(math3d, settings) {
         super(math3d, settings);
         this.scope = math3d.toggleScope;
@@ -1787,7 +1790,7 @@ class Toggle extends AbstractVariable{
     
     get defaultSettings() {
         var defaults = {
-            name:'Toggle',
+            name:'toggle',
             value:true,
             description: this.type,
         }
@@ -1826,6 +1829,7 @@ class MathGraphic extends MathObject {
         this.settings = {};
         this.userSettings = [
             //{attribute:'visible',format:'Boolean'},
+            {attribute:'calculatedVisibility', format:'String'},
             {
                 attribute: 'opacity',
                 format: 'Number'
@@ -1920,7 +1924,7 @@ class MathGraphic extends MathObject {
                     }
                 },
                 get: function(){
-                    return _this.calculatedVisible;
+                    return this._calculatedVisibility;
                 }
             },
             size: {
@@ -2076,7 +2080,13 @@ class MathGraphic extends MathObject {
     }
     
     recalculateVisibility(){
-        this.settings.visible = this.parsedVisibility.eval(this.math3d.toggleScope);
+        try {
+            this.settings.visible = this.parsedVisibility.eval(this.math3d.toggleScope);
+        } 
+        catch (e) {
+            console.log(e.message);
+        }
+        
     }
 
     setWidth(val) {
