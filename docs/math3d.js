@@ -1136,7 +1136,7 @@ class Math3D {
             _this.mathTree.push(branchCopy);
             _.forEach(branch.objects, function(metaObj, idx) {
                 // only add variables
-                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider') {
+                if (metaObj.type === 'Variable' || metaObj.type === 'VariableSlider' || metaObj.type === 'Toggle') {
                     var mathObj = MathObject.renderNewObject(_this, metaObj);
                 }
             });
@@ -1152,7 +1152,7 @@ class Math3D {
             _.forEach(branch.objects, function(metaObj, idx) {
                 // creating a new object appends to last branch
                 var mathObj = MathObject.renderNewObject(_this, metaObj);
-                if (mathObj.type === 'VariableSlider' || mathObj.type === 'Variable') {
+                if (mathObj.type === 'VariableSlider' || mathObj.type === 'Variable' || mathObj.type === 'Toggle') {
                     mathObj.valid = true;
                     mathObj.lastValidName = mathObj.name;
                 }
