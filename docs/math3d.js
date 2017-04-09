@@ -1193,6 +1193,7 @@ class Math3D {
             return Math.round(x * 1000) / 1000;
         });
         rawSettings.camera.position = this.swizzle(this.swizzle(rawSettings.camera.position));
+        
         // add math objects
         _.forEach(this.mathTree, function(branch) {
             rawSettings.wrappedMathTree.push({
@@ -1919,9 +1920,7 @@ class MathGraphic extends MathObject {
             calculatedVisibility: {
                 set: function(val){
                     this._calculatedVisibility = val;
-                    if (_this.mathboxGroup !== null) {
-                        _this.setCalculatedVisibility(val);
-                    }
+                    _this.setCalculatedVisibility(val);
                 },
                 get: function(){
                     return this._calculatedVisibility;
