@@ -1472,21 +1472,21 @@ class AbstractVariable extends MathObject {
         });
     }
     setName(newName) {
-            this.math3d.mathScope.removeVariable(this.lastValidName);
-            this.valid = this.addVarToMathScope(newName);
+        this.math3d.mathScope.removeVariable(this.lastValidName);
+        this.valid = this.addVarToMathScope(newName);
 
-            if (this.valid) {
-                this.lastValidName = newName;
-            }
-            this.name = newName;
-
-            // name change might cause other variables to be valid / invalid. Let's check
-
-            this.updateOthers();
-
-            return newName;
+        if (this.valid) {
+            this.lastValidName = newName;
         }
-        // addVarToMathScope(newName){} defined by all subclasses
+        this.name = newName;
+
+        // name change might cause other variables to be valid / invalid. Let's check
+
+        this.updateOthers();
+
+        return newName;
+    }
+    // addVarToMathScope(newName){} defined by all subclasses
     get defaultSettings() {
         var defaults = {
             description: ''
@@ -1750,6 +1750,12 @@ class VariableSlider extends AbstractVariable {
         this.settings.min = this.settings.min;
         this.settings.value = this.settings.value;
         this.settings.max = this.settings.max;
+    }
+}
+
+class Toggle extends AbstractVariable{
+    constructor(math3d, settings) {
+        super(math3d, settings);
     }
 }
 
