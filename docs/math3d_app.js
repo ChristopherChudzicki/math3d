@@ -212,8 +212,11 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     
 }]);
 
-app.controller('mathObjectCtrl',['$scope', function($scope){
+app.controller('mathObjectCtrl',['$scope','$timeout', function($scope, $timeout){
     $scope.debug = arg => console.log(arg)
+    
+    initialize($scope.obj);
+     
     $scope.setColor = function(obj){
         document.getElementById(`jscolor-${obj.id}`).jscolor.show()
     }
@@ -226,6 +229,16 @@ app.controller('mathObjectCtrl',['$scope', function($scope){
             var borderColor = 'darkgray';
         }
         return `background-color:${backgroundColor}; border-color:${borderColor}`
+    }
+    function initialize(obj){
+        if (obj instanceof MathGraphic){
+            Utility.extendSetter(obj.settings, 'visible', function(){
+                // Call $apply inside timeout; see https://docs.angularjs.org/error/$rootScope/inprog?p0=$apply "Trigger Events Programatically"
+                $timeout(function(){
+                    $scope.$apply();
+                }, 0, false);
+            });
+        }
     }
 }])
 

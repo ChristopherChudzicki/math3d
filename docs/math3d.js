@@ -1853,6 +1853,7 @@ class MathGraphic extends MathObject {
                 get: function() {
                     return this._visible;
                 },
+                configurable:true
             },
             size: {
                 set: function(val) {
