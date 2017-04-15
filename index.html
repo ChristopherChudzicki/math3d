@@ -176,11 +176,11 @@ var authorSettings = {
       objects: [
         {
           type: 'Point',
-          settings: {rawExpression: "[3,1,sqrt(4)]"}
+          settings: {rawExpression: "[1,2,sqrt(9)]"}
         },
         {
           type: 'Vector',
-          settings: {color:'red',tail:'2j-k', components:'2i-3j+k'}
+          settings: {color:'red',tail:'2k', components:'2i-3j+k'}
         },
       ]
     },
@@ -189,8 +189,20 @@ var authorSettings = {
       collapsed:false,
       objects: [
         {
+          type:'VariableSlider',
+          settings: {name:'T', min:'0', max:'2pi', animationRunning:true}
+        },
+        {
+          type:'Variable',
+          settings:{rawName:'r(t)', rawExpression:'[3*cos(pi t), 3*sin(pi t), t]'}
+        },
+        {
+          type: 'Point',
+          settings: {rawExpression: "r(T)"}
+        },
+        {
           type: 'ParametricCurve',
-          settings: {rawExpression:'[2cos(pi t), 2sin(pi t),t]', range:"[-3, 3]", color:'orange'}
+          settings: {rawExpression:'r(t)', range:"[-3, T]", color:'orange', samples:128}
         },
       ]
     }
