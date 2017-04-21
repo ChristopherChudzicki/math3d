@@ -2342,22 +2342,3 @@ class WrappedMathFieldMain extends WrappedMathField {
         this.updateMathObj(this.mathObjKey);
     }
 }
-
-var test = {}
-Object.defineProperties(test,
-{
-    a: {
-        set: function(val){
-            this._a = val;
-            console.log(`Setting 'a' to value ${val}`)
-        },
-        get: function(){
-            console.log(`Getting 'a' with value ${this._a}`)
-            return this._a
-        },
-        configurable:true
-    }
-})
-
-Utility.extendSetter(test, 'a', function(){console.log('ROAR')});
-Utility.extendGetter(test, 'a', function(val){return val+1;});
