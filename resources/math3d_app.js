@@ -273,7 +273,7 @@ app.controller('sliderCtrl', ['$scope', function($scope){
     
     $scope.incrementSpeed = function(obj, incr){
         obj.settings.speedIdx += incr;
-        obj.settings.speedIdx = MathUtility.clamp(0, obj.settings.speedIdx, obj.speeds.length);
+        obj.settings.speedIdx = MathUtility.clamp(0, obj.settings.speedIdx, obj.speeds.length - 1);
         $scope.toggleAnimate(obj);
         $scope.toggleAnimate(obj);
     }
