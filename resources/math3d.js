@@ -613,6 +613,20 @@ class Math3D {
                 if (_.contains(obj.variables, varName) || _.contains(obj.toggleVariables, varName)) {
                     try {
                         obj.recalculateData();
+                    } catch (e) {
+                        console.log(`Caught:${e}`);
+                    }
+                }
+            })
+        })
+    }
+    
+    onToggleVariableChange(varName) {
+        // update objects where the variables have changed
+        _.forEach(this.mathTree, function(branch, idx) {
+            _.forEach(branch.objects, function(obj, idx) {
+                if (_.contains(obj.variables, varName) || _.contains(obj.toggleVariables, varName)) {
+                    try {
                         obj.recalculateVisibility();
                     } catch (e) {
                         console.log(`Caught:${e}`);
@@ -1207,7 +1221,6 @@ class VariableSlider extends AbstractVariable {
     }
 }
 
-// TODO: Adjust onVariableChange for use with toggle variables; MathObjects will need to store list of mathVariables and toggleVariables separately
 class VariableToggle extends AbstractVariable{
     constructor(math3d, settings) {
         super(math3d, settings);
@@ -1227,8 +1240,8 @@ class VariableToggle extends AbstractVariable{
         });
 
         this.settings = this.setDefaults(settings);
-        var onVariableChange = math3d.onVariableChange.bind(math3d);
-        this.scope.addVariable(this.settings.name, this.settings.value, onVariableChange);
+        var onToggleVariableChange = math3d.onToggleVariableChange.bind(math3d);
+        this.scope.addVariable(this.settings.name, this.settings.value, onToggleVariableChange);
     }
     
     get defaultSettings() {
@@ -1248,8 +1261,8 @@ class VariableToggle extends AbstractVariable{
     }
     
     addVarToScope(newName) {
-        var onVariableChange = this.math3d.onVariableChange.bind(this.math3d);
-        return this.scope.addVariable(newName, this.value, onVariableChange);
+        var onToggleVariableChange = this.math3d.onToggleVariableChange.bind(this.math3d);
+        return this.scope.addVariable(newName, this.value, onToggleVariableChange);
     }
 }
 
@@ -1527,7 +1540,6 @@ class MathGraphic extends MathObject {
         catch (e) {
             console.log(e.message);
         }
-        
     }
 
     setWidth(val) {
