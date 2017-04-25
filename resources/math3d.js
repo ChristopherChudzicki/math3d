@@ -849,7 +849,7 @@ class MathObject {
 
     get defaultSettings() {
         var defaults = {
-            hideFromUI: false
+            showInUI: true
         }
         return defaults
     }
@@ -1024,11 +1024,11 @@ class Variable extends AbstractVariable {
     }
 
     get defaultSettings() {
-        var defaults = {
+        var defaults = _.merge(super.defaultSettings, {
             rawName: 'f(t)',
             rawExpression: 'e^t',
             description: 'Function'
-        }
+        });
         return defaults
     }
 
