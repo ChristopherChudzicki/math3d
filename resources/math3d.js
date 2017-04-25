@@ -847,6 +847,13 @@ class MathObject {
         return this.settings;
     }
 
+    get defaultSettings() {
+        var defaults = {
+            showInUI: true
+        }
+        return defaults
+    }
+
     parseRawExpression(expr) {
         return new MathExpression(expr);
     }
@@ -953,9 +960,9 @@ class AbstractVariable extends MathObject {
     }
     // addVarToScope(newName){} defined by all subclasses
     get defaultSettings() {
-        var defaults = {
+        var defaults = _.merge(super.defaultSettings, {
             description: ''
-        }
+        });
         return defaults
     }
 
@@ -1017,11 +1024,11 @@ class Variable extends AbstractVariable {
     }
 
     get defaultSettings() {
-        var defaults = {
+        var defaults = _.merge(super.defaultSettings, {
             rawName: 'f(t)',
             rawExpression: 'e^t',
             description: 'Function'
-        }
+        });
         return defaults
     }
 
@@ -1168,7 +1175,7 @@ class VariableSlider extends AbstractVariable {
     }
 
     get defaultSettings() {
-        var defaults = {
+        var defaults = _.merge(super.defaultSettings, {
             value: 0.5,
             min: '0',
             max: '10',
@@ -1176,7 +1183,7 @@ class VariableSlider extends AbstractVariable {
             speedIdx: 5,
             animationRunning: false,
             description: this.type,
-        }
+        });
         return defaults
     }
 
@@ -1245,11 +1252,11 @@ class VariableToggle extends AbstractVariable{
     }
     
     get defaultSettings() {
-        var defaults = {
+        var defaults = _.merge(super.defaultSettings, {
             name:'toggle',
             value:true,
             description: this.type,
-        }
+        });
         return defaults
     }
     
@@ -1459,13 +1466,13 @@ class MathGraphic extends MathObject {
     };
 
     get defaultSettings() {
-        var defaults = {
+        var defaults = _.merge(super.defaultSettings, {
             visible: true,
             color: '#3090FF',
             zIndex: 0,
             opacity: 1,
             description: this.type,
-        }
+        });
         return defaults
     }
 
