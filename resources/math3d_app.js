@@ -112,7 +112,7 @@ app.controller('treeCtrl', function($scope)  {
     };
     
     function reflowBranch(branch){
-        // If folders are collapsed on page load, mathquill mathfields are initialized in zero-height spans. We need to reflow each of them when the folder is expanded.
+        // If folders are collapsed on page load, mathquill as are initialized in zero-height spans. We need to reflow each of them when the folder is expanded.
         // Reflow only really needs to be done once, has the mq-reflow tracking class.
         var failures = 0;
         _.forEach(branch.objects, function(obj){
@@ -206,7 +206,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             new MathQuill.getInterface(2).StaticMath(elEqual[0]);
         }
         if (!elExpression.hasClass('has-mq')){
-            new WrappedMathFieldMain(elExpression[0], obj, 'rawExpression');
+            new WrappedMathFieldMain(elExpression[0], obj, 'rawExpression', $scope);
         }
     }
     
