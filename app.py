@@ -81,8 +81,3 @@ def validate():
 def validate_password(username, password):
     user = User.query.filter_by(username=username)[0]
     return user.check_password(password)
-
-# Hacky, need to find who's making this wrong request.
-@app.route('/resources/templates/common.html')
-def record():
-    return redirect("/static/resources/templates/common.html")
