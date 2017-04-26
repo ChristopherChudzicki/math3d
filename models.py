@@ -8,16 +8,14 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True)
     email = db.Column(db.String(120), unique=True)
-    first_name = db.Column(db.String())
-    last_name = db.Column(db.String())
+    name = db.Column(db.String())
     pw_hash = db.Column(db.String())
-    posts = db.relationship("Graph", backref="user", lazy="dynamic")
+    graphs = db.relationship("Graph", backref="user", lazy="dynamic")
     
-    def __init__(self, username, email, first_name, last_name, password):
+    def __init__(self, username, email, name, password):
         self.username = username
         self.email = email
-        self.first_name = first_name
-        self.last_name = last_name
+        self.name = name
         self.pw_hash = bcrypt.generate_password_hash(password).decode("utf-8")
     
     def check_password(password):
@@ -30,6 +28,7 @@ class Graph(db.Model):
     created_at = db.Column(db.DateTime)
     title = db.Column(db.String())
     serialized_string = db.Column(db.String())
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     
     def __init__(self, serialized_string):
         self.created_at = datetime.utcnow()
