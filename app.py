@@ -9,6 +9,8 @@ app = Flask(__name__)
 app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
 
 # Configurations
+# Using environmental variables for secret key and database url
+# Secret key is used to sign cookies, so it's secure to keep it hidden
 app.config.update(
     SECRET_KEY=os.environ["SECRET_KEY"],
     SQLALCHEMY_DATABASE_URI=os.environ["DATABASE_URL"],
