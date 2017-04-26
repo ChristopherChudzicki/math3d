@@ -7,48 +7,48 @@
   <meta name="author" content="Chris Chudzicki">
   <title>Math 3D</title>
   
-  <script src="vendors/mathbox/mathbox-bundle.js"></script>
-  <link rel="stylesheet" href="vendors/mathbox/mathbox.css">
+  <script src="/static/vendors/mathbox/mathbox-bundle.js"></script>
+  <link rel="stylesheet" href="/static/vendors/mathbox/mathbox.css">
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="vendors/jquery/jquery-ui.min.js"></script>
-  <link rel="stylesheet" href="vendors/jquery/jquery-ui.min.css">
+  <script src="/static/vendors/jquery/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="/static/vendors/jquery/jquery-ui.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.3.1/ui-bootstrap-tpls.js"></script>
 
-  <script src="vendors/autosize.js"></script>
+  <script src="/static/vendors/autosize.js"></script>
 
-  <link rel="stylesheet" href="vendors/bootstrap/css/bootstrap.css">
+  <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.css">
   
-  <script src="resources/utility.js"></script>
-  <script src="resources/math-utility.js"></script>
-  <script src="resources/math3d.js"></script>
-  <link rel="stylesheet" href="resources/math3d.css">
-  <link rel="stylesheet" href="resources/math3d_app.css">
+  <script src="/static/resources/utility.js"></script>
+  <script src="/static/resources/math-utility.js"></script>
+  <script src="/static/resources/math3d.js"></script>
+  <link rel="stylesheet" href="/static/resources/math3d.css">
+  <link rel="stylesheet" href="/static/resources/math3d_app.css">
   
-  <script src="vendors/bootstrap/js/bootstrap.js"></script>
-  <script src="vendors/jscolor.js"></script>
+  <script src="/static/vendors/bootstrap/js/bootstrap.js"></script>
+  <script src="/static/vendors/jscolor.js"></script>
   
   <!-- Angular Tree -->
-  <link rel="stylesheet" href="vendors/angular-tree/source/angular-ui-tree.css">
-  <script src="vendors/angular-tree/source/main.js"></script>
-  <script src="vendors/angular-tree/source/controllers/handleCtrl.js"></script>
-  <script src="vendors/angular-tree/source/controllers/nodeCtrl.js"></script>
-  <script src="vendors/angular-tree/source/controllers/nodesCtrl.js"></script>
-  <script src="vendors/angular-tree/source/controllers/treeCtrl.js"></script>
-  <script src="vendors/angular-tree/source/directives/uiTree.js"></script>
-  <script src="vendors/angular-tree/source/directives/uiTreeHandle.js"></script>
-  <script src="vendors/angular-tree/source/directives/uiTreeNode.js"></script>
-  <script src="vendors/angular-tree/source/directives/uiTreeNodes.js"></script>
-  <script src="vendors/angular-tree/source/services/helper.js"></script>
+  <link rel="stylesheet" href="/static/vendors/angular-tree/source/angular-ui-tree.css">
+  <script src="/static/vendors/angular-tree/source/main.js"></script>
+  <script src="/static/vendors/angular-tree/source/controllers/handleCtrl.js"></script>
+  <script src="/static/vendors/angular-tree/source/controllers/nodeCtrl.js"></script>
+  <script src="/static/vendors/angular-tree/source/controllers/nodesCtrl.js"></script>
+  <script src="/static/vendors/angular-tree/source/controllers/treeCtrl.js"></script>
+  <script src="/static/vendors/angular-tree/source/directives/uiTree.js"></script>
+  <script src="/static/vendors/angular-tree/source/directives/uiTreeHandle.js"></script>
+  <script src="/static/vendors/angular-tree/source/directives/uiTreeNode.js"></script>
+  <script src="/static/vendors/angular-tree/source/directives/uiTreeNodes.js"></script>
+  <script src="/static/vendors/angular-tree/source/services/helper.js"></script>
   
-  <link  href="vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.css" rel="stylesheet">
-  <script src="vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.js"></script>
+  <link  href="/static/vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="/static/vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.js"></script>
   
-  <script src="vendors/mathquill/mathquill.js"></script>
-  <link rel="stylesheet" href="vendors/mathquill/mathquill.css"/>
+  <script src="/static/vendors/mathquill/mathquill.js"></script>
+  <link rel="stylesheet" href="/static/vendors/mathquill/mathquill.css"/>
   
 </head>
 <body>
@@ -104,7 +104,7 @@
             <div ui-tree="treeOptions" id='tree-root' ng-controller="treeCtrl">
               <div class="list-group" ui-tree-nodes ng-model="mathTree">
                 <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree" data-collapsed="branch.collapsed">
-                  <div ng-include="'resources/templates/folder.html'">
+                  <div ng-include="'/static/resources/templates/folder.html'">
                   </div>
                 </div>
               </div>
@@ -122,7 +122,7 @@
             </div>
             <div class="list-group">
               <div class="list-group-item">
-                <div ng-include="'resources/templates/axes_settings.html'">
+                <div ng-include="'/static/resources/templates/axes_settings.html'">
                 </div>
               </div>
             </div>
@@ -219,7 +219,7 @@ var math3d = new Math3D(settings);
 
 </script>
 
-<script src="resources/math3d_app.js"></script>
+<script src="/static/resources/math3d_app.js"></script>
 
 <script>
 ele = $("div.sidepanel");
