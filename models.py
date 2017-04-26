@@ -17,6 +17,9 @@ class User(db.Model):
         self.email = email
         self.name = name
         self.pw_hash = bcrypt.generate_password_hash(password).decode("utf-8")
+        
+    def __repr__(self):
+        return self.username
     
     def check_password(self, password):
         return bcrypt.check_password_hash(self.pw_hash, password)
@@ -33,4 +36,7 @@ class Graph(db.Model):
     def __init__(self, serialized_string):
         self.created_at = datetime.utcnow()
         self.serialized_string = serialized_string
-        
+    
+    def __repr__(self):
+        return self.title
+    
