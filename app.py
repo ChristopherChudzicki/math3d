@@ -1,7 +1,7 @@
 import os
 import logging
 from whitenoise import WhiteNoise
-from flask import Flask, render_template, redirect
+from flask import Flask, render_template, redirect, request, abort, url_for, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
@@ -17,9 +17,69 @@ app.config.update(
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
+# Must import after db is defined, not pretty
+from models import User
+
 @app.route('/')
 def index():
     return render_template("index.html")
+
+# For testing purposes
+@app.route('/users')
+def users():
+    return "<br>".join(map(lambda x: str(x), User.query.all()))
+
+@app.route('/register')
+def register():
+    return render_template("register.html")
+
+@app.route('/register/submit', methods=["POST"])
+def submit():
+    username = request.form.get("username")
+    name = request.form.get("name", default="")
+    email = request.form.get("email")
+    password = request.form.get("password")
+    
+    # Quick way to check if any of these is None
+    if None in [username, email, password]:
+        return redirect(url_for("register"))
+    
+    new_user = User(username, email, name, password)
+    db.session.add(new_user)
+    db.session.commit()
+    
+    response = make_response(redirect(url_for("user")))
+    response.set_cookie("username", username)
+    
+    return response
+
+@app.route('/user')
+def user():
+    username = request.cookies.get("username")
+    return render_template("user.html", username=username)
+
+@app.route('/login')
+def login():
+    return render_template("login.html")
+
+@app.route('/login/validate', methods=["POST"])
+def validate():
+    username = request.form.get("username")
+    password = request.form.get("password")
+    
+    if None in [username, password]:
+        return redirect(url_for("login"))
+    
+    if validate_password(username, password):
+        response = make_response(redirect(url_for("user")))
+        response.set_cookie("username", username)
+        return response
+    else:
+        return redirect(url_for("login"))
+    
+def validate_password(username, password):
+    user = User.query.filter_by(username=username)[0]
+    return user.check_password(password)
 
 # Hacky, need to find who's making this wrong request.
 @app.route('/resources/templates/common.html')
