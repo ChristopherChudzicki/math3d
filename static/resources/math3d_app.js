@@ -163,7 +163,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     
     $scope.addOjbectToUi = function(obj){
         var content = `
-            <div id="object-${obj.id}" ng-include="'resources/templates/${obj.type.toLowerCase()}.html'">
+            <div id="object-${obj.id}" ng-include="'/static/resources/templates/${obj.type.toLowerCase()}.html'">
             </div>`;
         
         //Re-initialize jscolor palletes. This seems hacky.
@@ -295,7 +295,7 @@ app.controller('popoverCtrl', ['$scope', function($scope) {
     // query popover
     $scope.myPopover = {
         isOpen: false,
-        templateUrl: 'resources/templates/settings_popover.html',
+        templateUrl: '/static/resources/templates/settings_popover.html',
         open: function open() {
             $scope.myPopover.isOpen = true;
             $scope.myPopover.data = 'Hello!';

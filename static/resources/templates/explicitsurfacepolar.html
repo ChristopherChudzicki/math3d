@@ -3,16 +3,16 @@
     <span ui-tree-handle class="grippy"></span>
   </div>
   <div class="object-cell-main" ng-controller="mathObjectCtrl">
-    <div ng-include="'resources/templates/common.html'"></div>
+    <div ng-include="'/static/resources/templates/common.html'"></div>
     <div class="cell-row">
       <div style="margin-left:25px;">
-        <label class="pull-left">x ∈ </label>
+        <label class="pull-left">r ∈ </label>
         <input class="form-control input-xs" style="width:75px" type="text" ng-model="obj.settings.rangeU"></input>
       </div>
     </div>
     <div class="cell-row">
       <div style="margin-left:25px;">
-        <label class="pull-left">y ∈ </label>
+        <label class="pull-left">θ ∈ </label>
         <input class="form-control input-xs" style="width:75px" type="text" ng-model="obj.settings.rangeV"></input>
       </div>
     </div>
