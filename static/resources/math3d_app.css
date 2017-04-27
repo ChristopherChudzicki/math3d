@@ -70,6 +70,7 @@ input.form-control:focus, textarea.form-control:focus{
 
 .user_functions {
     margin-left: 2em;
+    clear: both;
 }
 
 .user_button {
