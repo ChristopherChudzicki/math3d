@@ -9,6 +9,7 @@
     Email: <input type="email" name="email" /><br><br>
     Name: <input type="text" name"name" /><br><br>
     Password: <input type="password" name="password" /><br><br>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
     <input type="submit" value="Submit" />
   </form>
 </body>
