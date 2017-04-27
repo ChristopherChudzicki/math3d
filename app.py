@@ -1,6 +1,7 @@
 import os
 from whitenoise import WhiteNoise
-from flask import Flask, render_template, redirect, request, abort, url_for, make_response
+from flask import (Flask, render_template, redirect, request, abort, url_for,
+                   make_response)
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 
@@ -33,7 +34,8 @@ def users():
 
 @app.route('/register')
 def register():
-    return render_template("register.html")
+    errormessage = request.args.get("errormessage", default="")
+    return render_template("register.html", errormessage=errormessage)
 
 @app.route('/register/submit', methods=["POST"])
 def submit():
@@ -42,9 +44,11 @@ def submit():
     email = request.form.get("email")
     password = request.form.get("password")
     
-    # Quick way to check if any of these is None
-    if None in [username, email, password]:
-        return redirect(url_for("register"))
+    # Quick way to check if any of these is empty
+    # Should implement javascript password checker to prevent this
+    if "" in [username, email, password]:
+        errormessage = "Username, email, and password are required."
+        return redirect(url_for("register", errormessage=errormessage))
     
     new_user = User(username, email, name, password)
     db.session.add(new_user)
