@@ -83,7 +83,7 @@ def validate():
     username = request.form.get("username")
     password = request.form.get("password")
     
-    if None in [username, password]:
+    if "" in [username, password]:
         return redirect(url_for("login"))
     
     if validate_password(username, password):
