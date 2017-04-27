@@ -66,6 +66,21 @@ input.form-control:focus, textarea.form-control:focus{
     border-radius:4px;
 }
 
+/*Login Button*/
+
+.user_functions {
+    margin-left: 2em;
+}
+
+.user_button {
+    position: relative;
+    margin-left: 0.5em;
+}
+
+.user_button:hover {
+    text-decoration: none;
+}
+
 span.settings:hover span.glyphicon{
     color:#18bc9c;
 }
