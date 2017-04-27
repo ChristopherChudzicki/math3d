@@ -93,8 +93,11 @@ def validate():
         return redirect(url_for("login"))
     
 def validate_password(username, password):
-    user = User.query.filter_by(username=username)[0]
-    return user.check_password(password)
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return user.check_password(password)
+    else:
+        return False
 
 def add_logged_in_cookie(response, username):
     return_response = make_response(response)
