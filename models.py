@@ -33,8 +33,9 @@ class Graph(db.Model):
     serialized_string = db.Column(db.String())
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
     
-    def __init__(self, serialized_string):
+    def __init__(self, title, serialized_string):
         self.created_at = datetime.utcnow()
+        self.title = title
         self.serialized_string = serialized_string
     
     def __repr__(self):
