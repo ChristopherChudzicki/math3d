@@ -2216,6 +2216,7 @@ class ExplicitSurface extends ParametricSurface {
         super(math3d, settings);
         
         var _this = this;
+        delete this.settings.rawExpressionZ; // rawExpressionZ was previously set. Adding the getter/setter for it now messes up Utility.deepCopyValuesOnly unless we explicity delete the key.
         Object.defineProperties(this.settings, {
             rawExpressionZ: {
                 set: function(val) {
@@ -2249,6 +2250,7 @@ class ExplicitSurfacePolar extends ParametricSurface {
         super(math3d, settings);
         
         var _this = this;
+        delete this.settings.rawExpressionZ;
         Object.defineProperties(this.settings, {
             rawExpressionZ: {
                 set: function(val) {
