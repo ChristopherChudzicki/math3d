@@ -4,9 +4,12 @@ from flask import (Flask, render_template, redirect, request, abort, url_for,
                    make_response)
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+from flask_wtf.csrf import CSRFProtect, generate_csrf
 
 app = Flask(__name__)
 app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
+
+CSRFProtect().init_app(app)
 
 # Configurations
 # Using environmental variables for secret key and database url
@@ -22,6 +25,13 @@ bcrypt = Bcrypt(app)
 
 # Must import after db is defined, not pretty
 from models import User
+
+@app.after_request
+def add_csrf_to_cookie(response):
+    return_response = make_response(response)
+    if request.cookies.get("csrf_token") is not None:
+        return_response.set_cookie("csrf_token", generate_csrf())
+    return return_response
 
 @app.route('/')
 def index():
