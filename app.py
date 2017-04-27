@@ -64,10 +64,9 @@ def submit():
     db.session.add(new_user)
     db.session.commit()
     
-    response = make_response(redirect(url_for("user")))
-    response.set_cookie("username", username)
+    response = redirect(url_for("user"))
     
-    return response
+    return add_logged_in_cookie(response, username)
 
 @app.route('/user')
 def user():
@@ -87,12 +86,18 @@ def validate():
         return redirect(url_for("login"))
     
     if validate_password(username, password):
-        response = make_response(redirect(url_for("user")))
-        response.set_cookie("username", username)
-        return response
+        response = redirect(url_for("user"))
+        return add_logged_in_cookie(response, username)
     else:
         return redirect(url_for("login"))
     
 def validate_password(username, password):
     user = User.query.filter_by(username=username)[0]
     return user.check_password(password)
+
+def add_logged_in_cookie(response, username):
+    return_response = make_response(response)
+    expiry_date = datetime.datetime.now()
+    expiry_date += datetime.timedelta(days=30)
+    return_response.set_cookie("username", username, expires=expiry_date)
+    return return_response
