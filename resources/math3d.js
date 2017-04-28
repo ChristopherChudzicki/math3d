@@ -1321,7 +1321,7 @@ class MathGraphic extends MathObject {
             },
             //{attribute:'color',format:'String'},
             {
-                attribute: 'zIndex',
+                attribute: 'zBias',
                 format: 'Number'
             },
             //{attribute:'rawExpression',format:'String'}
@@ -1387,6 +1387,17 @@ class MathGraphic extends MathObject {
                 },
                 get: function() {
                     return this._zIndex;
+                },
+            },
+            zBias: {
+                set: function(val) {
+                    this._zBias = val;
+                    if (_this.mathboxGroup !== null) {
+                        _this.setZBias(val);
+                    }
+                },
+                get: function() {
+                    return this._zBias;
                 },
             },
             visible: {
@@ -1547,6 +1558,10 @@ class MathGraphic extends MathObject {
     setZIndex(val) {
         this.mathboxGroup.select(this.mathboxRenderType).set("zIndex", val);
     }
+    
+    setZBias(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("zBias", val);
+    }
 
     setSize(val) {
         this.mathboxGroup.select(this.mathboxRenderType).set("size", val);
@@ -1676,6 +1691,7 @@ class Point extends MathGraphic {
                 size: this.settings.size,
                 visible: this.settings.visible,
                 zIndex: this.settings.zIndex,
+                zBias:this.settings.zBias
             })
             .format({
                 data: [this.settings.label]
@@ -1753,7 +1769,8 @@ class AbstractCurveFromData extends AbstractCurve {
                 start: this.settings.start,
                 end: this.settings.end,
                 size: this.settings.size,
-                zIndex: this.settings.zIndex
+                zIndex: this.settings.zIndex,
+                zBias:this.settings.zBias
             })
             .format({
                 data: ['', this.settings.label]
@@ -1958,7 +1975,8 @@ class ParametricCurve extends AbstractCurve {
             start: this.settings.start,
             end: this.settings.end,
             size: this.settings.size,
-            zIndex: this.settings.zIndex
+            zIndex: this.settings.zIndex,
+            zBias:this.settings.zBias
         });
 
         return group;
@@ -2181,7 +2199,8 @@ class ParametricSurface extends AbstractSurface {
                 points: data,
                 color: this.settings.color,
                 opacity: this.settings.opacity,
-                shaded: this.settings.shaded
+                shaded: this.settings.shaded,
+                zBias:this.settings.zBias
             }).group().set('classes', ['gridV'])
             .resample({
                 height: this.settings.gridV,
@@ -2189,7 +2208,8 @@ class ParametricSurface extends AbstractSurface {
             })
             .line({
                 color: gridColor,
-                opacity: this.settings.gridOpacity
+                opacity: this.settings.gridOpacity,
+                zBias:this.settings.zBias
             })
             .end()
             .group().set('classes', ['gridU'])
@@ -2202,7 +2222,8 @@ class ParametricSurface extends AbstractSurface {
             })
             .line({
                 color: gridColor,
-                opacity: this.settings.gridOpacity
+                opacity: this.settings.gridOpacity,
+                zBias:this.settings.zBias
             })
             .end();
 
