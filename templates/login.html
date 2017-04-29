@@ -9,7 +9,7 @@
   <div class="container">
     <div class="col-md-4 centered">
       <h3>Login</h3>
-      <form action="login/validate" method="post">
+      <form action="/api/login/validate" method="post">
         Username: <input class="form-control" type="text" name="username" /><br>
         Password: <input class="form-control" type="password" name="password" /><br>
         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
