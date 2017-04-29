@@ -17,7 +17,7 @@
     }));
 
     function createElement(template) {
-      template = template || '<div ui-tree><ol ui-tree-nodes ng-model="items"><li ng-repeat="item in items" ui-tree-node><div ui-tree-handle>{{item.title}}</div></li></ol></div>';
+      template = template || '<div ui-tree><ol ui-tree-nodes ng-model="items"><li ng-repeat="item in items" ui-tree-node><div ui-tree-handle>[[item.title]]</div></li></ol></div>';
       element = angular.element(template);
       $compile(element)($scope);
       $scope.$digest();

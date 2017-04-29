@@ -1,15 +1,15 @@
 <div class="cell-row">
-  <textarea rows="1" style="width:{{obj.settings.description.length+2}}ch;" class="object-description form-control input-quiet input-xs" type='text' ng-model="obj.settings.description"></textarea>
+  <textarea rows="1" style="width:[[obj.settings.description.length+2]]ch;" class="object-description form-control input-quiet input-xs" type='text' ng-model="obj.settings.description"></textarea>
   <button type="button" class="btn btn-link btn-xs btn-quiet pull-upper-right" ng-click="obj.remove();">
       <span class="glyphicon glyphicon-remove"></span>
   </button>
 </div>
 <div class="cell-row">
-  <div style="{{getStyle(obj)}}"
+  <div style="[[getStyle(obj)]]"
     class = "visibility-indicator"
     on-long-press="setColor(obj)"
     on-short-press="obj.settings.visible = ! obj.settings.visible">
-    <input id="{{'jscolor-'+obj.id}}" class="jscolor hide-in-place" ng-model="obj.settings.color" ></input>
+    <input id="[['jscolor-'+obj.id]]" class="jscolor hide-in-place" ng-model="obj.settings.color" ></input>
   </div>
   <span class="mathquill-large"></span>
   <button class="btn btn-link btn-xs btn-quiet settings-trigger"
@@ -26,4 +26,4 @@
       </a>
   </button>
 </div>
-{{setupMathGraphicMF(obj)}}
+[[setupMathGraphicMF(obj)]]

@@ -15,22 +15,22 @@ describe('treeCtrl', function () {
       '  <ol ui-tree-nodes ng-model="list">' +
       '    <li ng-repeat="item in list" ui-tree-node="">' +
       '      <div ui-tree-handle>' +
-      '        {{item.title}}' +
+      '        [[item.title]]' +
       '      </div>' +
       '      <ol ui-tree-nodes="" ng-model="item.items">' +
       '        <li ng-repeat="subItem in item.items" ui-tree-node="">' +
       '          <div ui-tree-handle>' +
-      '            {{subItem.title}}' +
+      '            [[subItem.title]]' +
       '          </div>' +
       '          <ol ui-tree-nodes="" ng-model="subItem.items">' +
       '            <li ng-repeat="subItem1 in subItem.items" ui-tree-node="">' +
       '              <div ui-tree-handle>' +
-      '                {{subItem.title}}' +
+      '                [[subItem.title]]' +
       '              </div>' +
       '              <ol ui-tree-nodes="" ng-model="subItem1.items">' +
       '                <li ng-repeat="subItem2 in subItem1.items" ui-tree-node="">' +
       '                  <div ui-tree-handle>' +
-      '                    {{subItem1.title}}' +
+      '                    [[subItem1.title]]' +
       '                  </div>' +
       '                </li>' +
       '              </ol>' +

@@ -2,7 +2,13 @@ var container = $(".container")
 container.attr("ng-app", 'math3dApp')
 
 // app = angular.module('math3dApp', ['ui.sortable']);
-app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ui.bootstrap', 'ui.toggle']);
+app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle']);
+
+// Change default tags to '[[' and ']]' to prevent conflict with Flask
+app.config(function($interpolateProvider) {
+    $interpolateProvider.startSymbol('[[');
+    $interpolateProvider.endSymbol(']]');
+});
 
 app.directive('compileTemplate', ["$compile", "$parse", function($compile, $parse) {
     // http://stackoverflow.com/a/25407201/2747370

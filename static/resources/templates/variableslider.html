@@ -5,14 +5,14 @@
   <form class="object-cell-main form-horizontal math-object-settings" ng-controller="sliderCtrl">
     <div class="row">
       <div class="col-xs-12">
-        <textarea rows="1" style="width:{{obj.settings.description.length+2}}ch;" class="object-description form-control input-quiet input-xs" type='text' ng-model="obj.settings.description"> </textarea>
+        <textarea rows="1" style="width:[[obj.settings.description.length+2]]ch;" class="object-description form-control input-quiet input-xs" type='text' ng-model="obj.settings.description"> </textarea>
       </div>
     </div>
     <div class="form-group" style="margin-bottom:2pt">
       <div class="col-xs-4">
         <div class="input-group input-group-sm">
-          <input style="width:auto" type="text" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" size="{{1+obj.settings.name.length}}" type="text" ng-model="obj.settings.name"></input>
-          <span style="padding-left:2pt;padding-right:2pt" class="input-group-addon"> = {{obj.settings.value.substring(0,5)}} </span>
+          <input style="width:auto" type="text" ng-class="{'has-error': !obj.valid}" class="form-control has-feedback" size="[[1+obj.settings.name.length]]" type="text" ng-model="obj.settings.name"></input>
+          <span style="padding-left:2pt;padding-right:2pt" class="input-group-addon"> = [[obj.settings.value.substring(0,5)]] </span>
         </div>
       </div>
       <div class="col-xs-7 col-xs-offset-1">
@@ -21,7 +21,7 @@
             <span class="glyphicon glyphicon-backward"></span>
           </a>
           <a class="btn btn-quiet disabled btn-xs">
-            {{obj.speeds[obj.settings.speedIdx].string}} ×
+            [[obj.speeds[obj.settings.speedIdx].string]] ×
           </a>
           <a class="btn btn-link btn-quiet btn-xs" ng-click="incrementSpeed(obj,+1)">
             <span class="glyphicon glyphicon-forward"></span>
@@ -34,15 +34,15 @@
         <button type="button" class="btn btn-link btn-xs" ng-click="toggleAnimate(obj)">
           <span class="glyphicon" ng-class="{'glyphicon-play':!obj.settings.animationRunning, 'glyphicon-pause':obj.settings.animationRunning}"></span>
         </button>
-        <input elem-ready="initSlider(obj)" id="slider-{{obj.id}}" style="display:inline-block;width:75%;" type="range" ng-model="obj.settings.value" min="{{obj.min}}" max="{{obj.max}}"></input>
+        <input elem-ready="initSlider(obj)" id="slider-[[obj.id]]" style="display:inline-block;width:75%;" type="range" ng-model="obj.settings.value" min="[[obj.min]]" max="[[obj.max]]"></input>
       </div>
     </div>
     <div class="form-group" style="margin-top:0pt">
       <div class="col-xs-2 col-xs-offset-2">
-        <input style="width:auto" class="form-control input-quiet input-xs" type="text" size="{{obj.settings.min.length}}" ng-model="obj.settings.min"></input>
+        <input style="width:auto" class="form-control input-quiet input-xs" type="text" size="[[obj.settings.min.length]]" ng-model="obj.settings.min"></input>
       </div>
       <div class="col-xs-2 col-xs-offset-4">
-        <input style="width:auto" class="form-control input-quiet input-xs" type="text" size="{{obj.settings.max.length}}" ng-model="obj.settings.max"></input>
+        <input style="width:auto" class="form-control input-quiet input-xs" type="text" size="[[obj.settings.max.length]]" ng-model="obj.settings.max"></input>
       </div>
     </div>
     <button type="button" class="btn btn-link btn-xs remove-item pull-upper-right" ng-click="obj.remove();">
