@@ -28,7 +28,7 @@ from models import User
 @app.after_request
 def add_csrf_to_cookie(response):
     return_response = make_response(response)
-    if request.cookies.get("csrf_token") is not None:
+    if request.cookies.get("csrf_token") is None:
         return_response.set_cookie("csrf_token", generate_csrf())
     return return_response
 
