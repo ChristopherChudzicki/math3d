@@ -1,6 +1,5 @@
 import os
 import datetime
-from whitenoise import WhiteNoise
 from flask import (Flask, render_template, redirect, request, abort, url_for,
                    make_response)
 from flask_sqlalchemy import SQLAlchemy
@@ -8,7 +7,6 @@ from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect, generate_csrf
 
 app = Flask(__name__)
-app.wsgi_app = WhiteNoise(app.wsgi_app, root="static/")
 
 CSRFProtect().init_app(app)
 
