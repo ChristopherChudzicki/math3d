@@ -31,12 +31,13 @@ class Graph(db.Model):
     created_at = db.Column(db.DateTime)
     title = db.Column(db.String())
     serialized_string = db.Column(db.String())
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    user_name = db.Column(db.String(), db.ForeignKey("users.username"))
     
-    def __init__(self, title, serialized_string):
+    def __init__(self, title, serialized_string, user_name):
         self.created_at = datetime.utcnow()
         self.title = title
         self.serialized_string = serialized_string
+        self.user_name = user_name
     
     def __repr__(self):
         return self.title
