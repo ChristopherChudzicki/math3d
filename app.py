@@ -28,7 +28,7 @@ from models import User
 @app.after_request
 def add_csrf_to_cookie(response):
     """Adds csrf_token to cookie
-    
+
     Checks to see if token is present after every request.
     If not then add the token to cookies.
     """
@@ -62,7 +62,7 @@ def save_graph():
     title = request.form.get("title")
     serialized_graph = request.form.get("serialized_graph")
     username = request.cookies.get("username")
-    
+
     new_graph = Graph(title, serialized_graph, username)
     db.session.add(new_graph)
     db.session.commit()
@@ -71,10 +71,10 @@ def save_graph():
 def validate():
     username = request.form.get("username")
     password = request.form.get("password")
-    
+
     if "" in [username, password]:
         return redirect(url_for("login"))
-    
+
     if validate_password(username, password):
         response = redirect(url_for("user"))
         return add_logged_in_cookie(response, username)
@@ -84,7 +84,7 @@ def validate():
 @app.route('/api/login/username_exists', methods=["POST"])
 def check_username():
     """Checks if the given username already exists
-    
+
     Javascript side sends post request to this address.
     """
     username = request.form.get("username")
@@ -93,26 +93,26 @@ def check_username():
             return False
         else:
             return True
-        
+
 @app.route('/api/register/submit', methods=["POST"])
 def submit():
     username = request.form.get("username")
     name = request.form.get("name", default="")
     email = request.form.get("email")
     password = request.form.get("password")
-    
+
     # Quick way to check if any of these is empty
     # Should implement javascript password checker to prevent this
     if "" in [username, email, password]:
         errormessage = "Username, email, and password are required."
         return redirect(url_for("register", errormessage=errormessage))
-    
+
     new_user = User(username, email, name, password)
     db.session.add(new_user)
     db.session.commit()
-    
+
     response = redirect(url_for("user"))
-    
+
     return add_logged_in_cookie(response, username)
 
 # Helper Functions
