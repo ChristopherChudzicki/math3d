@@ -16,6 +16,7 @@
   <link rel="stylesheet" href="/static/vendors/jquery/jquery-ui.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-cookies.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.3.1/ui-bootstrap-tpls.js"></script>
 
   <script src="/static/vendors/autosize.js"></script>
@@ -53,15 +54,20 @@
 </head>
 <body>
 
-  <div class="container">
-    <div class="sidepanel menu-visible">
+  <div class="container" ng-controller="checkLoginCtrl">
+    <div class="sidepanel menu-visible" ng-cloak>
      
       <div class="user_functions">
-        <a href="login" class="btn btn-link user_button">Log In</a>
-        <a href="register" class="btn btn-link user_button">Register</a>
+        <div ng-hide="logged_in">
+          <a href="login" class="btn btn-link user_button">Log In</a>
+          <a href="register" class="btn btn-link user_button">Register</a>
+        </div>
+        <div ng-show="logged_in">
+          <p>Hi [[username]]!</p>
+        </div>
       </div>
       
-      <div class="math3d-controller" >
+      <div class="math3d-controller">
       
         <div class="math3d-controller-header">
           <ul class="nav nav-tabs nav-justified">
@@ -151,7 +157,10 @@
             <button type="button" class="close" data-dismiss="modal">
               <span class="glyphicon glyphicon-remove"></span>
             </button>
-            <h4 class="modal-title">Scene's URL</h4>
+            <h4 class="modal-title">Save Graph</h4>
+          </div>
+          <div ng-show="logged_in">
+            <textarea id="graph-title"></textarea>
           </div>
           <div class="modal-body">
             <textarea></textarea>
