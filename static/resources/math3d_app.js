@@ -147,8 +147,6 @@ app.controller('checkLoginCtrl', ['$scope', '$cookies', function($scope, $cookie
         $scope.username = username;
         $scope.logged_in = true;
     }
-    
-    console.log(username)
 }]);
 
 app.controller('saveCtrl', ['$scope', function($scope){
