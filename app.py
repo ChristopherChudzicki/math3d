@@ -67,6 +67,19 @@ def submit():
     
     return add_logged_in_cookie(response, username)
 
+@app.route('/login/username_exists', method=["POST"])
+def check_username():
+    """Checks if the given username already exists
+    
+    Javascript side sends post request to this address.
+    """
+    username = request.form.get("username")
+    if username:
+        if User.query.filter_by(username=username).first():
+            return False
+        else:
+            return True
+
 @app.route('/user')
 def user():
     username = request.cookies.get("username")
@@ -89,7 +102,7 @@ def validate():
         return add_logged_in_cookie(response, username)
     else:
         return redirect(url_for("login"))
-    
+
 def validate_password(username, password):
     user = User.query.filter_by(username=username).first()
     if user:
