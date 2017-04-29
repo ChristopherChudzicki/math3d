@@ -67,7 +67,7 @@ def submit():
     
     return add_logged_in_cookie(response, username)
 
-@app.route('/login/username_exists', method=["POST"])
+@app.route('/login/username_exists', methods=["POST"])
 def check_username():
     """Checks if the given username already exists
     
