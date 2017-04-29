@@ -27,26 +27,74 @@ from models import User
 
 @app.after_request
 def add_csrf_to_cookie(response):
+    """Adds csrf_token to cookie
+    
+    Checks to see if token is present after every request.
+    If not then add the token to cookies.
+    """
     return_response = make_response(response)
     if request.cookies.get("csrf_token") is None:
         return_response.set_cookie("csrf_token", generate_csrf())
     return return_response
 
+# Pages
 @app.route('/')
 def index():
     return render_template("index.html")
-
-# For testing purposes
-@app.route('/users')
-def users():
-    return "<br>".join(map(lambda x: str(x), User.query.all()))
 
 @app.route('/register')
 def register():
     errormessage = request.args.get("errormessage", default="")
     return render_template("register.html", errormessage=errormessage)
 
-@app.route('/register/submit', methods=["POST"])
+@app.route('/user')
+def user():
+    username = request.cookies.get("username")
+    return render_template("user.html", username=username)
+
+@app.route('/login')
+def login():
+    return render_template("login.html")
+
+# Handlers for Client-Side Requests
+@app.route('/api/graph/save', methods=["POST"])
+def save_graph():
+    title = request.form.get("title")
+    serialized_graph = request.form.get("serialized_graph")
+    username = request.cookies.get("username")
+    
+    new_graph = Graph(title, serialized_graph, username)
+    db.session.add(new_graph)
+    db.session.commit()
+
+@app.route('/api/login/validate', methods=["POST"])
+def validate():
+    username = request.form.get("username")
+    password = request.form.get("password")
+    
+    if "" in [username, password]:
+        return redirect(url_for("login"))
+    
+    if validate_password(username, password):
+        response = redirect(url_for("user"))
+        return add_logged_in_cookie(response, username)
+    else:
+        return redirect(url_for("login"))
+
+@app.route('/api/login/username_exists', methods=["POST"])
+def check_username():
+    """Checks if the given username already exists
+    
+    Javascript side sends post request to this address.
+    """
+    username = request.form.get("username")
+    if username:
+        if User.query.filter_by(username=username).first():
+            return False
+        else:
+            return True
+        
+@app.route('/api/register/submit', methods=["POST"])
 def submit():
     username = request.form.get("username")
     name = request.form.get("name", default="")
@@ -67,42 +115,7 @@ def submit():
     
     return add_logged_in_cookie(response, username)
 
-@app.route('/login/username_exists', methods=["POST"])
-def check_username():
-    """Checks if the given username already exists
-    
-    Javascript side sends post request to this address.
-    """
-    username = request.form.get("username")
-    if username:
-        if User.query.filter_by(username=username).first():
-            return False
-        else:
-            return True
-
-@app.route('/user')
-def user():
-    username = request.cookies.get("username")
-    return render_template("user.html", username=username)
-
-@app.route('/login')
-def login():
-    return render_template("login.html")
-
-@app.route('/login/validate', methods=["POST"])
-def validate():
-    username = request.form.get("username")
-    password = request.form.get("password")
-    
-    if "" in [username, password]:
-        return redirect(url_for("login"))
-    
-    if validate_password(username, password):
-        response = redirect(url_for("user"))
-        return add_logged_in_cookie(response, username)
-    else:
-        return redirect(url_for("login"))
-
+# Helper Functions
 def validate_password(username, password):
     user = User.query.filter_by(username=username).first()
     if user:
