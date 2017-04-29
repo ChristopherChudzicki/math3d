@@ -135,6 +135,16 @@ app.controller('treeCtrl', function($scope)  {
     }
 });
 
+app.controller('checkLoginCtrl', ['$scope', '$cookies', function($scope, $cookies) {
+    var username = $cookies.get("username");
+    if (username) {
+        $scope.username = username;
+        $scope.logged_in = true;
+    }
+    
+    console.log(username)
+}]);
+
 app.controller('saveCtrl', ['$scope', function($scope){
     $scope.saveURL = function(){
         var url = math3d.saveSettingsAsURL();
