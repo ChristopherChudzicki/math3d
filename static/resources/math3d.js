@@ -664,10 +664,15 @@ class Math3D {
         });
         return JSON.stringify(Utility.deepObjectDiff(rawSettings, this.defaultSettings));
     }
+    
+    saveSettingsAsString(settings) {
+        settings = Utility.defaultVal(settings, this.settings);
+        return window.btoa(this.serialize(settings));
+    }
 
     saveSettingsAsURL(settings) {
         settings = Utility.defaultVal(settings, this.settings);
-        var settingsDiff64 = window.btoa(this.serialize(settings));
+        var settingsDiff64 = this.saveSettingsAsString(settings);
         var url = window.location.href.split('#')[0].split("?")[0] + "?settings=" + settingsDiff64;
         return url
     }
