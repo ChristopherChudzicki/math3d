@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="form-group" ng-repeat="setting in obj.userSettings">
-        <label class="control-label label-xs col-xs-6" >{{setting.attribute}}</label>  
+        <label class="control-label label-xs col-xs-6" >[[setting.attribute]]</label>  
       <div class="col-xs-6">
         <input ng-if="setting.format==='Number'"  type="number"          class="form-control input-xs" ng-model="obj.settings[setting.attribute]">
         <input ng-if="setting.format==='Integer'" type="number" step="1" class="form-control input-xs" ng-model="obj.settings[setting.attribute]">
