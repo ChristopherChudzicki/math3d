@@ -1,7 +1,7 @@
 import os
 import datetime
 from flask import (Flask, render_template, redirect, request, abort, url_for,
-                   make_response)
+                   make_response, abort, jsonify)
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect, generate_csrf
@@ -67,6 +67,14 @@ def save_graph():
     db.session.commit()
 
     return "Success!"
+
+@app.route('/api/graph/get')
+def get_graphs():
+    username = request.cookies.get("username")
+    graph_objs = User.query.filter_by(username=username).first().graphs
+    graphs = [graph.serialize() for graph in graph_objs]
+    
+    return jsonify(graphs)
 
 @app.route('/api/login/validate', methods=["POST"])
 def validate():

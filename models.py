@@ -42,3 +42,10 @@ class Graph(db.Model):
     def __repr__(self):
         return self.title
     
+    def serialize(self):
+        return {
+            "title": self.title,
+            "serialized_string": self.serialized_string,
+            "username": self.user_name,
+            "created_at": str(self.created_at),
+        }
