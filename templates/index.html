@@ -159,10 +159,14 @@
             </button>
             <h4 class="modal-title">Save Graph</h4>
           </div>
-          <div ng-show="logged_in">
-            <textarea id="graph-title"></textarea>
-          </div>
           <div class="modal-body">
+            <!-- Save to Database -->
+            <div ng-show="logged_in" ng-controller="saveToDBCtrl">
+              <label>Title: </label>
+              <input class="form-control" type="text" id="graph-title" />
+              <a class="btn btn-link" ng-click="saveToDB()">Save</a>
+            </div>
+            <br>
             <textarea></textarea>
             <p>URL length: <span id="url-length"></span></p>
             <p class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>This URL is not guaranteed to work in the future as more features are added to Math3D.</p>
