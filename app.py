@@ -45,11 +45,6 @@ def register():
     errormessage = request.args.get("errormessage", default="")
     return render_template("register.html", errormessage=errormessage)
 
-@app.route('/user')
-def user():
-    username = request.cookies.get("username")
-    return render_template("user.html", username=username)
-
 @app.route('/login')
 def login():
     return render_template("login.html")
@@ -85,10 +80,10 @@ def validate():
         return redirect(url_for("login"))
 
     if validate_password(username, password):
-        response = redirect(url_for("user"))
+        response = redirect(url_for("index"))
         return add_logged_in_cookie(response, username)
     else:
-        return redirect(url_for("login"))
+        return redirect(url_for("index"))
 
 @app.route('/api/login/username_exists', methods=["POST"])
 def check_username():
@@ -120,7 +115,7 @@ def submit():
     db.session.add(new_user)
     db.session.commit()
 
-    response = redirect(url_for("user"))
+    response = redirect(url_for("index"))
 
     return add_logged_in_cookie(response, username)
 
