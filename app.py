@@ -29,12 +29,10 @@ from models import User, Graph
 def add_csrf_to_cookie(response):
     """Adds csrf_token to cookie
 
-    Checks to see if token is present after every request.
-    If not then add the token to cookies.
+    Add to cookies with every response.
     """
     return_response = make_response(response)
-    if request.cookies.get("csrf_token") is None:
-        return_response.set_cookie("csrf_token", generate_csrf())
+    return_response.set_cookie("csrf_token", generate_csrf())
     return return_response
 
 # Pages
