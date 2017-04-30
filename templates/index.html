@@ -73,6 +73,7 @@
           <ul class="nav nav-tabs nav-justified">
             <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
             <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
+            <li><a data-toggle='tab' href="#controller-graphs">Graphs</a></li>
           </ul>
         </div>
       
@@ -135,6 +136,22 @@
               <div class="list-group-item">
                 <div ng-include="'/static/resources/templates/axes_settings.html'">
                 </div>
+              </div>
+            </div>
+          </div>
+          <div id="controller-graphs" class="tab-pane fade">
+            <div class="math3d-controller-header">
+              <ul class="nav nav-pills xs">
+                <li ng-controller="saveCtrl" class="save">
+                  <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
+                    <span class="glyphicon glyphicon-floppy-disk save"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="list-group" ng-controller="graphListCtrl">
+              <div ng-repeat="graph in graphs" class="list-group-item">
+                <a ng-click="loadGraph([[graph.serialized_string]])">[[graph.title]]</a>
               </div>
             </div>
           </div>
