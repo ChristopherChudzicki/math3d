@@ -66,6 +66,8 @@ def save_graph():
     db.session.add(new_graph)
     db.session.commit()
 
+    return "Success!"
+
 @app.route('/api/login/validate', methods=["POST"])
 def validate():
     username = request.form.get("username")
