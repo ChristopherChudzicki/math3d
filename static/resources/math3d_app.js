@@ -5,9 +5,13 @@ container.attr("ng-app", 'math3dApp')
 app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle']);
 
 // Change default tags to '[[' and ']]' to prevent conflict with Flask
-app.config(function($interpolateProvider) {
+app.config(function($interpolateProvider, $httpProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
+    
+    // Include csrf_token in every request
+    $httpProvider.defaults.xsrfCookieName = "csrf_token";
+    $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
 });
 
 app.directive('compileTemplate', ["$compile", "$parse", function($compile, $parse) {
