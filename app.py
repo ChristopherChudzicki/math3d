@@ -23,7 +23,7 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 # Must import after db is defined, not pretty
-from models import User
+from models import User, Graph
 
 @app.after_request
 def add_csrf_to_cookie(response):
