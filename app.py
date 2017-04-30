@@ -57,8 +57,9 @@ def login():
 # Handlers for Client-Side Requests
 @app.route('/api/graph/save', methods=["POST"])
 def save_graph():
-    title = request.form.get("title")
-    serialized_graph = request.form.get("serialized_graph")
+    # Angular sends json data by default
+    title = request.json.get("title")
+    serialized_graph = request.json.get("serialized_graph")
     username = request.cookies.get("username")
 
     new_graph = Graph(title, serialized_graph, username)
