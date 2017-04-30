@@ -161,6 +161,22 @@ app.controller('saveCtrl', ['$scope', function($scope){
     };
 }])
 
+app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
+    $scope.saveToDB = function(){
+        var title = $("#save-modal input").val();
+        var serialized_setting = math3d.saveSettingsAsString();
+        
+        $http.post("/api/graph/save", {
+            title: title,
+            serialized_graph: serialized_setting,
+        }).then(function(response) {
+            if (response.data == "Success!") {
+                $("#save-modal").modal('hide');
+            }
+        });
+    }
+}]);
+
 app.controller('axesSettingsCtrl', ['$scope', function($scope){
     $scope.settings = math3d.settings;
 }])
