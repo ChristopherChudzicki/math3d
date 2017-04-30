@@ -177,6 +177,25 @@ app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
     }
 }]);
 
+app.controller('graphListCtrl', ['$rootScope', '$scope', '$http', function($rootScope, $scope, $http) {
+    // Using rootScope so that when clicking the Graphs tab this can be called.
+    // The graphs tab button is out of the scope of graphListCtrl.
+    $rootScope.updateGraphs = function() {
+        if ($scope.logged_in) {
+            $http.get("/api/graph/get").then(function(response){
+                $rootScope.graphs = response.data;
+            });
+        }
+    }
+    
+    $scope.loadGraph = function(serialized_string) {
+        math3d = new Math3D(Math3D.decodeSettingsAsURL64(serialized_string));
+    }
+    
+    $rootScope.updateGraphs();
+
+}]);
+
 app.controller('axesSettingsCtrl', ['$scope', function($scope){
     $scope.settings = math3d.settings;
 }])
