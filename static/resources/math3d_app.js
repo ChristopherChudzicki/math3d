@@ -151,6 +151,11 @@ app.controller('checkLoginCtrl', ['$scope', '$cookies', function($scope, $cookie
         $scope.username = username;
         $scope.logged_in = true;
     }
+    
+    $scope.logout = function() {
+        $cookies.remove("username");
+        $scope.logged_in = false;
+    }
 }]);
 
 app.controller('saveCtrl', ['$scope', function($scope){

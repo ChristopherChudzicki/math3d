@@ -63,7 +63,8 @@
           <a href="register" class="btn btn-link user_button">Register</a>
         </div>
         <div ng-show="logged_in">
-          <p>Hi [[username]]!</p>
+          Hi [[username]]!
+          <a class="btn btn-link" ng-click="logout()">Logout</a>
         </div>
       </div>
       
