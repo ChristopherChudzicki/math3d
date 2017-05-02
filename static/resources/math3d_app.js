@@ -216,7 +216,8 @@ app.controller('graphListCtrl', ['$rootScope', '$scope', '$http', function($root
     }
     
     $scope.loadGraph = function(serialized_string) {
-        math3d = new Math3D(Math3D.decodeSettingsAsURL64(serialized_string));
+        math3d.clear()
+        math3d.load(Math3D.decodeSettingsAsURL64(serialized_string));
     }
     
     $rootScope.updateGraphs();
