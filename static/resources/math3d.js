@@ -1,27 +1,34 @@
+// MIT License
+//
+// Copyright (c) 2017 Christopher Chudzicki
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all
+// copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+// SOFTWARE.
+
 'use strict';
 
 class Math3D {
-    constructor(settings) {
-        this.swizzleOrder = Utility.defaultVal(settings.swizzleOrder, 'yzx');
-        this.settings = this.setDefaults(settings);
-
+    constructor(containerId, settings) {
         this.mathbox = this.initializeMathBox();
-        this.scene = this.setupScene();
-        this.updateRange();
-
-        // Initial Drawing
-        this.drawAxes();
-        this.drawGrids();
-
-        // Add getters and setters for updating after initial rendering
-        this.settings = this.makeDynamicSettings();
-
-        // create mathScope and toggleScope
-        this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
-        this.setDefaultScopes();
         
-        //Render math objects; this will update this.mathTree
-        this.renderMathObjects();
+        if (settings !== undefined){
+            this.load(settings)
+        }
     }
 
     setDefaultScopes() {
@@ -388,17 +395,15 @@ class Math3D {
         }
     }
 
-    initializeMathBox() {
-        var settings = this.settings
-
+    initializeMathBox(containerId) {
         // if necessary, add a container for mathbox
-        if ($("#" + settings.containerId).length === 0) {
-            settings.containerId = _.uniqueId();
+        if ($("#" + containerId).length === 0) {
+            containerId = _.uniqueId();
             this.container = $("<div class='mathbox-container'></div>");
-            this.container.attr('id', settings.containerId);
+            this.container.attr('id', containerId);
             $('body').append(this.container);
         } else {
-            this.container = $("#" + settings.containerId)
+            this.container = $("#" + containerId)
             this.container.addClass('mathbox-container');
         }
 
@@ -411,15 +416,54 @@ class Math3D {
             controls: controls,
             element: this.container[0]
         });
-
-        // setup camera
-        mathbox.camera({
-            proxy: true,
-            position: this.swizzle(settings.camera.position),
-        });
+        
         mathbox.three.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
 
         return mathbox;
+    }
+    
+    load(settings){
+        this.swizzleOrder = Utility.defaultVal(settings.swizzleOrder, 'yzx');
+        this.settings = this.setDefaults(settings);
+        
+        this.setCamera();
+        this.scene = this.setupScene();
+        this.updateRange();
+
+        // Initial Drawing
+        this.drawAxes();
+        this.drawGrids();
+
+        // Add getters and setters for updating after initial rendering
+        this.settings = this.makeDynamicSettings();
+
+        // create mathScope and toggleScope
+        this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
+        this.setDefaultScopes();
+        
+        //Render math objects; this will update this.mathTree
+        this.renderMathObjects();
+    }
+    
+    clear(){
+        // Remove objects before re-assigning mathTree. I'm not entirely sure if this is necessary.
+        _.forEach(this.mathTree, function(branch, idx) {
+            var branchLength = branch.objects.length; // each iteration of loop changes branch.objects.length, so store it at beginning.
+            for (let j=0; j<branchLength; j++){
+                branch.objects[0].remove();
+            }
+        });
+        this.mathTree = [];
+        // wipe mathbox
+        this.mathbox.remove('*');
+    }
+    
+    setCamera(){
+        // setup camera
+        this.mathbox.camera({
+            proxy: true,
+            position: this.swizzle(this.settings.camera.position),
+        });
     }
 
     setupScene() {
@@ -1304,7 +1348,7 @@ class MathGraphic extends MathObject {
             },
             //{attribute:'color',format:'String'},
             {
-                attribute: 'zIndex',
+                attribute: 'zBias',
                 format: 'Number'
             },
             //{attribute:'rawExpression',format:'String'}
@@ -1370,6 +1414,17 @@ class MathGraphic extends MathObject {
                 },
                 get: function() {
                     return this._zIndex;
+                },
+            },
+            zBias: {
+                set: function(val) {
+                    this._zBias = val;
+                    if (_this.mathboxGroup !== null) {
+                        _this.setZBias(val);
+                    }
+                },
+                get: function() {
+                    return this._zBias;
                 },
             },
             visible: {
@@ -1530,6 +1585,10 @@ class MathGraphic extends MathObject {
     setZIndex(val) {
         this.mathboxGroup.select(this.mathboxRenderType).set("zIndex", val);
     }
+    
+    setZBias(val) {
+        this.mathboxGroup.select(this.mathboxRenderType).set("zBias", val);
+    }
 
     setSize(val) {
         this.mathboxGroup.select(this.mathboxRenderType).set("size", val);
@@ -1659,6 +1718,7 @@ class Point extends MathGraphic {
                 size: this.settings.size,
                 visible: this.settings.visible,
                 zIndex: this.settings.zIndex,
+                zBias:this.settings.zBias
             })
             .format({
                 data: [this.settings.label]
@@ -1736,7 +1796,8 @@ class AbstractCurveFromData extends AbstractCurve {
                 start: this.settings.start,
                 end: this.settings.end,
                 size: this.settings.size,
-                zIndex: this.settings.zIndex
+                zIndex: this.settings.zIndex,
+                zBias:this.settings.zBias
             })
             .format({
                 data: ['', this.settings.label]
@@ -1941,7 +2002,8 @@ class ParametricCurve extends AbstractCurve {
             start: this.settings.start,
             end: this.settings.end,
             size: this.settings.size,
-            zIndex: this.settings.zIndex
+            zIndex: this.settings.zIndex,
+            zBias:this.settings.zBias
         });
 
         return group;
@@ -2164,7 +2226,8 @@ class ParametricSurface extends AbstractSurface {
                 points: data,
                 color: this.settings.color,
                 opacity: this.settings.opacity,
-                shaded: this.settings.shaded
+                shaded: this.settings.shaded,
+                zBias:this.settings.zBias
             }).group().set('classes', ['gridV'])
             .resample({
                 height: this.settings.gridV,
@@ -2172,7 +2235,8 @@ class ParametricSurface extends AbstractSurface {
             })
             .line({
                 color: gridColor,
-                opacity: this.settings.gridOpacity
+                opacity: this.settings.gridOpacity,
+                zBias:this.settings.zBias
             })
             .end()
             .group().set('classes', ['gridU'])
@@ -2185,7 +2249,8 @@ class ParametricSurface extends AbstractSurface {
             })
             .line({
                 color: gridColor,
-                opacity: this.settings.gridOpacity
+                opacity: this.settings.gridOpacity,
+                zBias:this.settings.zBias
             })
             .end();
 
@@ -2199,6 +2264,7 @@ class ExplicitSurface extends ParametricSurface {
         super(math3d, settings);
         
         var _this = this;
+        delete this.settings.rawExpressionZ; // rawExpressionZ was previously set. Adding the getter/setter for it now messes up Utility.deepCopyValuesOnly unless we explicity delete the key.
         Object.defineProperties(this.settings, {
             rawExpressionZ: {
                 set: function(val) {
@@ -2232,6 +2298,7 @@ class ExplicitSurfacePolar extends ParametricSurface {
         super(math3d, settings);
         
         var _this = this;
+        delete this.settings.rawExpressionZ;
         Object.defineProperties(this.settings, {
             rawExpressionZ: {
                 set: function(val) {

@@ -115,8 +115,8 @@
               </ul>
             </div>
             <div ui-tree="treeOptions" id='tree-root' ng-controller="treeCtrl">
-              <div class="list-group" ui-tree-nodes ng-model="mathTree">
-                <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree" data-collapsed="branch.collapsed">
+              <div class="list-group" ui-tree-nodes ng-model="math3d.mathTree">
+                <div class="list-group-item" ui-tree-node ng-repeat="branch in math3d.mathTree" data-collapsed="branch.collapsed">
                   <div ng-include="'/static/resources/templates/folder.html'">
                   </div>
                 </div>
@@ -197,7 +197,8 @@
       </div>
     </div>
 
-    <div id="my-math-box"></div>
+    <div id="my-math-box">
+    </div>
 
   </div>
   
@@ -208,7 +209,6 @@ var queryString = Utility.getQueryString();
 var encodedUserSettings = queryString['settings'];
 
 var authorSettings = {
-  containerId:'my-math-box',
   wrappedMathTree:[
     {
       name:'Folder 1',
@@ -251,7 +251,8 @@ var authorSettings = {
 
 var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
 
-var math3d = new Math3D(settings);
+var math3d = new Math3D('my-math-box');
+math3d.load(settings)
 
 </script>
 
