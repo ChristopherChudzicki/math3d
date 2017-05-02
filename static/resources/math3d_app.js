@@ -167,7 +167,7 @@ app.controller('treeCtrl', function($scope)  {
     }
 });
 
-app.controller('checkLoginCtrl', ['$scope', '$cookies', function($scope, $cookies) {
+app.controller('checkLoginCtrl', ['$scope', '$cookies', '$rootScope', function($scope, $cookies, $rootScope) {
     var username = $cookies.get("username");
     if (username) {
         $scope.username = username;
@@ -177,6 +177,7 @@ app.controller('checkLoginCtrl', ['$scope', '$cookies', function($scope, $cookie
     $scope.logout = function() {
         $cookies.remove("username");
         $scope.logged_in = false;
+        $rootScope.updateGraphs();
     }
 }]);
 
@@ -212,6 +213,8 @@ app.controller('graphListCtrl', ['$rootScope', '$scope', '$http', function($root
             $http.get("/api/graph/get").then(function(response){
                 $rootScope.graphs = response.data;
             });
+        } else {
+            $rootScope.graphs = [];
         }
     }
     
