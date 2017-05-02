@@ -180,7 +180,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     }
     
     $scope.createNewFolder = function(){
-        $scope.mathTree.push({name:'Untitled', objects:[], collapsed:false});
+        $scope.math3d.mathTree.push({name:'Untitled', objects:[], collapsed:false});
     }
     
     $scope.addOjbectToUi = function(obj){
