@@ -172,7 +172,7 @@ app.controller('axesSettingsCtrl', ['$scope', function($scope){
 app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
     $scope.debug = arg => console.log(arg);
     
-    $scope.mathTree = math3d.mathTree;
+    $scope.math3d = math3d;
     
     $scope.createNewObject = function(type){
         var metaMathObj = {type:type, settings:{}};

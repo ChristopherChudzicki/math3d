@@ -102,8 +102,8 @@
               </ul>
             </div>
             <div ui-tree="treeOptions" id='tree-root' ng-controller="treeCtrl">
-              <div class="list-group" ui-tree-nodes ng-model="mathTree">
-                <div class="list-group-item" ui-tree-node ng-repeat="branch in mathTree" data-collapsed="branch.collapsed">
+              <div class="list-group" ui-tree-nodes ng-model="math3d.mathTree">
+                <div class="list-group-item" ui-tree-node ng-repeat="branch in math3d.mathTree" data-collapsed="branch.collapsed">
                   <div ng-include="'resources/templates/folder.html'">
                   </div>
                 </div>

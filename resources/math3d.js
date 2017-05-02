@@ -445,6 +445,19 @@ class Math3D {
         this.renderMathObjects();
     }
     
+    clear(){
+        // Remove objects before re-assigning mathTree. I'm not entirely sure if this is necessary.
+        _.forEach(this.mathTree, function(branch, idx) {
+            var branchLength = branch.objects.length; // each iteration of loop changes branch.objects.length, so store it at beginning.
+            for (let j=0; j<branchLength; j++){
+                branch.objects[0].remove();
+            }
+        });
+        this.mathTree = [];
+        // wipe mathbox
+        this.mathbox.remove('*');
+    }
+    
     setCamera(){
         // setup camera
         this.mathbox.camera({
