@@ -23,27 +23,12 @@
 'use strict';
 
 class Math3D {
-    constructor(settings) {
-        this.swizzleOrder = Utility.defaultVal(settings.swizzleOrder, 'yzx');
-        this.settings = this.setDefaults(settings);
-
+    constructor(containerId, settings) {
         this.mathbox = this.initializeMathBox();
-        this.scene = this.setupScene();
-        this.updateRange();
-
-        // Initial Drawing
-        this.drawAxes();
-        this.drawGrids();
-
-        // Add getters and setters for updating after initial rendering
-        this.settings = this.makeDynamicSettings();
-
-        // create mathScope and toggleScope
-        this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
-        this.setDefaultScopes();
         
-        //Render math objects; this will update this.mathTree
-        this.renderMathObjects();
+        if (settings !== undefined){
+            this.load(settings)
+        }
     }
 
     setDefaultScopes() {
@@ -410,17 +395,15 @@ class Math3D {
         }
     }
 
-    initializeMathBox() {
-        var settings = this.settings
-
+    initializeMathBox(containerId) {
         // if necessary, add a container for mathbox
-        if ($("#" + settings.containerId).length === 0) {
-            settings.containerId = _.uniqueId();
+        if ($("#" + containerId).length === 0) {
+            containerId = _.uniqueId();
             this.container = $("<div class='mathbox-container'></div>");
-            this.container.attr('id', settings.containerId);
+            this.container.attr('id', containerId);
             $('body').append(this.container);
         } else {
-            this.container = $("#" + settings.containerId)
+            this.container = $("#" + containerId)
             this.container.addClass('mathbox-container');
         }
 
@@ -433,15 +416,54 @@ class Math3D {
             controls: controls,
             element: this.container[0]
         });
-
-        // setup camera
-        mathbox.camera({
-            proxy: true,
-            position: this.swizzle(settings.camera.position),
-        });
+        
         mathbox.three.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
 
         return mathbox;
+    }
+    
+    load(settings){
+        this.swizzleOrder = Utility.defaultVal(settings.swizzleOrder, 'yzx');
+        this.settings = this.setDefaults(settings);
+        
+        this.setCamera();
+        this.scene = this.setupScene();
+        this.updateRange();
+
+        // Initial Drawing
+        this.drawAxes();
+        this.drawGrids();
+
+        // Add getters and setters for updating after initial rendering
+        this.settings = this.makeDynamicSettings();
+
+        // create mathScope and toggleScope
+        this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
+        this.setDefaultScopes();
+        
+        //Render math objects; this will update this.mathTree
+        this.renderMathObjects();
+    }
+    
+    clear(){
+        // Remove objects before re-assigning mathTree. I'm not entirely sure if this is necessary.
+        _.forEach(this.mathTree, function(branch, idx) {
+            var branchLength = branch.objects.length; // each iteration of loop changes branch.objects.length, so store it at beginning.
+            for (let j=0; j<branchLength; j++){
+                branch.objects[0].remove();
+            }
+        });
+        this.mathTree = [];
+        // wipe mathbox
+        this.mathbox.remove('*');
+    }
+    
+    setCamera(){
+        // setup camera
+        this.mathbox.camera({
+            proxy: true,
+            position: this.swizzle(this.settings.camera.position),
+        });
     }
 
     setupScene() {
