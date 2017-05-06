@@ -197,6 +197,9 @@ span.folder-name-editable{
     color:lightgray;
     visibility:hidden;
 }
+.folder-main div.folder-contents {
+    padding-left:0px;
+}
 
 .has-error.has-feedback, .has-error.has-feedback:focus,
 .mq-editable-field.has-error.has-feedback,
