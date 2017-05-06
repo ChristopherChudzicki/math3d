@@ -1324,7 +1324,7 @@ class MathGraphic extends MathObject {
         super(math3d, settings);
         this.mathboxGroup = null;
         this.mathboxDataType = null; // e.g., 'array'
-        this.mathboxRenderType = null; // e.g., 'point'
+        this.mathboxRenderTypes = null; // e.g., 'point'
 
         this.parsedExpression = null;
         this.parsedRange = null;
@@ -1566,27 +1566,27 @@ class MathGraphic extends MathObject {
     }
 
     setColor(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("color", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("color", val);
     }
 
     setShaded(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("shaded", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("shaded", val);
     }
 
     setOpacity(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("opacity", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("opacity", val);
     }
 
     setZIndex(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("zIndex", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("zIndex", val);
     }
     
     setZBias(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("zBias", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("zBias", val);
     }
 
     setSize(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("size", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("size", val);
     }
 
     setVisible(val) {
@@ -1609,7 +1609,7 @@ class MathGraphic extends MathObject {
     }
 
     setWidth(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("width", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("width", val);
     }
 
     setRange(val) {
@@ -1624,15 +1624,15 @@ class MathGraphic extends MathObject {
     }
 
     setStart(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("start", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("start", val);
     }
 
     setEnd(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("end", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("end", val);
     }
 
     setSize(val) {
-        this.mathboxGroup.select(this.mathboxRenderType).set("size", val);
+        this.mathboxGroup.select(this.mathboxRenderTypes).set("size", val);
     }
 
     remove() {
@@ -1645,7 +1645,7 @@ class Point extends MathGraphic {
     constructor(math3d, settings) {
         super(math3d, settings);
         this.mathboxDataType = 'array';
-        this.mathboxRenderType = 'point';
+        this.mathboxRenderTypes = 'point';
 
         var _this = this;
         Object.defineProperties(this.settings, {
@@ -1739,7 +1739,7 @@ class AbstractCurve extends MathGraphic {
     constructor(math3d, settings) {
         super(math3d, settings);
         this.mathboxDataType = 'interval';
-        this.mathboxRenderType = 'line';
+        this.mathboxRenderTypes = 'line';
 
     }
 
@@ -2010,7 +2010,7 @@ class AbstractSurface extends MathGraphic {
     constructor(math3d, settings) {
         super(math3d, settings);
         this.mathboxDataType = 'area';
-        this.mathboxRenderType = 'surface';
+        this.mathboxRenderTypes = 'surface, line';
         this.userSettings = this.userSettings.concat([{
             attribute: 'gridU',
             format: 'Integer'
@@ -2088,6 +2088,7 @@ class AbstractSurface extends MathGraphic {
         var gridColor = Utility.lightenColor(val, -0.5);
         this.mathboxGroup.select('line').set('color', gridColor);
     }
+    
 }
 
 class ParametricSurface extends AbstractSurface {
