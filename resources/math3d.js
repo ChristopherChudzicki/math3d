@@ -881,6 +881,9 @@ class MathObject {
 
         this.type = this.constructor.name;
         
+        // storage math expressions
+        this.parsed = {}
+        
         // Record all MathQuill mathfields associated with with this object for the UI
         this.wrappedMathFields = [];
     }
@@ -2324,6 +2327,11 @@ class ExplicitSurfacePolar extends ParametricSurface {
 }
 
 // TODO: toward improving parsing feedback, one idea is:
+// 1. refactor so setting min/max/expression/etc updates the existing MathExpression rather than creating a new one.
+// 2. Give each MathExpression an error attribute to store errors on update or creation
+// 3. For each MathObject, store parsed expressions in obj.parse
+
+// original idea:
 // 1. move all MathExpressions associated with an object into obj.mathExpressions
 // 2. While I'm at it, remove all instances of this.parseRawExpression. It's a dumb method.
 // 3. Add an error message property to MathExpression class
