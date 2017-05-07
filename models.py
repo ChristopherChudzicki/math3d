@@ -18,9 +18,16 @@ class User(db.Model):
         self.email = email
         self.name = name
         self.pw_hash = bcrypt.generate_password_hash(password).decode("utf-8")
-        
-    def __repr__(self):
+    
+    def __str__(self):
         return self.username
+    
+    def __repr__(self):
+        return str({
+            "username": self.username,
+            "email": self.email,
+            "name": self.name,
+        })
     
     def check_password(self, password):
         return bcrypt.check_password_hash(self.pw_hash, password)
@@ -42,8 +49,16 @@ class Graph(db.Model):
         self.user_name = user_name
         self.short_url = self.__get_hash()
     
-    def __repr__(self):
+    def __str__(self):
         return self.title
+    
+    def __repr__(self):
+        return str({
+            "title": self.title,
+            "user_name": self.user_name,
+            "short_url": self.short_url,
+            "created_at": str(self.created_at),
+        })
     
     def serialize(self):
         return {
