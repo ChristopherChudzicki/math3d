@@ -208,6 +208,12 @@
 var queryString = Utility.getQueryString();
 var encodedUserSettings = queryString['settings'];
 
+graph = JSON.parse({{ graph|tojson|safe }});
+
+if (graph.hasOwnProperty("serialized_string")) {
+  encodedUserSettings = graph.serialized_string;
+}
+
 var authorSettings = {
   wrappedMathTree:[
     {

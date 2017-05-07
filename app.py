@@ -37,8 +37,8 @@ def add_csrf_to_cookie(response):
 
 # Pages
 @app.route('/')
-def index():
-    return render_template("index.html")
+def index(data="{}"):
+    return render_template("index.html", graph=data)
 
 @app.route('/register')
 def register():
