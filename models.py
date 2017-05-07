@@ -1,4 +1,5 @@
 from datetime import datetime
+from hashlib import md5
 
 from app import db, bcrypt
 
@@ -32,12 +33,14 @@ class Graph(db.Model):
     title = db.Column(db.String())
     serialized_string = db.Column(db.String())
     user_name = db.Column(db.String(), db.ForeignKey("users.username"))
+    short_url = db.Column(db.String())
     
     def __init__(self, title, serialized_string, user_name):
         self.created_at = datetime.utcnow()
         self.title = title
         self.serialized_string = serialized_string
         self.user_name = user_name
+        self.short_url = self.__get_hash()
     
     def __repr__(self):
         return self.title
@@ -49,3 +52,8 @@ class Graph(db.Model):
             "username": self.user_name,
             "created_at": str(self.created_at),
         }
+    
+    # Two underscores is Python's "private" method
+    # https://docs.python.org/3/tutorial/classes.html#tut-private
+    def __get_hash(self):
+        return md5((self.title + str(self.id)).encode("utf-8")).hexdigest()
