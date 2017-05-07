@@ -168,17 +168,6 @@ app.controller('treeCtrl', function($scope)  {
 });
 
 app.controller('checkLoginCtrl', ['$scope', '$cookies', '$rootScope', function($scope, $cookies, $rootScope) {
-    var username = $cookies.get("username");
-    if (username) {
-        $scope.username = username;
-        $scope.logged_in = true;
-    }
-    
-    $scope.logout = function() {
-        $cookies.remove("username");
-        $scope.logged_in = false;
-        $rootScope.updateGraphs();
-    }
 }]);
 
 app.controller('saveCtrl', ['$scope', function($scope){
