@@ -1318,7 +1318,7 @@ class VariableSlider extends AbstractVariable {
     }
 }
 
-class VariableToggle extends AbstractVariable{
+class VariableToggle extends AbstractVariable {
     constructor(math3d, settings) {
         super(math3d, settings);
         this.scope = math3d.toggleScope;
