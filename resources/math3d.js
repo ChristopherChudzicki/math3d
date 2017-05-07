@@ -883,8 +883,6 @@ class MathObject {
         
         // Record all MathQuill mathfields associated with with this object for the UI
         this.wrappedMathFields = [];
-        // Record MathExpressions
-        this.mathExpressions = {};
     }
 
     setDefaults(settings) {
@@ -900,10 +898,8 @@ class MathObject {
         return defaults
     }
 
-    genMathExpression(expr, name) {
-        var mathExpr = new MathExpression(expr);
-        this.mathExpressions[name] = mathExpr;
-        return mathExpr
+    parseRawExpression(expr) {
+        return new MathExpression(expr);
     }
 
     serialize() {
@@ -1049,7 +1045,7 @@ class Variable extends AbstractVariable {
             rawExpression: {
                 set: function(val) {
                     this._rawExpression = val;
-                    _this.parsedExpression = _this.genMathExpression(val,'expression');
+                    _this.parsedExpression = _this.parseRawExpression(val);
                     _this.updateVariablesList();
                     _this.setRawExpression(val);
                 },
@@ -1081,7 +1077,7 @@ class Variable extends AbstractVariable {
     }
 
     setRawName(val) {
-        var expr = this.genMathExpression(val,'name');
+        var expr = this.parseRawExpression(val);
         // expr should be something like f_1(s,t); should have 1 function and 0+ variables
         if (expr.functions.length === 1) {
             this.holdEvaluation = true;
@@ -1248,12 +1244,12 @@ class VariableSlider extends AbstractVariable {
     }
 
     setMin(val) {
-        this.parsedMin = this.genMathExpression(val, 'min');
+        this.parsedMin = this.parseRawExpression(val);
         this.min = this.parsedMin.eval(this.scope);
         this.updateVariablesList();
     }
     setMax(val) {
-        this.parsedMax = this.genMathExpression(val, 'max');
+        this.parsedMax = this.parseRawExpression(val);
         this.max = this.parsedMax.eval(this.scope);
         this.updateVariablesList();
     }
@@ -1358,7 +1354,7 @@ class MathGraphic extends MathObject {
             rawExpression: {
                 set: function(val) {
                     this._rawExpression = val;
-                    _this.parsedExpression = _this.genMathExpression(val, 'expression');
+                    _this.parsedExpression = _this.parseRawExpression(val);
                     _this.updateVariablesList();
                     _this.recalculateData();
                 },
@@ -1598,7 +1594,7 @@ class MathGraphic extends MathObject {
     }
 
     setCalculatedVisibility(val){
-        this.parsedVisibility = this.genMathExpression(val, 'calculatedVisibility');
+        this.parsedVisibility = this.parseRawExpression(val);
         this.updateVariablesList();
         this.recalculateVisibility();
     }
@@ -1617,7 +1613,7 @@ class MathGraphic extends MathObject {
     }
 
     setRange(val) {
-        this.parsedRange = this.genMathExpression(val, 'range');
+        this.parsedRange = this.parseRawExpression(val);
         this.range = this.parsedRange.eval(this.math3d.mathScope);
         this.updateVariablesList();
         this.recalculateData();
