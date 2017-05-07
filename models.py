@@ -32,7 +32,7 @@ class Graph(db.Model):
     created_at = db.Column(db.DateTime)
     title = db.Column(db.String())
     serialized_string = db.Column(db.String())
-    user_name = db.Column(db.String(), db.ForeignKey("users.username"))
+    user_name = db.Column(db.String(), db.ForeignKey("users.username"), nullable=True)
     short_url = db.Column(db.String())
     
     def __init__(self, title, serialized_string, user_name):
