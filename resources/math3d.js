@@ -2414,13 +2414,8 @@ class WrappedMathField {
     }
     
     updateMathObj(key){
-        try {
-            this.mathObj.settings[key] = MathUtility.texToMathJS(this.mathfield.latex());
-            this.$scope.$apply(); // for variables, changing the name can change object description from between variable and function. Propagating this change requires an apply().
-        } 
-        catch (e) {
-            console.log(e.message);
-        }
+        this.mathObj.settings[key] = MathUtility.texToMathJS(this.mathfield.latex());
+        this.$scope.$apply(); // for variables, changing the name can change object description from between variable and function. Propagating this change requires an apply().
     }
     
 }
