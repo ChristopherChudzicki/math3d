@@ -56,25 +56,12 @@
 
   <div class="container" ng-controller="checkLoginCtrl">
     <div class="sidepanel menu-visible" ng-cloak>
-     
-      <div class="user_functions">
-        <div ng-hide="logged_in">
-          <a href="login" class="btn btn-link user_button">Log In</a>
-          <a href="register" class="btn btn-link user_button">Register</a>
-        </div>
-        <div ng-show="logged_in">
-          Hi [[username]]!
-          <a class="btn btn-link" ng-click="logout()">Logout</a>
-        </div>
-      </div>
-      
       <div class="math3d-controller">
       
         <div class="math3d-controller-header">
           <ul class="nav nav-tabs nav-justified">
             <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
             <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
-            <li><a data-toggle='tab' href="#controller-graphs" ng-click="updateGraphs()">Graphs</a></li>
           </ul>
         </div>
       
@@ -140,22 +127,6 @@
               </div>
             </div>
           </div>
-          <div id="controller-graphs" class="tab-pane fade">
-            <div class="math3d-controller-header">
-              <ul class="nav nav-pills xs">
-                <li ng-controller="saveCtrl" class="save">
-                  <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
-                    <span class="glyphicon glyphicon-floppy-disk save"></span>
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <div class="list-group" ng-controller="graphListCtrl">
-              <div ng-repeat="graph in graphs" class="list-group-item">
-                <a href="#" ng-click="loadGraph([[graph.serialized_string]])">[[graph.title]]</a>
-              </div>
-            </div>
-          </div>
         </div>
       
       </div>
@@ -179,11 +150,9 @@
           </div>
           <div class="modal-body">
             <!-- Save to Database -->
-            <div ng-show="logged_in" ng-controller="saveToDBCtrl">
-              <label>Title: </label>
-              <input class="form-control" type="text" id="graph-title" />
-              <a class="btn btn-link" ng-click="saveToDB()">Save</a>
-            </div>
+            <label>Title: </label>
+            <input class="form-control" type="text" id="graph-title" />
+            <a class="btn btn-link" ng-click="saveToDB()">Save</a>
             <br>
             <textarea></textarea>
             <p>URL length: <span id="url-length"></span></p>
