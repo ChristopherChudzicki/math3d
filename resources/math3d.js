@@ -765,13 +765,39 @@ class MathExpression {
     constructor(expression) {
         // store initial representation
         this.expression = expression;
+        this.err = null;
+    }
+    
+    get expression(){
+        return this._expression;
+    }
+    set expression(val){
+        this._expression = val;
+        if (val !== null){
+            this.update();
+        }
+    }
+    
+    update(){
+        try {
+            this.parsed = this.parse();
+        } catch (err) {
+            this.err = err
+            throw (err)
+            return
+        }
+        
+        this.updateVars();
+        
+        this.assignEval();
 
-        var parsed = this.parse();
-
+    }
+    
+    updateVars(){
         this.variables = []
         this.functions = []
 
-        parsed.traverse(function(node) {
+        this.parsed.traverse(function(node) {
             if (node.type === 'SymbolNode') {
                 this.variables.push(node.name);
             }
@@ -779,44 +805,44 @@ class MathExpression {
                 this.functions.push(node.name);
             }
         }.bind(this))
+    }
 
-        var compiled = parsed.compile();
-
-        if (expression[0] == "[") {
+    assignEval(){
+        var compiled = this.parsed.compile();
+        
+        if (this.expression[0] == "[") {
             this.eval = function(scope) {
-                return compiled.eval(scope).toArray();
+                try {
+                    return compiled.eval(scope).toArray();
+                } 
+                catch (err) {
+                    this.err = err;
+                }
             }
         } else {
             this.eval = function(scope) {
-                return compiled.eval(scope);
+                try {
+                    return compiled.eval(scope);
+                } 
+                catch (err) {
+                    this.err=err;
+                }
+                
             }
         }
-
     }
 
-    parse() {
+    parsePreProcess(expression){
         // Cross and dot products are not built into mathjs express. Let's replace "cross" and "dot" by mathjs operators that we probably won't use. Then we'll reassign functionality to these operators.
-        this.expression = this.expression.replace(/dot/g, '|');
-        this.expression = this.expression.replace(/cross/g, '&');
+        expression = expression.replace(/dot/g, '|');
+        expression = expression.replace(/cross/g, '&');
         
-        this.expression = functionOperatorParser(this.expression, 'diff');
-        this.expression = functionOperatorParser(this.expression, 'unitT');
-        this.expression = functionOperatorParser(this.expression, 'unitN');
-        this.expression = functionOperatorParser(this.expression, 'unitB');
+        expression = functionOperatorParser(this.expression, 'diff');
+        expression = functionOperatorParser(this.expression, 'unitT');
+        expression = functionOperatorParser(this.expression, 'unitN');
+        expression = functionOperatorParser(this.expression, 'unitB');
         
-        var parsed = math.parse(this.expression);
-
-        parsed.traverse(function(node) {
-            if (node.type === 'OperatorNode' && node.op === '|') {
-                node.fn = 'dot';
-            }
-            if (node.type === 'OperatorNode' && node.op === '&') {
-                node.fn = 'cross';
-            }
-        }.bind(this))
-        this.expression = this.expression.replace(/:/, 'dot')
-        this.expression = this.expression.replace(/&/, 'cross')
-        return parsed
+        return expression
         
         function functionOperatorParser(string, opName){
             // MathJS's parse function does not deal well with functions that return functions. 
@@ -863,6 +889,23 @@ class MathExpression {
             }
 
         }
+    }
+    
+    parse() {
+        var expression = this.parsePreProcess(this.expression);
+        
+        var parsed = math.parse(expression);
+
+        parsed.traverse(function(node) {
+            if (node.type === 'OperatorNode' && node.op === '|') {
+                node.fn = 'dot';
+            }
+            if (node.type === 'OperatorNode' && node.op === '&') {
+                node.fn = 'cross';
+            }
+        }.bind(this))
+
+        return parsed
     }
 }
 
