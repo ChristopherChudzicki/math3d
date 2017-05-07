@@ -1,5 +1,6 @@
 import os
 import datetime
+import json
 from flask import (Flask, render_template, redirect, request, abort, url_for,
                    make_response, abort, jsonify)
 from flask_sqlalchemy import SQLAlchemy
@@ -48,6 +49,14 @@ def register():
 @app.route('/login')
 def login():
     return render_template("login.html")
+
+@app.route('/graph/<graph_hash>')
+def get_graph(graph_hash):
+    graph = Graph.query.filter_by(short_url=graph_hash).first()
+    if graph:
+        data = json.dumps(graph.serialize())
+        return index(data)
+    return redirect(url_for("index"))
 
 # Handlers for Client-Side Requests
 @app.route('/api/graph/save', methods=["POST"])
