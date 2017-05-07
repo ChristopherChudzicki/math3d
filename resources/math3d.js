@@ -781,6 +781,7 @@ class MathExpression {
     update(){
         try {
             this.parsed = this.parse();
+            this.err = null;
         } catch (err) {
             this.err = err
             throw (err)
@@ -813,7 +814,9 @@ class MathExpression {
         if (this.expression[0] == "[") {
             this.eval = function(scope) {
                 try {
-                    return compiled.eval(scope).toArray();
+                    var val = compiled.eval(scope).toArray();
+                    this.err = null;
+                    return val;
                 } 
                 catch (err) {
                     this.err = err;
@@ -822,12 +825,13 @@ class MathExpression {
         } else {
             this.eval = function(scope) {
                 try {
-                    return compiled.eval(scope);
+                    var val = compiled.eval(scope);
+                    this.err = null;
+                    return val;
                 } 
                 catch (err) {
                     this.err=err;
                 }
-                
             }
         }
     }
