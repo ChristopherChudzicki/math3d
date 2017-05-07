@@ -1039,7 +1039,7 @@ class Variable extends AbstractVariable {
         super(math3d, settings);
         this.scope = math3d.mathScope;
         
-        this.parsedExpression = null;
+        this.parsed.expression = null;
         this.argNames = null;
         this.holdEvaluation = null;
 
@@ -1048,7 +1048,7 @@ class Variable extends AbstractVariable {
             rawExpression: {
                 set: function(val) {
                     this._rawExpression = val;
-                    _this.parsedExpression = _this.parseRawExpression(val);
+                    _this.parsed.expression = _this.parseRawExpression(val);
                     _this.updateVariablesList();
                     _this.setRawExpression(val);
                 },
@@ -1104,7 +1104,7 @@ class Variable extends AbstractVariable {
         return this.scope.addVariable(newName, this.value, onVariableChange);
     }
     setRawExpression(val) {
-        var expr = this.parsedExpression;
+        var expr = this.parsed.expression;
         if (!this.valid || expr === null) {
             return
         }
@@ -1131,9 +1131,9 @@ class Variable extends AbstractVariable {
     
     updateVariablesList() {
         this.variables = []
-        if (this.parsedExpression !== null) {
-            this.variables = this.variables.concat(this.parsedExpression.variables);
-            this.variables = this.variables.concat(this.parsedExpression.functions);
+        if (this.parsed.expression !== null) {
+            this.variables = this.variables.concat(this.parsed.expression.variables);
+            this.variables = this.variables.concat(this.parsed.expression.functions);
         }
     }
     recalculateData() {
@@ -1146,8 +1146,8 @@ class VariableSlider extends AbstractVariable {
         super(math3d, settings);
         this.scope = math3d.mathScope;
         
-        this.parsedMin = null;
-        this.parsedMax = null;
+        this.parsed.min = null;
+        this.parsed.max = null;
 
         this.speeds = [{
             value: 1 / 16,
@@ -1236,24 +1236,24 @@ class VariableSlider extends AbstractVariable {
 
     updateVariablesList() {
         this.variables = []
-        if (this.parsedMin !== null) {
-            this.variables = this.variables.concat(this.parsedMin.variables);
-            this.variables = this.variables.concat(this.parsedMin.functions);
+        if (this.parsed.min !== null) {
+            this.variables = this.variables.concat(this.parsed.min.variables);
+            this.variables = this.variables.concat(this.parsed.min.functions);
         }
-        if (this.parsedMax !== null) {
-            this.variables = this.variables.concat(this.parsedMax.variables);
-            this.variables = this.variables.concat(this.parsedMax.functions);
+        if (this.parsed.max !== null) {
+            this.variables = this.variables.concat(this.parsed.max.variables);
+            this.variables = this.variables.concat(this.parsed.max.functions);
         }
     }
 
     setMin(val) {
-        this.parsedMin = this.parseRawExpression(val);
-        this.min = this.parsedMin.eval(this.scope);
+        this.parsed.min = this.parseRawExpression(val);
+        this.min = this.parsed.min.eval(this.scope);
         this.updateVariablesList();
     }
     setMax(val) {
-        this.parsedMax = this.parseRawExpression(val);
-        this.max = this.parsedMax.eval(this.scope);
+        this.parsed.max = this.parseRawExpression(val);
+        this.max = this.parsed.max.eval(this.scope);
         this.updateVariablesList();
     }
     setValue(val) {
@@ -1329,11 +1329,11 @@ class MathGraphic extends MathObject {
         this.mathboxDataType = null; // e.g., 'array'
         this.mathboxRenderTypes = null; // e.g., 'point'
 
-        this.parsedExpression = null;
-        this.parsedRange = null;
+        this.parsed.expression = null;
+        this.parsed.range = null;
         this.variables = [];
         
-        this.parsedVisibility = null;
+        this.parsed.visibility = null;
         this.toggleVariables = [];
 
         this.settings = {};
@@ -1357,7 +1357,7 @@ class MathGraphic extends MathObject {
             rawExpression: {
                 set: function(val) {
                     this._rawExpression = val;
-                    _this.parsedExpression = _this.parseRawExpression(val);
+                    _this.parsed.expression = _this.parseRawExpression(val);
                     _this.updateVariablesList();
                     _this.recalculateData();
                 },
@@ -1539,18 +1539,18 @@ class MathGraphic extends MathObject {
 
     updateVariablesList() {
         this.variables = []
-        if (this.parsedExpression !== null) {
-            this.variables = this.variables.concat(this.parsedExpression.variables);
-            this.variables = this.variables.concat(this.parsedExpression.functions);
+        if (this.parsed.expression !== null) {
+            this.variables = this.variables.concat(this.parsed.expression.variables);
+            this.variables = this.variables.concat(this.parsed.expression.functions);
         }
 
-        if (this.parsedRange !== null) {
-            this.variables = this.variables.concat(this.parsedRange.variables);
-            this.variables = this.variables.concat(this.parsedRange.functions);
+        if (this.parsed.range !== null) {
+            this.variables = this.variables.concat(this.parsed.range.variables);
+            this.variables = this.variables.concat(this.parsed.range.functions);
         }
         
-        if (this.parsedVisibility !== null){
-            this.toggleVariables = this.toggleVariables.concat(this.parsedVisibility.variables);
+        if (this.parsed.visibility !== null){
+            this.toggleVariables = this.toggleVariables.concat(this.parsed.visibility.variables);
         }
     }
 
@@ -1597,14 +1597,14 @@ class MathGraphic extends MathObject {
     }
 
     setCalculatedVisibility(val){
-        this.parsedVisibility = this.parseRawExpression(val);
+        this.parsed.visibility = this.parseRawExpression(val);
         this.updateVariablesList();
         this.recalculateVisibility();
     }
     
     recalculateVisibility(){
         try {
-            this.settings.visible = this.parsedVisibility.eval(this.math3d.toggleScope);
+            this.settings.visible = this.parsed.visibility.eval(this.math3d.toggleScope);
         } 
         catch (e) {
             console.log(e.message);
@@ -1616,8 +1616,8 @@ class MathGraphic extends MathObject {
     }
 
     setRange(val) {
-        this.parsedRange = this.parseRawExpression(val);
-        this.range = this.parsedRange.eval(this.math3d.mathScope);
+        this.parsed.range = this.parseRawExpression(val);
+        this.range = this.parsed.range.eval(this.math3d.mathScope);
         this.updateVariablesList();
         this.recalculateData();
     }
@@ -1698,7 +1698,7 @@ class Point extends MathGraphic {
     }
 
     recalculateData() {
-        this.data = this.parsedExpression.eval(this.math3d.mathScope);
+        this.data = this.parsed.expression.eval(this.math3d.mathScope);
     }
 
     render() {
@@ -1774,7 +1774,7 @@ class AbstractCurveFromData extends AbstractCurve {
     }
 
     recalculateData() {
-        this.data = this.parsedExpression.eval(this.math3d.mathScope);
+        this.data = this.parsed.expression.eval(this.math3d.mathScope);
     }
 
     render() {
@@ -1949,11 +1949,11 @@ class ParametricCurve extends AbstractCurve {
     recalculateData() {
         if (this.mathboxGroup !== null) {
             this.mathboxGroup.select("cartesian").set("range", [this.range, [0, 1]]);
-            var expr = this.parsedExpression;
+            var expr = this.parsed.expression;
             var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
             var param = this.settings.parameter;
 
-            this.range = this.parsedRange.eval(this.math3d.mathScope);
+            this.range = this.parsed.range.eval(this.math3d.mathScope);
             this.mathboxGroup.select("cartesian").set("range", [this.range, [0, 1]]);
             this.mathboxGroup.select("interval").set("width", this.settings.samples);
 
@@ -1969,7 +1969,7 @@ class ParametricCurve extends AbstractCurve {
     render() {
         // NOTE: Updating an <area>'s range does not work. However, it does work to make range a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
         var group = this.math3d.scene.group().set('classes', ['curve', 'parametric']);
-        var expr = this.parsedExpression;
+        var expr = this.parsed.expression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         var param = this.settings.parameter[0];
 
@@ -2172,12 +2172,12 @@ class ParametricSurface extends AbstractSurface {
         if (this.mathboxGroup !== null) {
             this.mathboxGroup.select("cartesian").set("range", this.range);
 
-            var expr = this.parsedExpression;
+            var expr = this.parsed.expression;
             var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
             var param0 = this.settings.parameters[0];
             var param1 = this.settings.parameters[1];
             
-            this.range = this.parsedRange.eval(this.math3d.mathScope);
+            this.range = this.parsed.range.eval(this.math3d.mathScope);
             this.mathboxGroup.select("cartesian").set("range", this.range);
 
             this.mathboxGroup.select("area").set("width", this.settings.samplesU);
@@ -2195,7 +2195,7 @@ class ParametricSurface extends AbstractSurface {
     render() {
         // NOTE: Updating an <area>'s range does not work. However, it does work to make range a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
         var group = this.math3d.scene.group().set('classes', ['surface', 'parametric']);
-        var expr = this.parsedExpression;
+        var expr = this.parsed.expression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         var param0 = this.settings.parameters[0];
         var param1 = this.settings.parameters[1];
