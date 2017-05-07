@@ -773,7 +773,7 @@ class MathExpression {
     }
     set expression(val){
         this._expression = val;
-        if (val !== null){
+        if (val !== undefined){
             this.update();
         }
     }
@@ -944,10 +944,6 @@ class MathObject {
         return defaults
     }
 
-    parseRawExpression(expr) {
-        return new MathExpression(expr);
-    }
-
     serialize() {
         // copy settings values, no setters and getters
         var rawSettings = Utility.deepCopyValuesOnly(this.settings)
@@ -1082,7 +1078,8 @@ class Variable extends AbstractVariable {
         super(math3d, settings);
         this.scope = math3d.mathScope;
         
-        this.parsed.expression = null;
+        this.parsed.expression = new MathExpression();
+        this.parsed.name = new MathExpression();
         this.argNames = null;
         this.holdEvaluation = null;
 
@@ -1091,7 +1088,7 @@ class Variable extends AbstractVariable {
             rawExpression: {
                 set: function(val) {
                     this._rawExpression = val;
-                    _this.parsed.expression = _this.parseRawExpression(val);
+                    _this.parsed.expression.expression = val;
                     _this.updateVariablesList();
                     _this.setRawExpression(val);
                 },
@@ -1123,7 +1120,8 @@ class Variable extends AbstractVariable {
     }
 
     setRawName(val) {
-        var expr = this.parseRawExpression(val);
+        this.parsed.name.expression = val;
+        var expr = this.parsed.name;
         // expr should be something like f_1(s,t); should have 1 function and 0+ variables
         if (expr.functions.length === 1) {
             this.holdEvaluation = true;
@@ -1189,8 +1187,8 @@ class VariableSlider extends AbstractVariable {
         super(math3d, settings);
         this.scope = math3d.mathScope;
         
-        this.parsed.min = null;
-        this.parsed.max = null;
+        this.parsed.min = new MathExpression();
+        this.parsed.max = new MathExpression();
 
         this.speeds = [{
             value: 1 / 16,
@@ -1279,23 +1277,22 @@ class VariableSlider extends AbstractVariable {
 
     updateVariablesList() {
         this.variables = []
-        if (this.parsed.min !== null) {
-            this.variables = this.variables.concat(this.parsed.min.variables);
-            this.variables = this.variables.concat(this.parsed.min.functions);
-        }
-        if (this.parsed.max !== null) {
-            this.variables = this.variables.concat(this.parsed.max.variables);
-            this.variables = this.variables.concat(this.parsed.max.functions);
-        }
+        
+        // TODO: Replace with a loop, combine & think about inheriting from MathObject. (Right now there are two copies of this method)
+        this.variables = this.variables.concat(this.parsed.min.variables);
+        this.variables = this.variables.concat(this.parsed.min.functions);
+        
+        this.variables = this.variables.concat(this.parsed.max.variables);
+        this.variables = this.variables.concat(this.parsed.max.functions);
     }
 
     setMin(val) {
-        this.parsed.min = this.parseRawExpression(val);
+        this.parsed.min.expression = val;
         this.min = this.parsed.min.eval(this.scope);
         this.updateVariablesList();
     }
     setMax(val) {
-        this.parsed.max = this.parseRawExpression(val);
+        this.parsed.max.expression = val;
         this.max = this.parsed.max.eval(this.scope);
         this.updateVariablesList();
     }
@@ -1372,11 +1369,11 @@ class MathGraphic extends MathObject {
         this.mathboxDataType = null; // e.g., 'array'
         this.mathboxRenderTypes = null; // e.g., 'point'
 
-        this.parsed.expression = null;
-        this.parsed.range = null;
+        this.parsed.expression = new MathExpression;
+        this.parsed.range = new MathExpression;
         this.variables = [];
         
-        this.parsed.visibility = null;
+        this.parsed.visibility = new MathExpression;
         this.toggleVariables = [];
 
         this.settings = {};
@@ -1400,7 +1397,7 @@ class MathGraphic extends MathObject {
             rawExpression: {
                 set: function(val) {
                     this._rawExpression = val;
-                    _this.parsed.expression = _this.parseRawExpression(val);
+                    _this.parsed.expression.expression = val;
                     _this.updateVariablesList();
                     _this.recalculateData();
                 },
@@ -1582,19 +1579,16 @@ class MathGraphic extends MathObject {
 
     updateVariablesList() {
         this.variables = []
-        if (this.parsed.expression !== null) {
-            this.variables = this.variables.concat(this.parsed.expression.variables);
-            this.variables = this.variables.concat(this.parsed.expression.functions);
-        }
-
-        if (this.parsed.range !== null) {
-            this.variables = this.variables.concat(this.parsed.range.variables);
-            this.variables = this.variables.concat(this.parsed.range.functions);
-        }
         
-        if (this.parsed.visibility !== null){
-            this.toggleVariables = this.toggleVariables.concat(this.parsed.visibility.variables);
-        }
+        //TODO replace this with a loop over this.parsed object
+        
+        this.variables = this.variables.concat(this.parsed.expression.variables);
+        this.variables = this.variables.concat(this.parsed.expression.functions);
+
+        this.variables = this.variables.concat(this.parsed.range.variables);
+        this.variables = this.variables.concat(this.parsed.range.functions);
+        
+        this.toggleVariables = this.toggleVariables.concat(this.parsed.visibility.variables);
     }
 
     get data() {
@@ -1640,7 +1634,7 @@ class MathGraphic extends MathObject {
     }
 
     setCalculatedVisibility(val){
-        this.parsed.visibility = this.parseRawExpression(val);
+        this.parsed.visibility.expression = val;
         this.updateVariablesList();
         this.recalculateVisibility();
     }
@@ -1659,7 +1653,7 @@ class MathGraphic extends MathObject {
     }
 
     setRange(val) {
-        this.parsed.range = this.parseRawExpression(val);
+        this.parsed.range.expression = val;
         this.range = this.parsed.range.eval(this.math3d.mathScope);
         this.updateVariablesList();
         this.recalculateData();
