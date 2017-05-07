@@ -2323,6 +2323,12 @@ class ExplicitSurfacePolar extends ParametricSurface {
     }
 }
 
+// TODO: toward improving parsing feedback, one idea is:
+// 1. move all MathExpressions associated with an object into obj.mathExpressions
+// 2. While I'm at it, remove all instances of this.parseRawExpression. It's a dumb method.
+// 3. Add an error message property to MathExpression class
+// 4. Now that every object has a mathExpressions list, append error messages to object in UI.
+
 // This should all really go into another file. It's specific to the math3d.org webapp design.
 
 // Customize MathQuill's MathField; bind to math3d MathObject
