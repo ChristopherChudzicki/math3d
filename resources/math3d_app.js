@@ -213,7 +213,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             }
             var key = keys[obj.type];
             if (key === undefined){ key = 'rawExpression' };
-            var mf = new WrappedMathFieldMain(el[0],obj, key);
+            var mf = new WrappedMathFieldMain(el[0],obj, key, $scope);
         }
         
     }
