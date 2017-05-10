@@ -2008,7 +2008,7 @@ class ParametricCurve extends AbstractCurve {
     }
 
     render() {
-        // NOTE: Updating an <area>'s range does not work. However, it does work to make range a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
+        // NOTE: Updating an <interval>'s range does not work. However, it does work to make interval a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
         var group = this.math3d.scene.group().set('classes', ['curve', 'parametric']);
         var expr = this.parsed.expression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
@@ -2372,11 +2372,9 @@ class ExplicitSurfacePolar extends ParametricSurface {
 // 2. Give each MathExpression an error attribute to store errors on update or creation
 // 3. For each MathObject, store parsed expressions in obj.parse
 
-// original idea:
-// 1. move all MathExpressions associated with an object into obj.mathExpressions
-// 2. While I'm at it, remove all instances of this.parseRawExpression. It's a dumb method.
-// 3. Add an error message property to MathExpression class
-// 4. Now that every object has a mathExpressions list, append error messages to object in UI.
+// TODO:
+// MathGraphics have some copied code. Also, the top MathGraphic class defines a bunch of setters and getters that several subclasses don't use.
+// Could mixins help clean this up? Idea: the classes only define recalculateData and render methods. Everything else is mixed in.
 
 // This should all really go into another file. It's specific to the math3d.org webapp design.
 
