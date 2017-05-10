@@ -841,10 +841,10 @@ class MathExpression {
         expression = expression.replace(/dot/g, '|');
         expression = expression.replace(/cross/g, '&');
         
-        expression = functionOperatorParser(this.expression, 'diff');
-        expression = functionOperatorParser(this.expression, 'unitT');
-        expression = functionOperatorParser(this.expression, 'unitN');
-        expression = functionOperatorParser(this.expression, 'unitB');
+        expression = functionOperatorParser(expression, 'diff');
+        expression = functionOperatorParser(expression, 'unitT');
+        expression = functionOperatorParser(expression, 'unitN');
+        expression = functionOperatorParser(expression, 'unitB');
         
         return expression
         
@@ -1150,11 +1150,11 @@ class Variable extends AbstractVariable {
     }
     setRawExpression(val) {
         var expr = this.parsed.expression;
-        if (!this.valid || expr === null) {
+        if (!this.valid || expr.expression === undefined) {
             return
         }
 
-        if (expr === null) {
+        if (expr.expression === undefined) {
             return
         }
         var localMathScope = Utility.deepCopyValuesOnly(this.scope);
