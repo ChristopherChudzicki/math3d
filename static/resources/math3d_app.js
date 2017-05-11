@@ -182,8 +182,10 @@ app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
             title: title,
             serialized_graph: serialized_setting,
         }).then(function(response) {
-            if (response.data == "Success!") {
-                $("#save-modal").modal('hide');
+            if (response.data.result == "Success") {
+                base_url = window.location.href;
+                graph_url = base_url + "graph/" + response.data.url;
+                $("#save-modal textarea").val(graph_url);
             }
         });
     }
