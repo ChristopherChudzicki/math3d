@@ -184,6 +184,13 @@ app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
         }).then(function(response) {
             if (response.data.result == "Success") {
                 base_url = window.location.href;
+                
+                // Remove /graph/... if it already exists
+                graph_index = base_url.search("/graph");
+                if (graph_index != -1) {
+                    base_url = base_url.substring(0, graph_index) + "/";
+                }
+                
                 graph_url = base_url + "graph/" + response.data.url;
                 $("#save-modal textarea").val(graph_url);
             }
