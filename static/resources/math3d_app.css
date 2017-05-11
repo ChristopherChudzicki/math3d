@@ -165,11 +165,6 @@ input {
     padding:4px;
 }
 
-#save-modal textarea {
-    width:100%;
-    height:100px;
-}
-
 /*Folder Stuff*/
 div.folder-container{
 /*    overflow:hidden;*/
