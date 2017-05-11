@@ -171,11 +171,6 @@ app.controller('checkLoginCtrl', ['$scope', '$cookies', '$rootScope', function($
 }]);
 
 app.controller('saveCtrl', ['$scope', function($scope){
-    $scope.saveURL = function(){
-        var url = math3d.saveSettingsAsURL();
-        $("#save-modal textarea").val(url);
-        $("#url-length").html(url.length);
-    };
 }])
 
 app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
