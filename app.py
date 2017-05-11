@@ -70,7 +70,10 @@ def save_graph():
     db.session.add(new_graph)
     db.session.commit()
 
-    return "Success!"
+    return jsonify({
+        "url": new_graph.short_url,
+        "result": "Success",
+    })
 
 @app.route('/api/graph/get')
 def get_graphs():
