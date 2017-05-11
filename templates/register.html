@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+  <title>Register</title>
+  <link rel="stylesheet" href="/static/resources/math3d_app.css" />
+  <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.min.css" />
+</head>
+<body>
+  <h3>{{ errormessage }}</h3>
+  <div class="container">
+    <div class="col-md-4 centered">
+      <h3>Register</h3><br>
+      <form action="/api/register/submit" method="post">
+        Username: <input class="form-control" type="text" name="username" /><br>
+        Email: <input class="form-control" type="email" name="email" /><br>
+        Name: <input class="form-control" type="text" name"name" /><br>
+        Password: <input class="form-control" type="password" name="password" /><br>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <input class="btn btn-link" type="submit" value="Submit" />
+      </form>
+    </div>
+  </div>
+  <style>
+    .centered {
+      float: none;
+      display: block;
+      margin: 0 auto;
+    }
+
+    h3 {
+      text-align: center;
+    }
+
+    input.btn-link {
+      display: block;
+      margin: 0 auto;
+    }
+  </style>
+</body>

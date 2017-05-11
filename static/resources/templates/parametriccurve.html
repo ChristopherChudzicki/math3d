@@ -1,0 +1,14 @@
+<div class="object-cell grippy-trigger">
+  <div class="object-cell-handle">
+    <span ui-tree-handle class="grippy"></span>
+  </div>
+  <div class="object-cell-main" ng-controller="mathObjectCtrl">
+    <div ng-include="'/static/resources/templates/common.html'"></div>
+    <div class="cell-row">
+      <div style="margin-left:25px">
+          <label class="pull-left">t ∈</label>
+          <input class="form-control input-xs" style="width:75px" type="text" ng-model="obj.settings.range"></input>
+      </div>
+    </div>
+  </div>
+</div>
