@@ -96,7 +96,7 @@
                 </li>
                 <li ng-controller="saveCtrl" class="pull-right">
                   <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
-                    <span class="glyphicon glyphicon-floppy-disk save"></span>
+                    <span class="glyphicon glyphicon-share-alt save"></span>
                   </a>
                 </li>
               </ul>
@@ -146,7 +146,7 @@
             <button type="button" class="close" data-dismiss="modal">
               <span class="glyphicon glyphicon-remove"></span>
             </button>
-            <h4 class="modal-title">Save Graph</h4>
+            <h4 class="modal-title">Share Graph</h4>
           </div>
           <div class="modal-body">
             <!-- Save to Database -->
@@ -156,8 +156,6 @@
             <br>
             <label>Url: </label>
             <textarea class="form-control"></textarea>
-            <p>URL length: <span id="url-length"></span></p>
-            <p class="text-danger"><span class="glyphicon glyphicon-warning-sign"></span>This URL is not guaranteed to work in the future as more features are added to Math3D.</p>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
