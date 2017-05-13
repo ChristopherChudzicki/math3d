@@ -187,8 +187,15 @@ app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
                 base_url = window.location.href;
                 
                 // Remove /graph/... if it already exists
-                graph_index = base_url.search("/graph");
+                graph_index = base_url.indexOf("/graph");
                 if (graph_index != -1) {
+                    base_url = base_url.substring(0, graph_index) + "/";
+                }
+                
+                // Remove /?settings=... if it already exists
+                graph_index = base_url.indexOf("/?settings=");
+                if (graph_index != -1) {
+                    console.log(base_url)
                     base_url = base_url.substring(0, graph_index) + "/";
                 }
                 
