@@ -94,3 +94,20 @@ class Graph(db.Model):
     # https://docs.python.org/3/tutorial/classes.html#tut-private
     def __get_hash(self):
         return md5((self.title + str(self.id)).encode("utf-8")).hexdigest()
+
+class Metadata(db.Model):
+    __tablename__ = "meta"
+    
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String())
+    graph_id = db.Column(db.Integer, db.ForeignKey("graphs.id"))
+    
+    def __init__(self, title, graph_id):
+        self.title = title
+        self.graph_id = graph_id
+    
+    def __str__(self):
+        return self.title
+    
+    def __repr__(self):
+        return str(self.serialize())
