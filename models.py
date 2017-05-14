@@ -59,32 +59,35 @@ class Graph(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     created_at = db.Column(db.DateTime)
-    title = db.Column(db.String())
+    meta = db.relationship("Metadata", uselist=False, backref="graph")
     serialized_string = db.Column(db.String())
     user_name = db.Column(db.String(), db.ForeignKey("users.username"), nullable=True)
     short_url = db.Column(db.String())
     
-    def __init__(self, title, serialized_string, user_name):
+    def __init__(self, serialized_string, user_name):
         self.created_at = datetime.utcnow()
-        self.title = title
         self.serialized_string = serialized_string
         self.user_name = user_name
-        self.short_url = self.__get_hash()
+        self.short_url = ""
     
     def __str__(self):
-        return self.title
+#        return self.meta.
+        pass
     
     def __repr__(self):
         return str({
-            "title": self.title,
             "user_name": self.user_name,
             "short_url": self.short_url,
             "created_at": str(self.created_at),
         })
+        
+    def generate_hash(self):
+        if not self.short_url:
+            self.short_url = self.__get_hash()
     
     def serialize(self):
         return {
-            "title": self.title,
+            "title": self.meta.title,
             "serialized_string": self.serialized_string,
             "username": self.user_name,
             "created_at": str(self.created_at),
@@ -93,7 +96,7 @@ class Graph(db.Model):
     # Two underscores is Python's "private" method
     # https://docs.python.org/3/tutorial/classes.html#tut-private
     def __get_hash(self):
-        return md5((self.title + str(self.id)).encode("utf-8")).hexdigest()
+        return md5((self.meta.title + str(self.id)).encode("utf-8")).hexdigest()
 
 class Metadata(db.Model):
     __tablename__ = "meta"
