@@ -113,4 +113,7 @@ class Metadata(db.Model):
         return self.title
     
     def __repr__(self):
-        return str(self.serialize())
+        return str({
+            "title": self.title,
+            "graph_id": self.graph_id
+        })
