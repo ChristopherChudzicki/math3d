@@ -199,6 +199,13 @@ app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
                     base_url = base_url.substring(0, graph_index) + "/";
                 }
                 
+                // Remove /#... if it already exists
+                graph_index = base_url.indexOf("/#");
+                if (graph_index != -1) {
+                    console.log(base_url)
+                    base_url = base_url.substring(0, graph_index) + "/";
+                }
+                
                 graph_url = base_url + "graph/" + response.data.url;
                 $("#save-modal textarea").val(graph_url);
             }
