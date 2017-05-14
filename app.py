@@ -46,7 +46,7 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 # Must import after db is defined, not pretty
-from models import User, Graph
+from models import User, Graph, Metadata
 
 @app.after_request
 def add_csrf_to_cookie(response):
@@ -88,8 +88,18 @@ def save_graph():
     serialized_graph = request.json.get("serialized_graph")
     username = request.cookies.get("username")
 
-    new_graph = Graph(title, serialized_graph, username)
+    new_graph = Graph(serialized_graph, username)
     db.session.add(new_graph)
+    db.session.commit()
+    
+    new_meta = Metadata(title, new_graph.id)
+    db.session.add(new_meta)
+    db.session.commit()
+
+    # Call generate_hash now that new_graph has access to new_meta
+    # since the title is used for hash generation
+    new_graph.generate_hash()
+    
     db.session.commit()
 
     return jsonify({
