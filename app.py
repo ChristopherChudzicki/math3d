@@ -46,7 +46,7 @@ db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
 
 # Must import after db is defined, not pretty
-from models import User, Graph
+from models import User, Graph, Metadata
 
 @app.after_request
 def add_csrf_to_cookie(response):
@@ -74,9 +74,9 @@ def login():
 
 @app.route('/graph/<graph_hash>')
 def get_graph(graph_hash):
-    graph = Graph.query.filter_by(short_url=graph_hash).first()
-    if graph:
-        data = json.dumps(graph.serialize())
+    meta = Metadata.query.filter_by(short_url=graph_hash).first()
+    if meta:
+        data = json.dumps(meta.graph.serialize())
         return index(data)
     return redirect(url_for("index"))
 
@@ -88,12 +88,17 @@ def save_graph():
     serialized_graph = request.json.get("serialized_graph")
     username = request.cookies.get("username")
 
-    new_graph = Graph(title, serialized_graph, username)
+    new_graph = Graph(serialized_graph)
     db.session.add(new_graph)
+    db.session.commit()
+    
+    new_meta = Metadata(title, new_graph.id, username)
+    new_meta.generate_hash()
+    db.session.add(new_meta)
     db.session.commit()
 
     return jsonify({
-        "url": new_graph.short_url,
+        "url": new_graph.meta.short_url,
         "result": "Success",
     })
 
@@ -101,7 +106,7 @@ def save_graph():
 def get_graphs():
     username = request.cookies.get("username")
     graph_objs = User.query.filter_by(username=username).first().graphs
-    graphs = [graph.serialize() for graph in graph_objs]
+    graphs = [graph.graph.serialize() for graph in graph_objs]
     
     return jsonify(graphs)
 
