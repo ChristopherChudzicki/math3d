@@ -33,7 +33,7 @@ class User(db.Model):
     email = db.Column(db.String(120), unique=True)
     name = db.Column(db.String())
     pw_hash = db.Column(db.String())
-    graphs = db.relationship("Graph", backref="user", lazy="dynamic")
+    graphs = db.relationship("Metadata", backref="user")
     
     def __init__(self, username, email, name, password):
         self.username = username
@@ -58,56 +58,47 @@ class Graph(db.Model):
     __tablename__ = "graphs"
     
     id = db.Column(db.Integer, primary_key=True)
-    created_at = db.Column(db.DateTime)
     meta = db.relationship("Metadata", uselist=False, backref="graph")
     serialized_string = db.Column(db.String())
-    user_name = db.Column(db.String(), db.ForeignKey("users.username"), nullable=True)
-    short_url = db.Column(db.String())
     
-    def __init__(self, serialized_string, user_name):
-        self.created_at = datetime.utcnow()
+    def __init__(self, serialized_string):
         self.serialized_string = serialized_string
-        self.user_name = user_name
-        self.short_url = ""
     
     def __str__(self):
-#        return self.meta.
+        return self.meta.title
         pass
     
     def __repr__(self):
         return str({
-            "user_name": self.user_name,
-            "short_url": self.short_url,
-            "created_at": str(self.created_at),
+            "user_name": self.meta.user_name,
+            "short_url": self.meta.short_url,
+            "created_at": str(self.meta.created_at),
         })
-        
-    def generate_hash(self):
-        if not self.short_url:
-            self.short_url = self.__get_hash()
     
     def serialize(self):
         return {
             "title": self.meta.title,
             "serialized_string": self.serialized_string,
-            "username": self.user_name,
-            "created_at": str(self.created_at),
+            "username": self.meta.user_name,
+            "created_at": str(self.meta.created_at),
         }
-    
-    # Two underscores is Python's "private" method
-    # https://docs.python.org/3/tutorial/classes.html#tut-private
-    def __get_hash(self):
-        return md5((self.meta.title + str(self.id)).encode("utf-8")).hexdigest()
 
 class Metadata(db.Model):
     __tablename__ = "meta"
     
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String())
+    created_at = db.Column(db.DateTime)
     graph_id = db.Column(db.Integer, db.ForeignKey("graphs.id"))
+    user_name = db.Column(db.String(), db.ForeignKey("users.username"), nullable=True)
+    short_url = db.Column(db.String())
     
-    def __init__(self, title, graph_id):
+    def __init__(self, title, graph_id, username):
         self.title = title
         self.graph_id = graph_id
+        self.user_name = username
+        self.short_url = ""
+        self.created_at = datetime.utcnow()
     
     def __str__(self):
         return self.title
@@ -115,5 +106,15 @@ class Metadata(db.Model):
     def __repr__(self):
         return str({
             "title": self.title,
-            "graph_id": self.graph_id
+            "author": self.user_name,
+            "graph_id": self.graph_id,
         })
+    
+    def generate_hash(self):
+        if not self.short_url:
+            self.short_url = self.__get_hash()
+    
+    # Two underscores is Python's "private" method
+    # https://docs.python.org/3/tutorial/classes.html#tut-private
+    def __get_hash(self):
+        return md5((self.title + str(self.graph_id)).encode("utf-8")).hexdigest()
