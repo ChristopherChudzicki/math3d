@@ -44,6 +44,10 @@ input.form-control:focus, textarea.form-control:focus{
     line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */
     border-radius: 3px;
 }
+.form-control{
+    box-shadow:none;
+    -webkit-box-shadow:none;
+}
 .form-horizontal .control-label.label-xs {
     padding: 2px 5px;
 }
@@ -54,8 +58,6 @@ input.form-control:focus, textarea.form-control:focus{
     border-radius:0pt;
     border-bottom:1pt solid darkgray;
     margin-bottom:4pt;
-    box-shadow:none;
-    -webkit-box-shadow:none;
 }
 .input-xs.input-quiet {
     padding-bottom:0pt;
