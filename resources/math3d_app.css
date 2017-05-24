@@ -54,6 +54,8 @@ input.form-control:focus, textarea.form-control:focus{
     border-radius:0pt;
     border-bottom:1pt solid darkgray;
     margin-bottom:4pt;
+    box-shadow:none;
+    -webkit-box-shadow:none;
 }
 .input-xs.input-quiet {
     padding-bottom:0pt;
@@ -133,6 +135,9 @@ input {
     width:95%;
 }
 
+/**************************************************/
+/* Main */
+/**************************************************/
 .sidepanel {
     position:absolute;
     left:0;
