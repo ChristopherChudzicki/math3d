@@ -44,6 +44,10 @@ input.form-control:focus, textarea.form-control:focus{
     line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */
     border-radius: 3px;
 }
+.form-control{
+    box-shadow:none;
+    -webkit-box-shadow:none;
+}
 .form-horizontal .control-label.label-xs {
     padding: 2px 5px;
 }
@@ -149,9 +153,33 @@ input {
     width:95%;
 }
 
+/**************************************************/
+/* Navbar */
+/**************************************************/
+/*Reduce navbar height: https://stackoverflow.com/a/29285935/2747370*/
+.navbar-nav > li > a, .navbar-brand {
+    padding-top:5px !important; 
+    padding-bottom:0 !important;
+    height: 30px;
+}
+.navbar {
+    min-height:30px !important;
+    border-bottom:none;
+    margin-bottom:5px;
+}
+
+.navbar a.navbar-brand {
+    font-weight: 900;
+    color:#bfbfbf;
+}
+
+/**************************************************/
+/* Main */
+/**************************************************/
 .sidepanel {
     position:absolute;
     left:0;
+    top:30px; /*navbar height*/
     z-index:1000;
 }
 .math3d-controller {
