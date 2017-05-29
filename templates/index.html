@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, maximum-scale=1">
+  <meta name="description" content="An interactive 3D graphing tool in your browser. Draw, animate, and share surfaces, curves, points, lines, and vectors.">
+  <meta name="author" content="Chris Chudzicki">
+  <title>Math 3D</title>
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-98682014-1', 'auto');
+    ga('send', 'pageview');
+  </script>
+  
+  <script src="/static/vendors/mathbox/mathbox-bundle.js"></script>
+  <link rel="stylesheet" href="/static/vendors/mathbox/mathbox.css">
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="/static/vendors/jquery/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="/static/vendors/jquery/jquery-ui.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-animate.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-cookies.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.3.1/ui-bootstrap-tpls.js"></script>
+
+  <script src="/static/vendors/autosize.js"></script>
+
+  <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.css">
+  
+  <script src="/static/resources/utility.js"></script>
+  <script src="/static/resources/math-utility.js"></script>
+  <script src="/static/resources/math3d.js"></script>
+  <link rel="stylesheet" href="/static/resources/math3d.css">
+  <link rel="stylesheet" href="/static/resources/math3d_app.css">
+  
+  <script src="/static/vendors/bootstrap/js/bootstrap.js"></script>
+  <script src="/static/vendors/jscolor.js"></script>
+  
+  <!-- Angular Tree -->
+  <link rel="stylesheet" href="/static/vendors/angular-tree/source/angular-ui-tree.css">
+  <script src="/static/vendors/angular-tree/source/main.js"></script>
+  <script src="/static/vendors/angular-tree/source/controllers/handleCtrl.js"></script>
+  <script src="/static/vendors/angular-tree/source/controllers/nodeCtrl.js"></script>
+  <script src="/static/vendors/angular-tree/source/controllers/nodesCtrl.js"></script>
+  <script src="/static/vendors/angular-tree/source/controllers/treeCtrl.js"></script>
+  <script src="/static/vendors/angular-tree/source/directives/uiTree.js"></script>
+  <script src="/static/vendors/angular-tree/source/directives/uiTreeHandle.js"></script>
+  <script src="/static/vendors/angular-tree/source/directives/uiTreeNode.js"></script>
+  <script src="/static/vendors/angular-tree/source/directives/uiTreeNodes.js"></script>
+  <script src="/static/vendors/angular-tree/source/services/helper.js"></script>
+  
+  <link  href="/static/vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.css" rel="stylesheet">
+  <script src="/static/vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.js"></script>
+  
+  <script src="/static/vendors/mathquill/mathquill.js"></script>
+  <link rel="stylesheet" href="/static/vendors/mathquill/mathquill.css"/>
+  
+</head>
+<body>
+  
+  <header>
+    <nav class="navbar navbar-default">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <a class="navbar-brand" href="#">Math3d</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+          <li ng-controller="popoverCtrl"
+              popover-is-open="myPopover.isOpen"  
+              popover-class="popover-settings"
+              uib-popover-template="'/static/resources/templates/help_popover.html'" 
+              popover-placement="auto" 
+              popover-trigger="outsideClick"
+              popover-append-to-body="false"
+              >
+            <a class="popover-trigger" href="#">
+              <span class="glyphicon glyphicon-question-sign"></span> Help/Contact
+            </a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+  <div class="container" ng-controller="checkLoginCtrl">
+    <div class="sidepanel menu-visible">
+      <div class="math3d-controller">
+      
+        <div class="math3d-controller-header">
+          <ul class="nav nav-tabs nav-justified">
+            <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
+            <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
+          </ul>
+        </div>
+      
+        <div class="tab-content">
+          <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
+            <div class="math3d-controller-header">
+              <ul class="nav nav-pills xs">
+                <li class="dropdown">
+                  <a class="dropdown-toggle" id="dropdownAddObject" data-toggle="dropdown">
+                    <span class="glyphicon glyphicon-plus"></span>
+                    New Object
+                    <span class="caret"></span>
+                  </a>
+                  <ul class="dropdown-menu">
+                    <li ng-click="createNewObject('Point')" ><a href="">Point</a></li>
+                    <li ng-click="createNewObject('Line')" ><a href="">Line</a></li>
+                    <li ng-click="createNewObject('Vector')" ><a href="">Vector</a></li>
+                    <li ng-click="createNewObject('ParametricCurve')" ><a href="">Parametric Curve</a></li>
+                    <li ng-click="createNewObject('ParametricSurface')" ><a href="">Parametric Surface</a></li>
+                    <li ng-click="createNewObject('ExplicitSurface')"><a href="">Explicit Surface</a></li>
+                    <li ng-click="createNewObject('ExplicitSurfacePolar')"><a href="">Explicit Surface (Polar)</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li ng-click="createNewFolder()"><a href="">Folder</a></li>
+                    <li ng-click="createNewObject('VariableSlider')"><a href="">Variable Slider</a></li>
+                    <li ng-click="createNewObject('Variable')">
+                      <a href="">Variable or Function</a>
+                    </li>
+                    <li ng-click="createNewObject('VariableToggle')">
+                      <a href="">Toggle Switch</a>
+                    </li>
+                  </ul>
+                </li>
+                <li ng-controller="saveCtrl" class="pull-right">
+                  <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
+                    <span class="glyphicon glyphicon-floppy-disk save"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div ui-tree="treeOptions" id='tree-root' ng-controller="treeCtrl">
+              <div class="list-group" ui-tree-nodes ng-model="math3d.mathTree">
+                <div class="list-group-item" ui-tree-node ng-repeat="branch in math3d.mathTree" data-collapsed="branch.collapsed">
+                  <div ng-include="'/static/resources/templates/folder.html'">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div id="controller-axes" class="tab-pane fade">
+            <div class="math3d-controller-header">
+              <ul class="nav nav-pills xs">
+                <li ng-controller="saveCtrl" class="save">
+                  <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
+                    <span class="glyphicon glyphicon-floppy-disk save"></span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="list-group">
+              <div class="list-group-item">
+                <div ng-include="'/static/resources/templates/axes_settings.html'">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      
+      </div>
+      <div class="menu-toggle">
+          <a class="btn btn-sm btn-link" id="menu-toggle">
+            <span class="glyphicon glyphicon-menu-left"></span>
+          </a>
+      </div>
+    </div>
+    
+    <!-- Save URL Modal -->
+    <div class="modal fade" id="save-modal" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content" ng-controller="saveToDBCtrl">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">
+              <span class="glyphicon glyphicon-remove"></span>
+            </button>
+            <h4 class="modal-title">Share Graph</h4>
+          </div>
+          <div class="modal-body">
+            <!-- Save to Database -->
+            <label>Title: </label>
+            <input class="form-control" type="text" id="graph-title" />
+            <a class="btn btn-link" ng-click="saveToDB()">Save</a>
+            <br>
+            <label>Url: </label>
+            <textarea class="form-control"></textarea>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="my-math-box">
+    </div>
+
+  </div>
+  
+
+<script>
+
+var queryString = Utility.getQueryString();
+var encodedUserSettings = queryString['settings'];
+
+graph = JSON.parse({{ graph|tojson|safe }});
+
+if (graph.hasOwnProperty("serialized_string")) {
+  encodedUserSettings = graph.serialized_string;
+}
+
+var authorSettings = {
+  wrappedMathTree:[
+    {
+      name:'Folder 1',
+      collapsed:false,
+      objects: [
+        {
+          type: 'Point',
+          settings: {rawExpression: "[1,sqrt(4),3]"}
+        },
+        {
+          type: 'Vector',
+          settings: {color:'red',tail:'2k', components:'2i-3j+k'}
+        },
+      ]
+    },
+    {
+      name: 'Folder 2',
+      collapsed:false,
+      objects: [
+        {
+          type:'VariableSlider',
+          settings: {name:'T', min:'-3', max:'3', animationRunning:true}
+        },
+        {
+          type:'Variable',
+          settings:{rawName:'r(t)', rawExpression:'[3*cos(pi t), 3*sin(pi t), t]'}
+        },
+        {
+          type: 'Point',
+          settings: {rawExpression: "r(T)"}
+        },
+        {
+          type: 'ParametricCurve',
+          settings: {rawExpression:'r(t)', range:"[-3, T]", color:'orange', samples:128}
+        },
+      ]
+    }
+  ]
+};
+
+var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
+
+var math3d = new Math3D('my-math-box');
+math3d.load(settings)
+
+</script>
+
+<script src="/static/resources/math3d_app.js"></script>
+
+<script>
+ele = $("div.sidepanel");
+button = $('#menu-toggle span.glyphicon');
+$("div.math3d-controller").resizable({
+  handles: "e",
+  minWidth: 225
+}).on('resize', function(){
+  $(":focus").blur();
+});
+
+
+function hideMnu(){
+  var width = ele[0].offsetWidth;
+  ele[0].style.width=`${width}px`;
+  ele[0].style.left = `${-width+40}px`;
+  ele.removeClass('menu-visible');
+  button.removeClass('glyphicon-menu-left');
+  button.addClass('glyphicon-menu-right');
+};
+function showMenu(){
+  ele[0].style.width = "";
+  ele[0].style.left = "0%";
+  ele.addClass('menu-visible');
+  button.removeClass('glyphicon-menu-right');
+  button.addClass('glyphicon-menu-left');
+};
+function toggleMenu(){
+  ele.addClass('manually-toggled')
+  if (ele.hasClass('menu-visible')){
+    hideMnu();
+  } else {
+    showMenu()
+  }
+};
+
+function hideForSmallWindow(){
+  if (! window.matchMedia("(min-width: 768px)").matches) {
+    hideMnu();
+  }
+}
+function showForLargeWindow(ele){
+  if (window.matchMedia("(min-width: 768px)").matches) {
+    showMenu();
+  }
+}
+
+hideForSmallWindow(ele);
+ele.addClass("math3d-controller-animation")
+
+$(window).resize(function(e){
+  if ($(ele).hasClass('manually-toggled')){
+    return
+  }
+  if ($(ele).hasClass('menu-visible')){
+    hideForSmallWindow();
+  } else {
+    showForLargeWindow();
+  }
+})
+
+$("#menu-toggle").click(function(e) {
+  toggleMenu(e);
+});
+
+</script>
+
+</body>
+</html>

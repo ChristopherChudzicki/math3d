@@ -1,0 +1,393 @@
+/*MIT License
+
+Copyright (c) 2017 Christopher Chudzicki
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+
+/*Bootstrap monkey patch: 
+z-index on inputs was causing trouble in chrome 57. 
+This seems to disable it. Not sure of consequences ...
+*/
+.input-group .form-control:focus, .input-group .form-control{
+    z-index:initial;
+}
+
+/**************************************************/
+/* Bootstrap Extension */
+/**************************************************/
+input.form-control:focus, textarea.form-control:focus{
+    border-color:#66c2ff;
+    color:initial;
+}
+/* Similar to bootstrap's .input-sm, but for xs*/
+.input-xs {
+    height: 24px;
+    padding: 2px 5px;
+    font-size: 12px;
+    line-height: 1.5; /* If Placeholder of the input is moved up, rem/modify this. */
+    border-radius: 3px;
+}
+.form-control{
+    box-shadow:none;
+    -webkit-box-shadow:none;
+}
+.form-horizontal .control-label.label-xs {
+    padding: 2px 5px;
+}
+.input-quiet {
+    border-top:none;
+    border-right:none;
+    border-left:none;
+    border-radius:0pt;
+    border-bottom:1pt solid darkgray;
+    margin-bottom:4pt;
+}
+.input-xs.input-quiet {
+    padding-bottom:0pt;
+}
+.input-quiet:focus {
+    border-bottom: 2pt solid #66c2ff;
+}
+
+.pull-upper-right {
+    background: transparent;
+    margin-top: 1px;
+    margin-right: 2px;
+    position:absolute;
+    top:0;
+    right:0;
+}
+
+/*Subtle buttons*/
+.btn-quiet {
+    color:darkgray;
+}
+.btn-quiet:hover {
+    color:darkgray;
+}
+
+.btn:focus{
+    outline:none;
+}
+
+/*Theme Specific*/
+.btn.btn-link:hover{
+    background-color:#ecf0f1;
+    border-radius:4px;
+}
+
+/*Login Button*/
+
+.user_functions {
+    margin-left: 2em;
+    clear: both;
+}
+
+.user_button {
+    position: relative;
+    margin-left: 0.5em;
+}
+
+.user_button:hover {
+    text-decoration: none;
+}
+
+span.settings:hover span.glyphicon{
+    color:#18bc9c;
+}
+
+/**************************************************/
+/* Color and visibility indicator */
+/**************************************************/
+div.visibility-indicator {
+    flex:2;
+    max-width:20px;
+    min-width:20px;
+    height:20px;
+    border-style:solid;
+    border-width:4px;
+    vertical-align:top;
+}
+
+input.jscolor {
+    width:25px;
+}
+
+/*Used to hide jscolor selector*/
+.hide-in-place {
+    opacity:0;
+    width:1px !important;
+    height:1px !important;
+    margin:0px !important;
+    padding:0px !important;
+}
+
+/**************************************************/
+/* Other */
+/**************************************************/
+
+/*Hide spinners for number input*/
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+input {
+    width:95%;
+}
+
+/**************************************************/
+/* Navbar */
+/**************************************************/
+/*Reduce navbar height: https://stackoverflow.com/a/29285935/2747370*/
+.navbar-nav > li > a, .navbar-brand {
+    padding-top:5px !important; 
+    padding-bottom:0 !important;
+    height: 30px;
+}
+.navbar {
+    min-height:30px !important;
+    border-bottom:none;
+    margin-bottom:5px;
+}
+
+.navbar a.navbar-brand {
+    font-weight: 900;
+    color:#bfbfbf;
+}
+
+/**************************************************/
+/* Main */
+/**************************************************/
+.sidepanel {
+    position:absolute;
+    left:0;
+    top:30px; /*navbar height*/
+    z-index:1000;
+}
+.math3d-controller {
+    margin-left:25px;
+    width:300px;
+    padding-left:0;
+    display:inline-block;
+}
+
+.math3d-controller-header {
+    padding:4px;
+}
+
+/*Folder Stuff*/
+div.folder-container{
+/*    overflow:hidden;*/
+    margin-bottom:6px;
+    display:flex;
+}
+div.folder-sidebar{
+    /*I don't really understand why this works.
+    Goal is to have grippy handle fixed width,
+    but expand vertically to fill available space.*/
+    flex:1;
+    min-width: 20px; 
+    max-width: 20px;
+    margin-left:5px;
+    overflow:hidden; /*To hide handle overflow*/
+}
+div.folder-main{
+    flex:20;
+    padding-right:2px;
+    max-width:calc(100% - 30px);
+}
+div.folder-main .folder-header{
+    display:flex;
+}
+div.folder-header-left{
+    flex:1;
+    min-width: 25px;
+    max-width: 25px;
+    overflow:hidden;
+}
+div.folder-header-center{
+    flex:8;
+}
+div.folder-header-right{
+    flex:1;
+}
+.folder-header-center input:hover + span {
+    visibility:visible;
+}
+span.folder-name-editable{
+    color:lightgray;
+    visibility:hidden;
+}
+.folder-main div.folder-contents {
+    padding-left:0px;
+}
+
+.has-error.has-feedback, .has-error.has-feedback:focus,
+.mq-editable-field.has-error.has-feedback,
+.mq-editable-field.mq-focused.has-error.has-feedback {
+    outline: none;
+    border-color: red;
+    box-shadow: 0 0 5px red;
+}
+
+/*https://codepen.io/zachariab/pen/wkrbc*/
+span.grippy {
+    height:1em;
+    visibility:hidden;
+    overflow:visible;
+    content: '....';
+    width: 20px;
+    display: inline-block;
+    line-height: 5px;
+    padding: 3px 4px;
+    cursor: move;
+    vertical-align: middle;
+    margin-top: -.2em;
+    margin-right: .3em;
+    font-size: 12px;
+    font-family: sans-serif;
+    letter-spacing: 2px;
+    color: #cccccc;
+    text-shadow: 1px 0 1px #8c8c8c;
+}
+span.grippy::after {
+    content: '.. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. .. ';
+}
+div.grippy-trigger:hover > * > span.grippy{
+    visibility:visible;
+}
+
+/* Object cell structure */
+.object-cell {
+    display:flex;
+}
+
+.object-cell-handle {
+    flex:1;
+    min-width: 25px;
+    max-width: 25px;
+    margin-bottom:4pt;
+    overflow:hidden;
+}   
+
+.object-cell-main {
+    flex:9;
+    max-width:calc(100% - 25px);
+    padding-right:5pt;
+}
+
+.object-cell-main.focused {
+    max-width:none;
+}
+
+.cell-row {
+    display:flex;
+}
+
+.mathquill-large {
+    margin-left:5px;
+    margin-right:5px;
+    margin-bottom:5px;
+    flex:10;
+    overflow:hidden;
+    display:flex;
+}
+span.mq-math-mode {
+    display:inline-flex;
+    min-height:25px;
+    align-items:center;
+}
+span.mq-editable-field.mq-math-mode {
+    border:1pt solid lightgray;
+    padding:4px;
+}
+
+.variable-rawName{
+    margin:4px;
+}
+.variable-rawExpression {
+    flex:2;
+    margin:4px;
+}
+
+.settings-trigger {
+    flex:2;
+    max-width:30px;
+    min-width:30px;
+    height:30px;
+}
+
+.popover.popover-settings {
+    background-color:rgba(255, 255, 255, 0.75);
+}
+.popover.popover-settings .form-group{
+    margin:2pt;
+}
+.popover.popover-settings input {
+    max-width:100%;
+    background-color:rgba(255, 255, 255, 0.85);
+}
+
+.axis-settings-single {
+    margin-bottom:20pt;
+}
+
+/*TO BE REMOVED AFTER LABEL REDO*/
+input.object-description {
+    width:auto;
+    display:inline-block;
+    font-size:100%;
+}
+textarea.object-description{
+    resize:none;
+    max-width:215px ;
+}
+.object-description {
+    color:gray;
+}
+.folder-header input.object-description{
+    color:black;
+    font-weight:bold;
+}
+span.edit-label{
+    visibility:hidden;
+}
+span.edit-label .glyphicon {
+    color:darkgray;
+}
+span.label-and-description:hover span.edit-label{
+    visibility:visible;
+}
+
+/**************************************************/
+/* Toggle Sidebar Controller */
+/**************************************************/
+.math3d-controller-animation {
+    transition: left 1s;
+}
+
+.menu-toggle {
+    display:inline-block;
+    vertical-align:top;
+    width:30px;
+    height:30px;
+    margin-left:5px;
+}
