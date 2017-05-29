@@ -104,7 +104,7 @@
             <div class="math3d-controller-header">
               <ul class="nav nav-pills xs">
                 <li class="dropdown">
-                  <a class="dropdown-toggle" id="dropdownAddObject" data-toggle="dropdown">
+                  <a class="dropdown-toggle btn btn-link" id="dropdownAddObject" data-toggle="dropdown">
                     <span class="glyphicon glyphicon-plus"></span>
                     New Object
                     <span class="caret"></span>
@@ -129,7 +129,7 @@
                   </ul>
                 </li>
                 <li ng-controller="saveCtrl" class="pull-right">
-                  <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
+                  <a class="btn btn-link" data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
                     <span class="glyphicon glyphicon-floppy-disk save"></span>
                   </a>
                 </li>
@@ -147,8 +147,8 @@
           <div id="controller-axes" class="tab-pane fade">
             <div class="math3d-controller-header">
               <ul class="nav nav-pills xs">
-                <li ng-controller="saveCtrl" class="save">
-                  <a data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
+                <li ng-controller="saveCtrl" class="pull-right">
+                  <a class="btn btn-link" data-toggle="modal" data-target="#save-modal" ng-click="saveURL()">
                     <span class="glyphicon glyphicon-floppy-disk save"></span>
                   </a>
                 </li>
