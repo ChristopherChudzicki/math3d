@@ -350,9 +350,6 @@ app.controller('sliderCtrl', ['$scope', function($scope){
         obj.settings.animationRunning = true;
         var ele = document.getElementById("slider-"+obj.id);
         ele.step = ((ele.max-ele.min)/200) * obj.speeds[obj.settings.speedIdx].value;
-        
-        // Use a less complex representation to avoid getting the slider stuck
-        ele.step = Math.fround(ele.step);
         $scope.intervalID = setInterval(function(){
            ele.stepUp();
            if (ele.value > ele.max - ele.step){
