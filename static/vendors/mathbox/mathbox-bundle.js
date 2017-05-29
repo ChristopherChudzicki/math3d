@@ -42724,10 +42724,8 @@ THREE.Bootstrap.registerPlugin('loop', {
 
     var trigger = three.trigger.bind(three);
     var loop = function () {
-      setTimeout(function() {
-        this.running && requestAnimationFrame(loop);
-        this.events.map(trigger);
-      }.bind(this), 1000 / 30 );
+      this.running && requestAnimationFrame(loop);
+      this.events.map(trigger);
     }.bind(this);
 
     requestAnimationFrame(loop);
@@ -42748,8 +42746,7 @@ THREE.Bootstrap.registerPlugin('time', {
   defaults: {
     speed: 1,  // Clock speed
     warmup: 0, // Wait N frames before starting clock
-    timeout: 1, // Timeout in seconds. Pause if no tick happens in this time.
-    debug: 0, // Prints out fps if set to 1
+    timeout: 1 // Timeout in seconds. Pause if no tick happens in this time.
   },
 
   listen: ['pre:tick', 'this.change'],
@@ -42828,10 +42825,6 @@ THREE.Bootstrap.registerPlugin('time', {
     this.last   = now;
     this.clock  = clock;
     this.time   = time;
-    
-    if (this.defaults.debug) {
-      console.log("FPS: " + api.fps);
-    }
   },
 
   uninstall: function (three) {
