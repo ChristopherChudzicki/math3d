@@ -177,11 +177,11 @@ app.controller('saveCtrl', ['$scope', function($scope){
 app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
     $scope.saveToDB = function(){
         var title = $("#save-modal input").val();
-        var serialized_setting = math3d.saveSettingsAsString();
+        var serialized_graph = math3d.serialize();
         
         $http.post("/api/graph/save", {
             title: title,
-            serialized_graph: serialized_setting,
+            serialized_graph: serialized_graph,
         }).then(function(response) {
             if (response.data.result == "Success") {
                 base_url = window.location.href;
