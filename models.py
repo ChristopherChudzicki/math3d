@@ -23,6 +23,8 @@
 from datetime import datetime
 from hashlib import md5
 
+from sqlalchemy.dialects.postgresql import JSON
+
 from app import db, bcrypt
 
 class User(db.Model):
@@ -59,14 +61,13 @@ class Graph(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     meta = db.relationship("Metadata", uselist=False, backref="graph")
-    serialized_string = db.Column(db.String())
+    serialized_graph = db.Column(db.String())
     
-    def __init__(self, serialized_string):
-        self.serialized_string = serialized_string
+    def __init__(self, serialized_graph):
+        self.serialized_graph = serialized_graph
     
     def __str__(self):
         return self.meta.title
-        pass
     
     def __repr__(self):
         return str({
@@ -78,7 +79,7 @@ class Graph(db.Model):
     def serialize(self):
         return {
             "title": self.meta.title,
-            "serialized_string": self.serialized_string,
+            "serialized_graph": self.serialized_graph,
             "username": self.meta.user_name,
             "created_at": str(self.meta.created_at),
         }

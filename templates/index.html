@@ -207,16 +207,9 @@
 
 <script>
 
-var queryString = Utility.getQueryString();
-var encodedUserSettings = queryString['settings'];
-
-graph = JSON.parse({{ graph|tojson|safe }});
-
-if (graph.hasOwnProperty("serialized_string")) {
-  encodedUserSettings = graph.serialized_string;
-}
-
-var authorSettings = {
+var graphFromQueryString = Utility.getQueryString().settings;
+var graphFromDatabase = JSON.parse({{ graph|tojson|safe }}).serialized_graph;
+var defaultSettings = {
   wrappedMathTree:[
     {
       name:'Folder 1',
@@ -256,8 +249,19 @@ var authorSettings = {
     }
   ]
 };
+var settings = {}
 
-var settings = encodedUserSettings===undefined ? authorSettings : Math3D.decodeSettingsAsURL64(encodedUserSettings);
+console.log(graphFromQueryString)
+console.log(graphFromDatabase)
+if (graphFromQueryString !== undefined){
+  settings = Math3D.decodeSettingsAsURL64(graphFromQueryString);
+}
+else if (graphFromDatabase !== undefined ){
+  settings = JSON.parse(graphFromDatabase);
+}
+else {
+  settings = defaultSettings;
+}
 
 var math3d = new Math3D('my-math-box');
 math3d.load(settings)
