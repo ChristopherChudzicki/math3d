@@ -168,9 +168,15 @@ input {
     margin-bottom:5px;
 }
 
-.navbar a.navbar-brand {
+.navbar span.navbar-brand {
     font-weight: 900;
     color:#bfbfbf;
+}
+
+.navbar .navbar-brand:hover, 
+.navbar .navbar-brand:focus {
+  background-color: transparent;
+  color: #bfbfbf;
 }
 
 /**************************************************/
