@@ -1619,7 +1619,7 @@ class MathGraphic extends MathObject {
     }
 
     setShaded(val) {
-        this.mathboxGroup.select(this.mathboxRenderTypes).set("shaded", val);
+        this.mathboxGroup.select('surface').set("shaded", val);
     }
 
     setOpacity(val) {
