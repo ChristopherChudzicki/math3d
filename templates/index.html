@@ -68,22 +68,29 @@
     <nav class="navbar navbar-default">
       <div class="container-fluid">
         <div class="navbar-header">
+          <button type="button" class="navbar-toggle" style="height:25px;margin:3px;padding:3px" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>                        
+          </button>
           <span class="navbar-brand" href="#">Math3d</span>
         </div>
-        <ul class="nav navbar-nav navbar-right">
-          <li ng-controller="popoverCtrl"
-              popover-is-open="myPopover.isOpen"  
-              popover-class="popover-settings"
-              uib-popover-template="'/static/resources/templates/help_popover.html'" 
-              popover-placement="auto" 
-              popover-trigger="outsideClick"
-              popover-append-to-body="false"
-              >
-            <a class="popover-trigger" href="#">
-              <span class="glyphicon glyphicon-question-sign"></span> Help/Contact
-            </a>
-          </li>
-        </ul>
+        <div class="collapse navbar-collapse" id="myNavbar">
+          <ul class="nav navbar-nav navbar-right">
+            <li ng-controller="popoverCtrl"
+                popover-is-open="myPopover.isOpen"  
+                popover-class="popover-settings"
+                uib-popover-template="'/static/resources/templates/help_popover.html'" 
+                popover-placement="auto" 
+                popover-trigger="outsideClick"
+                popover-append-to-body="false"
+                >
+              <a class="popover-trigger" href="#">
+                <span class="glyphicon glyphicon-question-sign"></span> Help/Contact
+              </a>
+            </li>
+          </ul>
+        </div>
       </div>
     </nav>
   </header>
