@@ -182,10 +182,13 @@ input {
 /**************************************************/
 /* Main */
 /**************************************************/
+.main {
+  position:relative;
+}
+
 .sidepanel {
     position:absolute;
     left:0;
-    top:30px; /*navbar height*/
     z-index:1;
 }
 .math3d-controller {
