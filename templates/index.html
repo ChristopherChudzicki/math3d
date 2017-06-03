@@ -81,7 +81,7 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
-            <li id="navbartest" class="modalpop-popover-mode" modalpop modalpop-content-url="'/static/resources/templates/help_popover.html'">
+            <li id="navbartest" modalpop modalpop-content-url="'/static/resources/templates/help_popover.html'">
               <a class="modalpop-trigger" href="#">
                 <span class="glyphicon glyphicon-question-sign"></span> Help/Contact
               </a>
@@ -93,7 +93,7 @@
   </header>
 
   <div class="container" ng-controller="checkLoginCtrl">
-    <div class="sidepanel menu-visible">
+    <div class="sidepanel menu-visible sidepanel-animation">
       <div class="math3d-controller">
       
         <div class="math3d-controller-header">
@@ -309,30 +309,38 @@ function toggleMenu(){
   }
 };
 
-function hideForSmallWindow(){
+function hideSidepanelForSmallWindow(){
+  if ($(ele).hasClass('manually-toggled')){
+    return
+  }
   if (! window.matchMedia("(min-width: 768px)").matches) {
     hideMnu();
   }
 }
-function showForLargeWindow(ele){
+function showSidepanelForSmallWindow(ele){
   if (window.matchMedia("(min-width: 768px)").matches) {
     showMenu();
   }
 }
 
-hideForSmallWindow(ele);
-ele.addClass("math3d-controller-animation")
-
+// hideSidepanelForSmallWindow(ele);
+// ele.addClass("sidepanel-animation")
 $(window).resize(function(e){
-  if ($(ele).hasClass('manually-toggled')){
-    return
-  }
   if ($(ele).hasClass('menu-visible')){
-    hideForSmallWindow();
+    hideSidepanelForSmallWindow();
   } else {
-    showForLargeWindow();
+    showSidepanelForSmallWindow();
   }
 })
+$(window).resize(function(e){
+  if (! window.matchMedia("(min-width: 768px)").matches) {
+    $('[modalpop]').removeClass('modalpop-popover-mode')
+  } 
+  else {
+    $('[modalpop]').addClass('modalpop-popover-mode')
+  }
+})
+$(window).trigger('resize')
 
 $("#menu-toggle").click(function(e) {
   toggleMenu(e);

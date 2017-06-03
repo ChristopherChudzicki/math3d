@@ -386,7 +386,7 @@ span.label-and-description:hover span.edit-label{
 /**************************************************/
 /* Toggle Sidebar Controller */
 /**************************************************/
-.math3d-controller-animation {
+.sidepanel-animation {
     transition: left 1s;
 }
 
