@@ -186,7 +186,7 @@ input {
     position:absolute;
     left:0;
     top:30px; /*navbar height*/
-    z-index:1000;
+    z-index:1;
 }
 .math3d-controller {
     margin-left:25px;
