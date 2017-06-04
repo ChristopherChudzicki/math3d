@@ -25,7 +25,7 @@ var container = $("body")
 container.attr("ng-app", 'math3dApp')
 
 // app = angular.module('math3dApp', ['ui.sortable']);
-app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle']);
+app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle', 'pathgather.popeye']);
 
 // Change default tags to '[[' and ']]' to prevent conflict with Flask
 app.config(function($interpolateProvider, $httpProvider) {
@@ -400,6 +400,116 @@ app.controller('popoverCtrl', ['$scope', function($scope) {
         }
     };
 }]);
+
+// **************************************************
+// ModalPop
+// **************************************************
+// TODO: Figure out how to put this into another file.
+// README:
+// modalpop is a custom angular directive that modifies angular-bootstrap's popover behavior:
+//  - When parent has class modalpop-modal, modalpop appears as a modal
+//  - When parent has class modalpop-popover, modalpop appears as a popover
+// USAGE:
+//  1. Give parent element attribute modalpop
+//  2. Give parent element attribute modalpop-contentUrl with content URL
+//  3. Give child trigger element class .modalpop-trigger 
+// REQUIRES:
+// 'pathgather.popeye'
+
+// define additional triggers on Tooltip and Popover
+app.config(['$uibTooltipProvider', function($tooltipProvider){
+    $tooltipProvider.setTriggers({
+        'show': 'hide'
+    });
+}]);
+
+// https://stackoverflow.com/a/26509316/2747370
+app.directive('ngTranscludeReplace', ['$log', function ($log) {
+  return {
+    terminal: true,
+    restrict: 'EA',
+    link: function ($scope, $element, $attr, ctrl, transclude) {
+      if (!transclude) {
+        $log.error('orphan',
+        'Illegal use of ngTranscludeReplace directive in the template! ' +
+        'No parent directive that requires a transclusion found. ');
+        return;
+      }
+      transclude(function (clone) {
+        if (clone.length) {
+          $element.replaceWith(clone);
+        }
+        else {
+          $element.remove();
+        }
+      });
+    }
+  };
+}
+]);
+
+app.directive('modalpop', function() {
+  return {
+    restrict: 'A',
+    scope: {
+      modalpopContentUrl:'@modalpopContentUrl',
+    },
+    transclude: true,
+    replace: false,
+    template:`
+<ng-transclude-replace></ng-transclude-replace>
+<span
+  class = "modalpop-popover-trigger"
+  uib-popover-template="{{modalpopContentUrl}}"
+  popover-placement="auto"
+  popover-trigger="'show outsideClick'"
+  popover-append-to-body="false"
+/>
+    `,
+    // templateUrl: 'modalpopover.html',
+    controller: ['$scope', 'Popeye', function($scope, Popeye){
+      $scope.openModal = function() {
+        // Open a modal to show the selected user profile
+        var modal = Popeye.openModal({
+          scope: $scope,
+          templateUrl: "/static/resources/templates/help_popover.html",
+          containerTemplate: `
+<div class="popeye-modal-container">
+  <div class="popeye-modal">
+  </div>
+</div>
+          `
+        })
+      }
+    }],
+    link: function($scope, $elem, $attrs) {
+      $scope.modalpopShow = function(){
+        if ($elem.hasClass('modalpop-popover-mode')){
+          $('.modalpop-popover-trigger', $elem).trigger('show')
+          $elem.addClass('modalpop-popover-open')
+        }
+        else {
+          $scope.openModal();
+          $elem.addClass('modalpop-modal-open')
+        }
+      }
+      $scope.modalpopHide = function(){
+        if ($elem.hasClass('modalpop-popover-open')){
+          $('.modalpop-popover-trigger', $elem).trigger('hide')
+          $elem.removeClass('modalpop-popover-open')
+        }
+        if ($elem.hasClass('modalpop-modal-open')) {
+          $scope.$close() //Popeye's close function 
+          $elem.removeClass('modalpop-modal-open')
+        }
+      }
+      $('.modalpop-trigger',$elem).bind('click', function(){
+        $scope.modalpopShow();
+      })
+    }
+  };
+});
+
 
 // Prevent key events from bubbling up to the 3d scene
 container.on("keypress keydown keyup", function(e) {
