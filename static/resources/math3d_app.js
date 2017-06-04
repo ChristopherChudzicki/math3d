@@ -503,7 +503,7 @@ app.directive('modalpop', function() {
           $elem.removeClass('modalpop-modal-open')
         }
       }
-      $('.modalpop-trigger',$elem).bind('click', function(){
+      $('.modalpop-trigger',$elem).bind('click tap', function(){
         $scope.modalpopShow();
       })
     }
