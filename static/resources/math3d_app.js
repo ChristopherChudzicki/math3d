@@ -171,6 +171,7 @@ app.controller('treeCtrl', function($scope)  {
 app.controller('checkLoginCtrl', ['$scope', '$cookies', '$rootScope', function($scope, $cookies, $rootScope) {
 }]);
 
+// TODO: Should this be removed?
 app.controller('saveCtrl', ['$scope', function($scope){
 }])
 
@@ -235,7 +236,7 @@ app.controller('graphListCtrl', ['$rootScope', '$scope', '$http', function($root
 
 }]);
 
-app.controller('axesSettingsCtrl', ['$scope', function($scope){
+app.controller('settingsCtrl', ['$scope', function($scope){
     $scope.settings = math3d.settings;
 }])
 
@@ -510,6 +511,9 @@ app.directive('modalpop', function() {
   };
 });
 
+// **************************************************
+// End ModalPop
+// **************************************************
 
 // Prevent key events from bubbling up to the 3d scene
 container.on("keypress keydown keyup", function(e) {

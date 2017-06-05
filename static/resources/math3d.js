@@ -85,7 +85,8 @@ class Math3D {
             wrappedMathTree: [{
                 name: "General",
                 objects: []
-            }]
+            }],
+            title: 'Untitled'
         }
 
         function genDefaultAxisSettings(axisId, axisLabel) {
