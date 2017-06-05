@@ -204,6 +204,19 @@ input {
     padding:4px;
 }
 
+form.navbar-title {
+  margin:0;
+  padding-top:5px;
+}
+form.navbar-title input {
+  height:20px;
+  padding:0;
+  margin:0;
+  font-size:120%;
+  background-color:transparent;
+  color:darkgray;
+}
+
 /*Folder Stuff*/
 div.folder-container{
 /*    overflow:hidden;*/

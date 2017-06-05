@@ -78,10 +78,15 @@
             <span class="icon-bar"></span>                        
           </button>
           <span class="navbar-brand" href="#">Math3d</span>
+          <form class="navbar-form navbar-left navbar-title" ng-controller="settingsCtrl">
+            <div class="form-group">
+              <input type="text" class="form-control input-quiet input-xs" ng-model="settings.title" style="width:[[settings.title.length+2]]ch;">
+            </div>
+          </form>
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
-            <li id="navbartest" modalpop modalpop-content-url="'/static/resources/templates/help_popover.html'">
+            <li modalpop modalpop-content-url="'/static/resources/templates/help_popover.html'">
               <a class="modalpop-trigger" href="#">
                 <span class="glyphicon glyphicon-question-sign"></span> Help/Contact
               </a>
