@@ -176,41 +176,26 @@ app.controller('saveCtrl', ['$scope', function($scope){
 }])
 
 app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
-    $scope.saveToDB = function(){
-        var title = $("#save-modal input").val();
-        var serialized_graph = math3d.serialize();
-        
-        $http.post("/api/graph/save", {
-            title: title,
-            serialized_graph: serialized_graph,
-        }).then(function(response) {
-            if (response.data.result == "Success") {
-                base_url = window.location.href;
-                
-                // Remove /graph/... if it already exists
-                graph_index = base_url.indexOf("/graph");
-                if (graph_index != -1) {
-                    base_url = base_url.substring(0, graph_index) + "/";
-                }
-                
-                // Remove /?settings=... if it already exists
-                graph_index = base_url.indexOf("/?settings=");
-                if (graph_index != -1) {
-                    console.log(base_url)
-                    base_url = base_url.substring(0, graph_index) + "/";
-                }
-                
-                // Remove /#... if it already exists
-                graph_index = base_url.indexOf("/#");
-                if (graph_index != -1) {
-                    console.log(base_url)
-                    base_url = base_url.substring(0, graph_index) + "/";
-                }
-                
-                graph_url = base_url + "graph/" + response.data.url;
-                $("#save-modal textarea").val(graph_url);
-            }
-        });
+  
+  $scope.displayUrl = function() {
+      saveToDB()
+  }
+  
+  
+  function saveToDB(){
+    var serialized_graph = math3d.serialize();
+    
+    $http.post("/api/graph/save", {
+        title: math3d.settings.title,
+        serialized_graph: serialized_graph,
+    }).then(function(response) {
+        if (response.data.result == "Success") {
+            
+            graph_url = window.location.host + "/graph/" + response.data.url;
+            
+            $('#share-url').val(graph_url)
+        }
+    });
     }
 }]);
 
@@ -471,10 +456,11 @@ app.directive('modalpop', function() {
     controller: ['$scope', 'Popeye', function($scope, Popeye){
       $scope.openModal = function() {
         // Open a modal to show the selected user profile
-        var modal = Popeye.openModal({
-          scope: $scope,
-          templateUrl: "/static/resources/templates/help_popover.html",
-          containerTemplate: `
+          var strippedModalpopContentUrl =  $scope.modalpopContentUrl.substring(1, $scope.modalpopContentUrl.length-1)
+          var modal = Popeye.openModal({
+            scope: $scope,
+            templateUrl: strippedModalpopContentUrl,
+            containerTemplate: `
 <div class="popeye-modal-container">
   <div class="popeye-modal">
   </div>
