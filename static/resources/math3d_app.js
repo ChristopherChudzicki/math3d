@@ -456,10 +456,11 @@ app.directive('modalpop', function() {
     controller: ['$scope', 'Popeye', function($scope, Popeye){
       $scope.openModal = function() {
         // Open a modal to show the selected user profile
-        var modal = Popeye.openModal({
-          scope: $scope,
-          templateUrl: "/static/resources/templates/help_popover.html",
-          containerTemplate: `
+          var strippedModalpopContentUrl =  $scope.modalpopContentUrl.substring(1, $scope.modalpopContentUrl.length-1)
+          var modal = Popeye.openModal({
+            scope: $scope,
+            templateUrl: strippedModalpopContentUrl,
+            containerTemplate: `
 <div class="popeye-modal-container">
   <div class="popeye-modal">
   </div>
