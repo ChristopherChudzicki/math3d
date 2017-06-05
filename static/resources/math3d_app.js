@@ -191,7 +191,7 @@ app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
     }).then(function(response) {
         if (response.data.result == "Success") {
             
-            graph_url = window.location.host + "/graph/" + response.data.url;
+            var graph_url = window.location.host + "/graph/" + response.data.url;
             
             $('#share-url').val(graph_url)
         }
