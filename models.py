@@ -82,6 +82,7 @@ class Graph(db.Model):
             "serialized_graph": self.serialized_graph,
             "username": self.meta.user_name,
             "created_at": str(self.meta.created_at),
+            "times_accessed": self.meta.times_accessed,
         }
 
 class Metadata(db.Model):
