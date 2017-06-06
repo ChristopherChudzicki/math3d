@@ -93,6 +93,7 @@ class Metadata(db.Model):
     graph_id = db.Column(db.Integer, db.ForeignKey("graphs.id"))
     user_name = db.Column(db.String(), db.ForeignKey("users.username"), nullable=True)
     short_url = db.Column(db.String())
+    times_accessed = db.Column(db.Integer)
     
     def __init__(self, title, graph_id, username):
         self.title = title
@@ -100,6 +101,7 @@ class Metadata(db.Model):
         self.user_name = username
         self.short_url = ""
         self.created_at = datetime.utcnow()
+        self.times_accessed = 0
     
     def __str__(self):
         return self.title
