@@ -182,7 +182,7 @@
 <script>
 
 var graphFromQueryString = Utility.getQueryString().settings;
-var fromDatabase = JSON.parse({{ graph|tojson|safe }});
+var graphFromDatabase = JSON.parse({{ graph|tojson|safe }}).serialized_graph;
 var defaultSettings = {
   wrappedMathTree:[
     {
@@ -226,13 +226,12 @@ var defaultSettings = {
 var settings = {}
 
 console.log(graphFromQueryString)
-console.log(fromDatabase);
+console.log(graphFromDatabase)
 if (graphFromQueryString !== undefined){
   settings = Math3D.decodeSettingsAsURL64(graphFromQueryString);
 }
-else if (!$.isEmptyObject(fromDatabase)){
-  settings = JSON.parse(fromDatabase.serialized_graph);
-  settings.times_accessed = fromDatabase.times_accessed;
+else if (graphFromDatabase !== undefined ){
+  settings = JSON.parse(graphFromDatabase);
 }
 else {
   settings = defaultSettings;
