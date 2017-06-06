@@ -77,6 +77,10 @@ def get_graph(graph_hash):
     meta = Metadata.query.filter_by(short_url=graph_hash).first()
     if meta:
         data = json.dumps(meta.graph.serialize())
+
+        # Increment times accessed
+        meta.times_accessed += 1
+        db.session.commit()
         return index(data)
     return redirect(url_for("index"))
 
