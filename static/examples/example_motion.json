@@ -1,122 +1,119 @@
 {
-    "short_url": "example_motion",
-    "settings": {
-        "containerId": "my-math-box",
-        "camera": {
-            "position": [
-                0.683,
-                -1.492,
-                0.606
+    "containerId": "my-math-box",
+    "camera": {
+        "position": [
+            0.683,
+            -1.492,
+            0.606
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "objects": [
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "value": "0.0374998650513593",
+                        "min": "-6",
+                        "max": "6",
+                        "name": "T",
+                        "speedIdx": 1,
+                        "animationRunning": true
+                    }
+                }
             ]
         },
-        "wrappedMathTree": [
-            {
-                "name": "Folder 1",
-                "objects": [
-                    {
-                        "type": "VariableSlider",
-                        "settings": {
-                            "value": "0.0374998650513593",
-                            "min": "-6",
-                            "max": "6",
-                            "name": "T",
-                            "speedIdx": 1,
-                            "animationRunning": true
-                        }
+        {
+            "name": "Position",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "r(t)",
+                        "name": "r",
+                        "rawExpression": "[4*cos(pi*t),2* sin(pi*t), t]"
                     }
-                ]
-            },
-            {
-                "name": "Position",
-                "collapsed": true,
-                "objects": [
-                    {
-                        "type": "Variable",
-                        "settings": {
-                            "rawName": "r(t)",
-                            "name": "r",
-                            "rawExpression": "[4*cos(pi*t),2* sin(pi*t), t]"
-                        }
-                    },
-                    {
-                        "type": "Point",
-                        "settings": {
-                            "rawExpression": "[r(T)]"
-                        }
-                    },
-                    {
-                        "type": "ParametricCurve",
-                        "settings": {
-                            "color": "#2F94FF",
-                            "description": "ParametricCurve (past)",
-                            "rawExpression": "r(t)",
-                            "range": "[-6, T]",
-                            "samples": 256
-                        }
-                    },
-                    {
-                        "type": "ParametricCurve",
-                        "settings": {
-                            "opacity": 0.15,
-                            "description": "ParametricCurve (all)",
-                            "rawExpression": "r(t)",
-                            "range": "[-6,6]",
-                            "samples": 256
-                        }
+                },
+                {
+                    "type": "Point",
+                    "settings": {
+                        "rawExpression": "[r(T)]"
                     }
-                ]
-            },
-            {
-                "name": "Velocity",
-                "collapsed": true,
-                "objects": [
-                    {
-                        "type": "Variable",
-                        "settings": {
-                            "rawName": "v(t)",
-                            "name": "v",
-                            "rawExpression": "0.25 * diff(r)(t)"
-                        }
-                    },
-                    {
-                        "type": "Vector",
-                        "settings": {
-                            "color": "#FF0000",
-                            "rawExpression": "[r(T),r(T)+v(T)]",
-                            "tail": "r(T)",
-                            "components": "v(T)",
-                            "labelVisible": true,
-                            "label": "v"
-                        }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "color": "#2F94FF",
+                        "description": "ParametricCurve (past)",
+                        "rawExpression": "r(t)",
+                        "range": "[-6, T]",
+                        "samples": 256
                     }
-                ]
-            },
-            {
-                "name": "Acceleration",
-                "collapsed": true,
-                "objects": [
-                    {
-                        "type": "Variable",
-                        "settings": {
-                            "rawName": "a(t)",
-                            "name": "a",
-                            "rawExpression": "0.25 * diff(v)(t)"
-                        }
-                    },
-                    {
-                        "type": "Vector",
-                        "settings": {
-                            "color": "#B9810A",
-                            "rawExpression": "[r(T),r(T)+a(T)]",
-                            "tail": "r(T)",
-                            "components": "a(T)",
-                            "labelVisible": true,
-                            "label": "a"
-                        }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "opacity": 0.15,
+                        "description": "ParametricCurve (all)",
+                        "rawExpression": "r(t)",
+                        "range": "[-6,6]",
+                        "samples": 256
                     }
-                ]
-            }
-        ],
-        "title": "Velocity and Acceleration Vectors"
-    }
+                }
+            ]
+        },
+        {
+            "name": "Velocity",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "v(t)",
+                        "name": "v",
+                        "rawExpression": "0.25 * diff(r)(t)"
+                    }
+                },
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "color": "#FF0000",
+                        "rawExpression": "[r(T),r(T)+v(T)]",
+                        "tail": "r(T)",
+                        "components": "v(T)",
+                        "labelVisible": true,
+                        "label": "v"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Acceleration",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "a(t)",
+                        "name": "a",
+                        "rawExpression": "0.25 * diff(v)(t)"
+                    }
+                },
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "color": "#B9810A",
+                        "rawExpression": "[r(T),r(T)+a(T)]",
+                        "tail": "r(T)",
+                        "components": "a(T)",
+                        "labelVisible": true,
+                        "label": "a"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Velocity and Acceleration Vectors"
 }
