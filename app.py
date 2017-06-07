@@ -76,6 +76,12 @@ def login():
 def get_graph(graph_hash):
     meta = Metadata.query.filter_by(short_url=graph_hash).first()
     if meta:
+        # Increment times accessed
+        meta.times_accessed += 1
+        db.session.commit()
+
+        # Serialize meta object after the times accessed
+        # field has been incremented
         data = json.dumps(meta.graph.serialize())
         return index(data)
     return redirect(url_for("index"))
