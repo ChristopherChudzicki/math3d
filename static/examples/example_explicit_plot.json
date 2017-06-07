@@ -1,0 +1,67 @@
+{
+    "short_url": "example_explicit_rectangular_plot",
+    "settings": {
+        "camera": {
+            "position": [
+                -0.818,
+                -2.542,
+                0.946
+            ]
+        },
+        "wrappedMathTree": [
+            {
+                "name": "Parameter Sliders",
+                "collapsed": false,
+                "objects": [
+                    {
+                        "type": "VariableSlider",
+                        "settings": {
+                            "description": "First Parameter!\nSlide me!",
+                            "value": "1.14750000275671",
+                            "min": "0.5",
+                            "max": "4",
+                            "name": "a"
+                        }
+                    },
+                    {
+                        "type": "VariableSlider",
+                        "settings": {
+                            "description": "Another Parameter",
+                            "value": "1",
+                            "min": "0.25",
+                            "max": "4",
+                            "name": "b"
+                        }
+                    },
+                    {
+                        "type": "VariableSlider",
+                        "settings": {
+                            "description": "More Parameters!",
+                            "value": "3.80000020563602",
+                            "min": "-10",
+                            "name": "c"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Plot Graphic",
+                "collapsed": false,
+                "objects": [
+                    {
+                        "type": "ExplicitSurface",
+                        "settings": {
+                            "shaded": true,
+                            "rawExpression": "[x,y,c *  x *  e^(-((x^2)/(a^2)+(y^2)/(b^2)))]",
+                            "rangeU": "[-4,4]",
+                            "rangeV": "[-4, 4]",
+                            "range": "[[-4,4],[-4, 4]]",
+                            "rawExpressionZ": "c *  x *  e^(-((x^2)/(a^2)+(y^2)/(b^2)))"
+                        }
+                    }
+                ]
+            }
+        ],
+        "title": "Explicit Surface Plotter z=f(x,y)"
+    }
+}

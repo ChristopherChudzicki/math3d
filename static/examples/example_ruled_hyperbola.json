@@ -1,0 +1,117 @@
+{
+    "short_url": "example_ruled_hyperbola",
+    "settings": {
+        "containerId": "my-math-box",
+        "camera": {
+            "position": [
+                -0.879,
+                -1.081,
+                0.809
+            ]
+        },
+        "wrappedMathTree": [
+            {
+                "name": "Sliders",
+                "collapsed": false,
+                "objects": [
+                    {
+                        "type": "VariableSlider",
+                        "settings": {
+                            "value": "0",
+                            "max": "2*pi",
+                            "name": "T",
+                            "animationRunning": true
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Functions",
+                "collapsed": true,
+                "objects": [
+                    {
+                        "type": "Variable",
+                        "settings": {
+                            "rawName": "r1(t)",
+                            "name": "r1",
+                            "rawExpression": "[  3 *  cos(t),  3 *  sin(t),  -3]"
+                        }
+                    },
+                    {
+                        "type": "Variable",
+                        "settings": {
+                            "rawName": "r2(t)",
+                            "name": "r2",
+                            "rawExpression": "[  3 *  cos(t+( pi)/(2)),  3 *  sin(t+( pi)/(2)),  3]"
+                        }
+                    },
+                    {
+                        "type": "Variable",
+                        "settings": {
+                            "rawName": "r(u,v)",
+                            "name": "r",
+                            "rawExpression": "r1(u)+v * (r2(u)-r1(u))"
+                        }
+                    }
+                ]
+            },
+            {
+                "name": "Graphics",
+                "collapsed": true,
+                "objects": [
+                    {
+                        "type": "ParametricCurve",
+                        "settings": {
+                            "rawExpression": "r1(t)",
+                            "range": "[0,2pi]"
+                        }
+                    },
+                    {
+                        "type": "ParametricCurve",
+                        "settings": {
+                            "rawExpression": "r2(t)",
+                            "range": "[0,2pi]"
+                        }
+                    },
+                    {
+                        "type": "Point",
+                        "settings": {
+                            "color": "#FF0000",
+                            "rawExpression": "[  r1(T)]"
+                        }
+                    },
+                    {
+                        "type": "Point",
+                        "settings": {
+                            "color": "#FF0000",
+                            "rawExpression": "[  r2(T)]"
+                        }
+                    },
+                    {
+                        "type": "ParametricCurve",
+                        "settings": {
+                            "color": "#FFBD52",
+                            "rawExpression": "r(T,t)",
+                            "range": "[0,1]"
+                        }
+                    },
+                    {
+                        "type": "ParametricSurface",
+                        "settings": {
+                            "color": "#FFC548",
+                            "opacity": 0.5,
+                            "gridU": 10,
+                            "gridV": 2,
+                            "shaded": true,
+                            "rawExpression": "r(u,v)",
+                            "rangeU": "[0, T]",
+                            "rangeV": "[0, 1]",
+                            "range": "[[0, T],[0, 1]]"
+                        }
+                    }
+                ]
+            }
+        ],
+        "title": "A Ruled Hyperbola"
+    }
+}
