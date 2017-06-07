@@ -93,7 +93,7 @@ class Metadata(db.Model):
     created_at = db.Column(db.DateTime)
     graph_id = db.Column(db.Integer, db.ForeignKey("graphs.id"))
     user_name = db.Column(db.String(), db.ForeignKey("users.username"), nullable=True)
-    short_url = db.Column(db.String())
+    short_url = db.Column(db.String(), unique=True)
     times_accessed = db.Column(db.Integer)
     
     def __init__(self, title, graph_id, username, short_url=""):
