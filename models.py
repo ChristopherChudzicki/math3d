@@ -96,11 +96,11 @@ class Metadata(db.Model):
     short_url = db.Column(db.String())
     times_accessed = db.Column(db.Integer)
     
-    def __init__(self, title, graph_id, username):
+    def __init__(self, title, graph_id, username, short_url=""):
         self.title = title
         self.graph_id = graph_id
         self.user_name = username
-        self.short_url = ""
+        self.short_url = short_url
         self.created_at = datetime.utcnow()
         self.times_accessed = 0
     
