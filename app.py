@@ -91,10 +91,10 @@ def get_graph(graph_hash):
 def save_graph():
     # Angular sends json data by default
     title = request.json.get("title")
-    serialized_graph = request.json.get("serialized_graph")
+    settings = request.json.get("settings")
     username = request.cookies.get("username")
 
-    new_graph = Graph(serialized_graph)
+    new_graph = Graph(settings)
     db.session.add(new_graph)
     db.session.commit()
     

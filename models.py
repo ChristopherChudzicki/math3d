@@ -61,10 +61,10 @@ class Graph(db.Model):
     
     id = db.Column(db.Integer, primary_key=True)
     meta = db.relationship("Metadata", uselist=False, backref="graph")
-    serialized_graph = db.Column(db.String())
+    settings = db.Column(JSON)
     
-    def __init__(self, serialized_graph):
-        self.serialized_graph = serialized_graph
+    def __init__(self, settings):
+        self.settings = settings
     
     def __str__(self):
         return self.meta.title
@@ -79,7 +79,7 @@ class Graph(db.Model):
     def serialize(self):
         return {
             "title": self.meta.title,
-            "serialized_graph": self.serialized_graph,
+            "settings": self.settings,
             "username": self.meta.user_name,
             "created_at": str(self.meta.created_at),
             "times_accessed": self.meta.times_accessed,

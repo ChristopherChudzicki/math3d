@@ -183,11 +183,11 @@ app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
   
   
   function saveToDB(){
-    var serialized_graph = math3d.serialize();
+    var settings = JSON.parse(math3d.serialize());
     
     $http.post("/api/graph/save", {
         title: math3d.settings.title,
-        serialized_graph: serialized_graph,
+        settings: settings,
     }).then(function(response) {
         if (response.data.result == "Success") {
             
