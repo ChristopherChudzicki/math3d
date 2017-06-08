@@ -400,18 +400,3 @@ span.edit-label .glyphicon {
 span.label-and-description:hover span.edit-label{
     visibility:visible;
 }
-
-/**************************************************/
-/* Toggle Sidebar Controller */
-/**************************************************/
-.sidepanel-animation {
-    transition: left 1s;
-}
-
-.menu-toggle {
-    display:inline-block;
-    vertical-align:top;
-    width:30px;
-    height:30px;
-    margin-left:5px;
-}
