@@ -25,7 +25,7 @@ var container = $("body")
 container.attr("ng-app", 'math3dApp')
 
 // app = angular.module('math3dApp', ['ui.sortable']);
-app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle', 'pathgather.popeye']);
+app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle', 'pathgather.popeye', 'pageslide-directive']);
 
 // Change default tags to '[[' and ']]' to prevent conflict with Flask
 app.config(function($interpolateProvider, $httpProvider) {
@@ -386,6 +386,13 @@ app.controller('popoverCtrl', ['$scope', function($scope) {
         }
     };
 }]);
+
+app.controller('examplesCtrl',['$scope',function($scope){
+    $scope.checked = false;
+    $scope.toggle = function() {
+        $scope.checked = !$scope.checked
+    }
+    }]);
 
 // **************************************************
 // ModalPop

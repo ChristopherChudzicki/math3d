@@ -88,6 +88,16 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
+            <li ng-controller="examplesCtrl" >
+              <a href="" ng-click="toggle()">Examples</a>
+              <div pageslide ps-open="checked" ps-side="right" ps-container="main">
+                <div>
+                  <h2>Hello Pageslide</h2>
+                  <p>Put here whatever you want</p>
+                  <a ng-click="toggle()" class="button" >Close</a>
+                </div>
+              </div>
+            </li>
             <li modalpop modalpop-content-url="'/static/resources/templates/share_popover.html'">
               <a class="modalpop-trigger" href="">
                 <span class="glyphicon glyphicon-share"></span>Share
@@ -104,7 +114,7 @@
     </nav>
   </header>
 
-  <div class="container main" ng-controller="checkLoginCtrl">
+  <div id="main" class="container main" ng-controller="checkLoginCtrl">
     <div class="sidepanel">
       <div class="math3d-controller">
       
@@ -170,9 +180,6 @@
       </div>
     </div>
     <div class="menu-toggle">
-        <a class="btn btn-sm btn-link" id="menu-toggle">
-          <span class="glyphicon glyphicon-menu-left"></span>
-        </a>
     </div>
 
     <div id="my-math-box">
