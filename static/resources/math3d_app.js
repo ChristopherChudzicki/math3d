@@ -222,7 +222,7 @@ app.controller('graphListCtrl', ['$rootScope', '$scope', '$http', function($root
 }]);
 
 app.controller('settingsCtrl', ['$scope', function($scope){
-    $scope.settings = math3d.settings;
+    $scope.math3d = math3d;
 }])
 
 app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
