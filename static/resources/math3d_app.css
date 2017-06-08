@@ -182,11 +182,16 @@ input {
 /**************************************************/
 /* Main */
 /**************************************************/
+html, body {
+    height:100%;
+}
 .main {
   position:relative;
   margin:0;
   padding:0;
-  overflow:visible !important; /*angular pageslide will try to set this to hidden*/
+  height:100%;
+}
+.sidepanel-container{
 }
 
 .sidepanel {
