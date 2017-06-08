@@ -191,7 +191,12 @@ html, body {
   padding:0;
   height:100%;
 }
-.sidepanel-container{
+.sidepanel-toggle {
+    position:absolute;
+    top:0;
+    right:-5px;
+    width:0;
+    overflow:visible;
 }
 
 .sidepanel {
@@ -200,9 +205,8 @@ html, body {
     z-index:1;
 }
 .math3d-controller {
-    margin-left:25px;
-    width:300px;
-    padding-left:0;
+    width:325px;
+    padding-left:25px;
     display:inline-block;
 }
 

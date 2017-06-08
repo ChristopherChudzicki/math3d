@@ -115,68 +115,72 @@
   </header>
 
   <div id="main" class="main" ng-controller="checkLoginCtrl">
-    <div class="sidepanel">
-      <div class="math3d-controller">
+    
+    <div id="sidepanel-container" ng-controller="examplesCtrl">
+      <div class="sidepanel" pageslide ps-open="checked" ps-side="left" ps-size="325px" ps-container="main">
+        <div class="math3d-controller">
       
-        <div class="math3d-controller-header">
-          <ul class="nav nav-tabs nav-justified">
-            <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
-            <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
-          </ul>
-        </div>
+          <div class="math3d-controller-header">
+            <ul class="nav nav-tabs nav-justified">
+              <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
+              <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
+            </ul>
+          </div>
       
-        <div class="tab-content">
-          <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
-            <div class="math3d-controller-header">
-              <ul class="nav nav-pills xs">
-                <li class="dropdown">
-                  <a class="dropdown-toggle btn btn-link" id="dropdownAddObject" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    New Object
-                    <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li ng-click="createNewObject('Point')" ><a href="">Point</a></li>
-                    <li ng-click="createNewObject('Line')" ><a href="">Line</a></li>
-                    <li ng-click="createNewObject('Vector')" ><a href="">Vector</a></li>
-                    <li ng-click="createNewObject('ParametricCurve')" ><a href="">Parametric Curve</a></li>
-                    <li ng-click="createNewObject('ParametricSurface')" ><a href="">Parametric Surface</a></li>
-                    <li ng-click="createNewObject('ExplicitSurface')"><a href="">Explicit Surface</a></li>
-                    <li ng-click="createNewObject('ExplicitSurfacePolar')"><a href="">Explicit Surface (Polar)</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li ng-click="createNewFolder()"><a href="">Folder</a></li>
-                    <li ng-click="createNewObject('VariableSlider')"><a href="">Variable Slider</a></li>
-                    <li ng-click="createNewObject('Variable')">
-                      <a href="">Variable or Function</a>
-                    </li>
-                    <li ng-click="createNewObject('VariableToggle')">
-                      <a href="">Toggle Switch</a>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
+          <div class="tab-content">
+            <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
+              <div class="math3d-controller-header">
+                <ul class="nav nav-pills xs">
+                  <li class="dropdown">
+                    <a class="dropdown-toggle btn btn-link" id="dropdownAddObject" data-toggle="dropdown">
+                      <span class="glyphicon glyphicon-plus"></span>
+                      New Object
+                      <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li ng-click="createNewObject('Point')" ><a href="">Point</a></li>
+                      <li ng-click="createNewObject('Line')" ><a href="">Line</a></li>
+                      <li ng-click="createNewObject('Vector')" ><a href="">Vector</a></li>
+                      <li ng-click="createNewObject('ParametricCurve')" ><a href="">Parametric Curve</a></li>
+                      <li ng-click="createNewObject('ParametricSurface')" ><a href="">Parametric Surface</a></li>
+                      <li ng-click="createNewObject('ExplicitSurface')"><a href="">Explicit Surface</a></li>
+                      <li ng-click="createNewObject('ExplicitSurfacePolar')"><a href="">Explicit Surface (Polar)</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li ng-click="createNewFolder()"><a href="">Folder</a></li>
+                      <li ng-click="createNewObject('VariableSlider')"><a href="">Variable Slider</a></li>
+                      <li ng-click="createNewObject('Variable')">
+                        <a href="">Variable or Function</a>
+                      </li>
+                      <li ng-click="createNewObject('VariableToggle')">
+                        <a href="">Toggle Switch</a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <div ui-tree="treeOptions" id='tree-root' ng-controller="treeCtrl">
+                <div class="list-group" ui-tree-nodes ng-model="math3d.mathTree">
+                  <div class="list-group-item" ui-tree-node ng-repeat="branch in math3d.mathTree" data-collapsed="branch.collapsed">
+                    <div ng-include="'/static/resources/templates/folder.html'">
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div ui-tree="treeOptions" id='tree-root' ng-controller="treeCtrl">
-              <div class="list-group" ui-tree-nodes ng-model="math3d.mathTree">
-                <div class="list-group-item" ui-tree-node ng-repeat="branch in math3d.mathTree" data-collapsed="branch.collapsed">
-                  <div ng-include="'/static/resources/templates/folder.html'">
+            <div id="controller-axes" class="tab-pane fade">
+              <div class="math3d-controller-header">
+              </div>
+              <div class="list-group">
+                <div class="list-group-item">
+                  <div ng-include="'/static/resources/templates/axes_settings.html'">
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div id="controller-axes" class="tab-pane fade">
-            <div class="math3d-controller-header">
-            </div>
-            <div class="list-group">
-              <div class="list-group-item">
-                <div ng-include="'/static/resources/templates/axes_settings.html'">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       
+        </div>
+        <a class="sidepanel-toggle" href="" ng-click="toggle()">Click me</a>
       </div>
     </div>
     
