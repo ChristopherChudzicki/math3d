@@ -1,0 +1,58 @@
+{
+    "camera": {
+        "position": [
+            0.988,
+            -1.61,
+            0.585
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Controls",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "value": "4.71681485673319",
+                        "min": "-2pi",
+                        "max": "2pi",
+                        "name": "T",
+                        "animationRunning": true
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Function:\nThis defines the function we'll use below. Try changing it.",
+                        "name": "f",
+                        "rawExpression": "[t,3 cos(2t), sin(2t)]"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Graphics Objects",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "description": "ParametricCurve:\nThe variable \"t\" is special for parametric curves, and represents the parameter range.",
+                        "rawExpression": "f(t)",
+                        "samples": 256
+                    }
+                },
+                {
+                    "type": "Point",
+                    "settings": {
+                        "color": "#FF0000",
+                        "description": "Point:\nThis draws a point at location f(T) where T is controlled by the slider.\nHold-click the red box to change its color.",
+                        "rawExpression": "f(T)"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Basic Parametric Curve Plotter"
+}

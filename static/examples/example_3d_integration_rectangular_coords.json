@@ -1,0 +1,148 @@
+{
+    "containerId": "my-math-box",
+    "camera": {
+        "position": [
+            0.968,
+            -3.128,
+            1.263
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Helper Functions",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "f(x,y)",
+                        "name": "f",
+                        "rawExpression": "2+0.5*x^2"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "g(x,y)",
+                        "name": "g",
+                        "rawExpression": "6-x"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "X Slice",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "value": "-2.83",
+                        "min": "-4",
+                        "max": "2",
+                        "name": "a"
+                    }
+                },
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "color": "#FF7E24",
+                        "gridU": 2,
+                        "gridV": 2,
+                        "rawExpression": "[a, u, v*f(a,u) + (1-v)*g(a,u)]",
+                        "rangeU": "[-3, 4]",
+                        "rangeV": "[0, 1]",
+                        "range": "[[-3, 4],[0, 1]]"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Y Slice",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "color": "#FF6C12",
+                        "gridU": 2,
+                        "gridV": 2,
+                        "rawExpression": "[  u,  b,  v *  f(u,b)+(1-v) *  g(u,b)]",
+                        "rangeU": "[-4, 2]",
+                        "rangeV": "[0, 1]",
+                        "range": "[[-4, 2],[0, 1]]"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "min": "-3",
+                        "max": "4",
+                        "name": "b"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Main Region",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "gridU": 2,
+                        "gridV": 2,
+                        "shaded": true,
+                        "rawExpression": "[  u,  v,  f(u,v)+0.01]",
+                        "rangeU": "[-4,2]",
+                        "rangeV": "[-3,4]",
+                        "range": "[[-4,2],[-3,4]]"
+                    }
+                },
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "gridU": 2,
+                        "gridV": 2,
+                        "shaded": true,
+                        "rawExpression": "[  u,  v,  g(u,v)+0.01]",
+                        "rangeU": "[-4,2]",
+                        "rangeV": "[-3,4]",
+                        "range": "[[-4,2],[-3,4]]"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Ghost Region",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "opacity": 0.1,
+                        "gridU": 2,
+                        "gridV": 2,
+                        "rawExpression": "[  u,  v,  g(u,v)]",
+                        "rangeU": "[-5,5]",
+                        "rangeV": "[-3,4]",
+                        "range": "[[-5,5],[-3,4]]"
+                    }
+                },
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "opacity": 0.2,
+                        "gridU": 2,
+                        "gridV": 2,
+                        "rawExpression": "[  u,  v,  f(u,v)]",
+                        "rangeU": "[-5,5]",
+                        "rangeV": "[-3,4]",
+                        "range": "[[-5,5],[-3,4]]"
+                    }
+                }
+            ]
+        }
+    ],
+    "title":"3D Integration: Adding up 2D slices"
+}
