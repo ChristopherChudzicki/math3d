@@ -24,7 +24,7 @@
 
 class Math3D {
     constructor(containerId, settings) {
-        this.mathbox = this.initializeMathBox();
+        this.mathbox = this.initializeMathBox(containerId);
         
         if (settings !== undefined){
             this.load(settings)
