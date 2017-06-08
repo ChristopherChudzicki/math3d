@@ -62,6 +62,8 @@
   <link  href="/static/vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.css" rel="stylesheet">
   <script src="/static/vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.js"></script>
   
+  <script src="/static/vendors/angular-pageslide-directive.js"></script>
+  
   <script src="/static/vendors/mathquill/mathquill.js"></script>
   <link rel="stylesheet" href="/static/vendors/mathquill/mathquill.css"/>
   
@@ -103,7 +105,7 @@
   </header>
 
   <div class="container main" ng-controller="checkLoginCtrl">
-    <div class="sidepanel menu-visible sidepanel-animation">
+    <div class="sidepanel">
       <div class="math3d-controller">
       
         <div class="math3d-controller-header">
@@ -166,11 +168,11 @@
         </div>
       
       </div>
-      <div class="menu-toggle">
-          <a class="btn btn-sm btn-link" id="menu-toggle">
-            <span class="glyphicon glyphicon-menu-left"></span>
-          </a>
-      </div>
+    </div>
+    <div class="menu-toggle">
+        <a class="btn btn-sm btn-link" id="menu-toggle">
+          <span class="glyphicon glyphicon-menu-left"></span>
+        </a>
     </div>
 
     <div id="my-math-box">
@@ -245,63 +247,6 @@ math3d.load(settings)
 <script src="/static/resources/math3d_app.js"></script>
 
 <script>
-ele = $("div.sidepanel");
-button = $('#menu-toggle span.glyphicon');
-$("div.math3d-controller").resizable({
-  handles: "e",
-  minWidth: 225
-}).on('resize', function(){
-  $(":focus").blur();
-});
-
-
-function hideMnu(){
-  var width = ele[0].offsetWidth;
-  ele[0].style.width=`${width}px`;
-  ele[0].style.left = `${-width+40}px`;
-  ele.removeClass('menu-visible');
-  button.removeClass('glyphicon-menu-left');
-  button.addClass('glyphicon-menu-right');
-};
-function showMenu(){
-  ele[0].style.width = "";
-  ele[0].style.left = "0%";
-  ele.addClass('menu-visible');
-  button.removeClass('glyphicon-menu-right');
-  button.addClass('glyphicon-menu-left');
-};
-function toggleMenu(){
-  ele.addClass('manually-toggled')
-  if (ele.hasClass('menu-visible')){
-    hideMnu();
-  } else {
-    showMenu()
-  }
-};
-
-function hideSidepanelForSmallWindow(){
-  if ($(ele).hasClass('manually-toggled')){
-    return
-  }
-  if (! window.matchMedia("(min-width: 768px)").matches) {
-    hideMnu();
-  }
-}
-function showSidepanelForSmallWindow(ele){
-  if (window.matchMedia("(min-width: 768px)").matches) {
-    showMenu();
-  }
-}
-
-// hideSidepanelForSmallWindow(ele);
-// ele.addClass("sidepanel-animation")
-$(window).resize(function(e){
-  if ($(ele).hasClass('menu-visible')){
-    hideSidepanelForSmallWindow();
-  } else {
-    showSidepanelForSmallWindow();
-  }
-})
 $(window).resize(function(e){
   if (! window.matchMedia("(min-width: 768px)").matches) {
     $('[modalpop]').removeClass('modalpop-popover-mode')
@@ -311,10 +256,6 @@ $(window).resize(function(e){
   }
 })
 $(window).trigger('resize')
-
-$("#menu-toggle").click(function(e) {
-  toggleMenu(e);
-});
 
 </script>
 
