@@ -182,7 +182,7 @@
 <script>
 
 var graphFromQueryString = Utility.getQueryString().settings;
-var graphFromDatabase = JSON.parse({{ graph|tojson|safe }}).serialized_graph;
+var graphFromDatabase = JSON.parse({{ graph|tojson|safe }}).settings;
 var defaultSettings = {
   wrappedMathTree:[
     {
@@ -231,7 +231,7 @@ if (graphFromQueryString !== undefined){
   settings = Math3D.decodeSettingsAsURL64(graphFromQueryString);
 }
 else if (graphFromDatabase !== undefined ){
-  settings = JSON.parse(graphFromDatabase);
+  settings = graphFromDatabase
 }
 else {
   settings = defaultSettings;

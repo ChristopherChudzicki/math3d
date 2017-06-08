@@ -1,0 +1,290 @@
+{
+    "grids": {
+        "xy": false,
+        "xz": true
+    },
+    "scale": {
+        "z": 1
+    },
+    "axes": {
+        "y": {
+            "visible": false,
+            "axisLabel": ""
+        },
+        "z": {
+            "axisLabel": "y"
+        }
+    },
+    "containerId": "my-math-box",
+    "camera": {
+        "position": [
+            0.855,
+            -2.479,
+            0.565
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Settings",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Left Limit",
+                        "rawName": "a",
+                        "name": "a",
+                        "rawExpression": "1"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Right Limit",
+                        "rawName": "b",
+                        "name": "b",
+                        "rawExpression": "4"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Outer Radius",
+                        "rawName": "f(x)",
+                        "name": "f",
+                        "rawExpression": "3+e^(-x)"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Inner Radius",
+                        "rawName": "g(x)",
+                        "name": "g",
+                        "rawExpression": " sqrt(x)"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Axis",
+                        "rawName": "y",
+                        "name": "y",
+                        "rawExpression": "1"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Washer Width",
+                        "rawName": "dX",
+                        "name": "dX",
+                        "rawExpression": "0.125"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Slider Controls",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "Rotation Angle",
+                        "value": "6.27533132554561",
+                        "max": "2*pi",
+                        "name": "Q",
+                        "speedIdx": 2
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "Washer Position",
+                        "value": "2.845",
+                        "min": "a",
+                        "max": "b"
+                    }
+                },
+                {
+                    "type": "VariableToggle",
+                    "settings": {
+                        "description": "Washer Visibility",
+                        "name": "washer"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Rotation Axis",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "Line",
+                    "settings": {
+                        "color": "#000000",
+                        "rawExpression": "[  [  a-1,  0,  y],  [  b+1,  0,  y]]"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Washer",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "color": "#840000",
+                        "rawExpression": "rC(X-0.5 *  dX,u,v)",
+                        "rangeU": "[0,1]",
+                        "rangeV": "[0,Q]",
+                        "range": "[[0,1],[0,Q]]",
+                        "samplesU": 16,
+                        "samplesV": 16,
+                        "calculatedVisibility": "washer"
+                    }
+                },
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "color": "#7D0000",
+                        "rawExpression": "rf(u,v)",
+                        "rangeU": "[X-0.5*dX,X+0.5*dX]",
+                        "rangeV": "[0,Q]",
+                        "range": "[[X-0.5*dX,X+0.5*dX],[0,Q]]",
+                        "samplesU": 16,
+                        "samplesV": 16,
+                        "calculatedVisibility": "washer"
+                    }
+                },
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "color": "#8C0000",
+                        "rawExpression": "rC(X+0.5 *  dX,u,v)",
+                        "rangeU": "[0,1]",
+                        "rangeV": "[0,Q]",
+                        "range": "[[0,1],[0,Q]]",
+                        "samplesU": 16,
+                        "samplesV": 16,
+                        "calculatedVisibility": "washer"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Inner Surface",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "color": "#FF9C50",
+                        "rawExpression": "rg(t,Q)",
+                        "range": "[a,b]"
+                    }
+                },
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "shaded": true,
+                        "rawExpression": "rg(u,v)",
+                        "rangeU": "[a,b]",
+                        "rangeV": "[0,Q]",
+                        "range": "[[a,b],[0,Q]]",
+                        "samplesU": 16,
+                        "samplesV": 16
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Outer Surface",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "color": "#FFA159",
+                        "rawExpression": "rf(t,Q)",
+                        "range": "[a,b]"
+                    }
+                },
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "shaded": true,
+                        "rawExpression": "rf(u,v)",
+                        "rangeU": "[a,b]",
+                        "rangeV": "[0,Q]",
+                        "range": "[[a,b],[0,Q]]",
+                        "samplesU": 16,
+                        "samplesV": 16
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Caps",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "rC(t,u,v)",
+                        "name": "rC",
+                        "rawExpression": "rf(t,v)+u * (rg(t,v)-rf(t,v))"
+                    }
+                },
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "rawExpression": "rC(a,u,v)",
+                        "rangeU": "[0,1]",
+                        "rangeV": "[0,Q]",
+                        "range": "[[0,1],[0,Q]]",
+                        "samplesU": 16,
+                        "samplesV": 16
+                    }
+                },
+                {
+                    "type": "ParametricSurface",
+                    "settings": {
+                        "shaded": true,
+                        "rawExpression": "rC(b,u,v)",
+                        "rangeU": "[0,1]",
+                        "rangeV": "[0,Q]",
+                        "range": "[[0,1],[0,Q]]",
+                        "samplesU": 16,
+                        "samplesV": 16
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Helper Functions",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "rf(t,Q)",
+                        "name": "rf",
+                        "rawExpression": "[  t,  -(f(t)-y) *  sin(Q),  (f(t)-y) cos(Q)]+[  0,  0,  y]"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "rg(t,Q)",
+                        "name": "rg",
+                        "rawExpression": "[  t,  -(g(t)-y) *  sin(Q),  (g(t)-y) cos(Q)]+[  0,  0,  y]"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Surface of Revolution, Horizontal Axis: Washer Method"
+}
