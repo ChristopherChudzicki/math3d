@@ -388,10 +388,23 @@ app.controller('popoverCtrl', ['$scope', function($scope) {
 }]);
 
 app.controller('controlsCtrl',['$scope', function($scope, $elem){
-    $scope.visible = true;
+    $scope.visible = isBigScreen();
+    $scope.manuallyTroggled = false;
+    
     $scope.toggle = function() {
-        $scope.visible = !$scope.visible
+        $scope.manuallyToggled = true;
+        $scope.visible = !$scope.visible;
     }
+    
+    $(window).on("resize", function(){
+        if (! $scope.manuallyToggled){
+            $scope.visible = isBigScreen();
+        }
+    })
+    function isBigScreen(){
+        return window.matchMedia("(min-width: 768px)").matches
+    }
+    
 }]);
 
 app.controller('examplesCtrl',['$scope',function($scope){
