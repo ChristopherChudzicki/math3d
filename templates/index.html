@@ -259,6 +259,14 @@ math3d.load(settings)
 <script src="/static/resources/math3d_app.js"></script>
 
 <script>
+// Because angular-pageslide requires a set width, it doesn't play well with resizable. TODO: fix this one day
+// $("div.math3d-controller").resizable({
+//   handles: "e",
+//   minWidth: 225
+// }).on('resize', function(){
+//   $(":focus").blur();
+// });
+  
 $(window).resize(function(e){
   if (! window.matchMedia("(min-width: 768px)").matches) {
     $('[modalpop]').removeClass('modalpop-popover-mode')
