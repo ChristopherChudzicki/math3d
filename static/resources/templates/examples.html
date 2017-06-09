@@ -1,4 +1,4 @@
-<div style="position:relative">
+<div style="position:relative" ng-controller="loadFromDbCtrl">
   <a style="position:absolute;top:0;left:-30px" class="btn btn-link sidepanel-toggle" href="" ng-click="toggle()">
     <span class="glyphicon glyphicon-menu-right" ng-class="{'hidden': !visible}"></span>
   </a>
@@ -14,11 +14,11 @@
   <div class="tab-content">
     <div id="features" class="tab-pane fade in active">
       <ul>
-        <li><a href="">Using Sliders to control Parameters</a></li>
+        <li><a href="" ng-click="loadGraph('example_explicit_plot')">Using Sliders to control Parameters</a></li>
         <li><a href="">Using Sliders to Animate Plot Range</a></li>
         <li><a href="">Vectors (i,j,k) and Vector Tails</a></li>
-        <li><a href="">Functions (vector-valued)</a></li>
         <li><a href="">Labeling Points and Vectors</a></li>
+        <li><a href="">Functions</a></li>
         <li><a href="">Diff: Calculating Derivatives</a></li>
         <li><a href="">Toggling Visibility for Multiple Objects</a></li>
         <li><a href="">The TNB Vectors</a></li>

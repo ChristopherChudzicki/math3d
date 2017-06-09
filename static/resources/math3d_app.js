@@ -199,6 +199,24 @@ app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
     }
 }]);
 
+app.controller('loadFromDbCtrl', ['$scope', '$http', function($scope, $http) {
+  
+  $scope.loadGraph = function(short_url) {
+      loadGraphFromDB(short_url)
+  }
+  
+  function loadGraphFromDB(short_url){
+    $http.post("/api/graph/load", {
+        short_url: short_url
+    }).then(function(response) {
+        if (response.data.result == "Success") {
+            math3d.clear()
+            math3d.load( JSON.parse(response.data.settings) )
+        }
+    });
+    }
+}]);
+
 app.controller('graphListCtrl', ['$rootScope', '$scope', '$http', function($rootScope, $scope, $http) {
     // Using rootScope so that when clicking the Graphs tab this can be called.
     // The graphs tab button is out of the scope of graphListCtrl.
