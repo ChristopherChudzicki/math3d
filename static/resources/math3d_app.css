@@ -165,7 +165,7 @@ input {
 .navbar {
     min-height:30px !important;
     border-bottom:none;
-    margin-bottom:5px;
+    margin-bottom:0pt;
 }
 
 .navbar span.navbar-brand {
@@ -414,4 +414,14 @@ span.edit-label .glyphicon {
 }
 span.label-and-description:hover span.edit-label{
     visibility:visible;
+}
+
+/**************************************************/
+/* Main */
+/**************************************************/
+.examples-container{
+    background-color:#f8f8f8;
+}
+.hidden {
+    visibility:hidden;
 }

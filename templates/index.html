@@ -88,14 +88,13 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
-            <li ng-controller="examplesCtrl" >
+            <li id="examples-toggle" ng-controller="examplesCtrl" >
               <a href="" ng-click="toggle()">Examples</a>
-              <div pageslide ps-open="visible" ps-side="right" ps-container="main">
-                <div>
-                  <h2>Hello Pageslide</h2>
-                  <p>Put here whatever you want</p>
-                  <a ng-click="toggle()" class="button" >Close</a>
+              <div class="examples-container" pageslide ps-open="visible" ps-side="right" ps-container="main">
+                <div ng-include="'/static/resources/templates/examples.html'">
                 </div>
+                <!-- pageslide breaks if its contents are empty -->
+                <span></span>
               </div>
             </li>
             <li modalpop modalpop-content-url="'/static/resources/templates/share_popover.html'">
