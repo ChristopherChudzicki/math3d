@@ -25,7 +25,7 @@ var container = $("body")
 container.attr("ng-app", 'math3dApp')
 
 // app = angular.module('math3dApp', ['ui.sortable']);
-app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle', 'pathgather.popeye', 'pageslide-directive']);
+app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle', 'pathgather.popeye', 'pageslide-directive', 'monospaced.elastic']);
 
 // Change default tags to '[[' and ']]' to prevent conflict with Flask
 app.config(function($interpolateProvider, $httpProvider) {
@@ -264,8 +264,6 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
-        //Re-initialize textarea autosizing
-        autosize($("textarea.object-description"))
         
         return $sce.trustAsHtml(content)
     };
