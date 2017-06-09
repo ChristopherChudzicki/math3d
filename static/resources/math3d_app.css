@@ -195,9 +195,14 @@ html, body {
 .sidepanel-toggle {
     position:absolute;
     top:0;
-    right:-25px;
+    right:-35px;
     width:0;
     overflow:visible;
+    width:30px;
+    height:30px;
+    margin:none;
+    border:none;
+    padding:5px;
 }
 
 .sidepanel {

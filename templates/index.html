@@ -90,7 +90,7 @@
           <ul class="nav navbar-nav navbar-right">
             <li ng-controller="examplesCtrl" >
               <a href="" ng-click="toggle()">Examples</a>
-              <div pageslide ps-open="checked" ps-side="right" ps-container="main">
+              <div pageslide ps-open="visible" ps-side="right" ps-container="main">
                 <div>
                   <h2>Hello Pageslide</h2>
                   <p>Put here whatever you want</p>
@@ -116,8 +116,8 @@
 
   <div id="main" class="main" ng-controller="checkLoginCtrl">
     
-    <div id="sidepanel-container" ng-controller="examplesCtrl">
-      <div class="sidepanel" pageslide ps-open="checked" ps-side="left" ps-click-outside="false" ps-size="325px" ps-zindex="10" ps-container="main">
+    <div id="sidepanel-container" ng-controller="controlsCtrl">
+      <div class="sidepanel" pageslide ps-open="visible" ps-side="left" ps-click-outside="false" ps-size="325px" ps-zindex="10" ps-container="main">
         <div class="math3d-controller">
       
           <div class="math3d-controller-header">
@@ -180,7 +180,9 @@
           </div>
       
         </div>
-        <a class="sidepanel-toggle" href="" ng-click="toggle()">Click me</a>
+        <a class="btn btn-link sidepanel-toggle" href="" ng-click="toggle()">
+          <span class="glyphicon" ng-class="{'glyphicon-menu-right': !visible, 'glyphicon-menu-left': visible}"></span>
+        </a>
       </div>
 
     </div>

@@ -387,12 +387,19 @@ app.controller('popoverCtrl', ['$scope', function($scope) {
     };
 }]);
 
-app.controller('examplesCtrl',['$scope',function($scope){
-    $scope.checked = false;
+app.controller('controlsCtrl',['$scope',function($scope){
+    $scope.visible = true;
     $scope.toggle = function() {
-        $scope.checked = !$scope.checked
+        $scope.visible = !$scope.visible
     }
-    }]);
+}]);
+
+app.controller('examplesCtrl',['$scope',function($scope){
+    $scope.visible = false;
+    $scope.toggle = function() {
+        $scope.checked = !$scope.visible
+    }
+}]);
 
 // **************************************************
 // ModalPop
