@@ -193,15 +193,16 @@ html, body {
   overflow-x:hidden;
 }
 .sidepanel-toggle {
-/*    position:absolute;*/
-/*    top:0;*/
-/*    right:-5px;*/
-/*    width:0;*/
-/*    overflow:visible;*/
+    position:absolute;
+    top:0;
+    right:-25px;
+    width:0;
+    overflow:visible;
 }
 
 .sidepanel {
     z-index:20;
+    position:relative;
 }
 .math3d-controller {
     width:325px;

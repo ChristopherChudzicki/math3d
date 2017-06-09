@@ -117,7 +117,7 @@
   <div id="main" class="main" ng-controller="checkLoginCtrl">
     
     <div id="sidepanel-container" ng-controller="examplesCtrl">
-      <div class="sidepanel" pageslide ps-open="checked" ps-side="left" ps-size="325px" ps-push="true" ps-zindex="10" ps-container="main">
+      <div class="sidepanel" pageslide ps-open="checked" ps-side="left" ps-click-outside="false" ps-size="325px" ps-zindex="10" ps-container="main">
         <div class="math3d-controller">
       
           <div class="math3d-controller-header">
@@ -180,8 +180,9 @@
           </div>
       
         </div>
+        <a class="sidepanel-toggle" href="" ng-click="toggle()">Click me</a>
       </div>
-      <a class="sidepanel-toggle" href="" ng-click="toggle()">Click me</a>
+
     </div>
     
     <div id="my-math-box">
