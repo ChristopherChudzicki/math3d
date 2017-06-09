@@ -387,7 +387,7 @@ app.controller('popoverCtrl', ['$scope', function($scope) {
     };
 }]);
 
-app.controller('controlsCtrl',['$scope',function($scope){
+app.controller('controlsCtrl',['$scope', function($scope, $elem){
     $scope.visible = true;
     $scope.toggle = function() {
         $scope.visible = !$scope.visible
@@ -397,7 +397,7 @@ app.controller('controlsCtrl',['$scope',function($scope){
 app.controller('examplesCtrl',['$scope',function($scope){
     $scope.visible = false;
     $scope.toggle = function() {
-        $scope.checked = !$scope.visible
+        $scope.visible = !$scope.visible
     }
 }]);
 
