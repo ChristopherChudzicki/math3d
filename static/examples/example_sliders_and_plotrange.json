@@ -1,0 +1,28 @@
+{
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "description": "ParametricCurve:\nSliders can also be used to animate the plot range for curves and surfaces.",
+                        "range": "[-2*pi, T]"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "value": "10.0668149364544",
+                        "min": "-2pi",
+                        "max": "4pi",
+                        "name": "T",
+                        "animationRunning": true
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Using Sliders to Animate Plot Range"
+}

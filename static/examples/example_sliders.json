@@ -1,0 +1,61 @@
+{
+    "camera": {
+        "position": [
+            0.659,
+            -1.461,
+            0.553
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Folder Title",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "First Parameter",
+                        "value": "1.6",
+                        "min": "0.25",
+                        "max": "4",
+                        "name": "a"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "Another Parameter",
+                        "value": "2.3",
+                        "min": "0.25",
+                        "max": "4",
+                        "name": "b"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "A Third Parameter",
+                        "value": "4.35000013932586",
+                        "min": "-5",
+                        "max": "5",
+                        "name": "c"
+                    }
+                },
+                {
+                    "type": "ExplicitSurface",
+                    "settings": {
+                        "opacity": 0.75,
+                        "description": "The parameters defined above can be used in this ExplicitSurface object (or any other object)",
+                        "shaded": true,
+                        "rawExpression": "[x,y,c *  x *  e^(-((x^2)/(a^2)+(y^2)/(b^2)))]",
+                        "rangeU": "[-4, 4]",
+                        "rangeV": "[-4, 4]",
+                        "range": "[[-4, 4],[-4, 4]]",
+                        "rawExpressionZ": "c *  x *  e^(-((x^2)/(a^2)+(y^2)/(b^2)))"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Using Sliders to control Parameters"
+}

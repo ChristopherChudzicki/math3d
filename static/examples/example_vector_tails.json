@@ -1,0 +1,53 @@
+{
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "description": "Vector:\nBy default, vectors have their tails at the origin",
+                        "rawExpression": "[[0,0,0],[0,0,0]+[  4,  2,3  ]]",
+                        "components": "[  4,  2,3  ]"
+                    }
+                },
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "color": "#FF0000",
+                        "description": "Vector:\nA different tail can be specified in object settings (Click the wrench)",
+                        "rawExpression": "[[-4,1,2],[-4,1,2]+[  4,  2,3  ]]",
+                        "tail": "[-4,1,2]",
+                        "components": "[  4,  2,3  ]"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Another Folder!",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "color": "#DF10FF",
+                        "description": "Vector:\nThe tail can  position can contain variables  or functions.\nHere the tail has coordinates [X,-2,-1]",
+                        "rawExpression": "[[X,-2,-1],[X,-2,-1]+[  4,  2,3  ]]",
+                        "tail": "[X,-2,-1]",
+                        "components": "[  4,  2,3  ]"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "value": "-3.69999998062849",
+                        "min": "-5",
+                        "max": "5"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Vector Tails"
+}

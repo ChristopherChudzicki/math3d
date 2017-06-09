@@ -1,0 +1,60 @@
+{
+    "camera": {
+        "position": [
+            -0.783,
+            -1.463,
+            0.349
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Function:\nFunctions can be scalar valued, like this:",
+                        "name": "f"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Function:\nOr vector-valued, like this:",
+                        "rawName": "g(t)",
+                        "name": "g",
+                        "rawExpression": "[t,3 cos( pi  t),  3 sin( pi  t)]"
+                    }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "description": "ParametricCurve\nOnce a function is defined, we can reuse it for different purposes.  Here, a curve:",
+                        "rawExpression": "g(t)",
+                        "range": "[-3,3]"
+                    }
+                },
+                {
+                    "type": "Point",
+                    "settings": {
+                        "color": "#FF0000",
+                        "description": "Point\nHere, g(t) as an animated point:",
+                        "rawExpression": "g(T)"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "VariableSlider\n(We could have called this slider \"t\", but I like to differentiate between the current point location and plot parameter.)",
+                        "value": "-1.44",
+                        "min": "-3",
+                        "max": "3",
+                        "name": "T"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Defining Functions"
+}

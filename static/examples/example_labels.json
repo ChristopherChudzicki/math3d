@@ -1,0 +1,31 @@
+{
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Point",
+                    "settings": {
+                        "description": "Point:\nOpen object settings (click the wrench) to add a label to a point. \nMake sure to also set \"labelVisible\".",
+                        "rawExpression": "[-2,-1,4]",
+                        "labelVisible": true,
+                        "label": "My Label"
+                    }
+                },
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "color": "#FF0000",
+                        "description": "Vector:\nVectors can also be labelled, with labels appearing at the tip.\nOnly vectors and points can be labeled.",
+                        "rawExpression": "[[0,0,0],[0,0,0]+[1,-3,2]]",
+                        "components": "[1,-3,2]",
+                        "labelVisible": true,
+                        "label": "Your Label!"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Labeling Points and Vectors"
+}
