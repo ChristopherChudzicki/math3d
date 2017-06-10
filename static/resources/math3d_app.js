@@ -25,7 +25,7 @@ var container = $("body")
 container.attr("ng-app", 'math3dApp')
 
 // app = angular.module('math3dApp', ['ui.sortable']);
-app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle', 'pathgather.popeye']);
+app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.bootstrap', 'ui.toggle', 'pathgather.popeye', 'pageslide-directive', 'monospaced.elastic']);
 
 // Change default tags to '[[' and ']]' to prevent conflict with Flask
 app.config(function($interpolateProvider, $httpProvider) {
@@ -199,6 +199,24 @@ app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
     }
 }]);
 
+app.controller('loadFromDbCtrl', ['$scope', '$http', function($scope, $http) {
+  
+  $scope.loadGraph = function(short_url) {
+      loadGraphFromDB(short_url)
+  }
+  
+  function loadGraphFromDB(short_url){
+    $http.post("/api/graph/load", {
+        short_url: short_url
+    }).then(function(response) {
+        if (response.data.result == "Success") {
+            math3d.clear()
+            math3d.load( JSON.parse(response.data.settings) )
+        }
+    });
+    }
+}]);
+
 app.controller('graphListCtrl', ['$rootScope', '$scope', '$http', function($rootScope, $scope, $http) {
     // Using rootScope so that when clicking the Graphs tab this can be called.
     // The graphs tab button is out of the scope of graphListCtrl.
@@ -246,8 +264,6 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
-        //Re-initialize textarea autosizing
-        autosize($("textarea.object-description"))
         
         return $sce.trustAsHtml(content)
     };
@@ -385,6 +401,33 @@ app.controller('popoverCtrl', ['$scope', function($scope) {
             $scope.myPopover.isOpen = false;
         }
     };
+}]);
+
+app.controller('controlsCtrl',['$scope', function($scope, $elem){
+    $scope.visible = isBigScreen();
+    $scope.manuallyTroggled = false;
+    
+    $scope.toggle = function() {
+        $scope.manuallyToggled = true;
+        $scope.visible = !$scope.visible;
+    }
+    
+    $(window).on("resize", function(){
+        if (! $scope.manuallyToggled){
+            $scope.visible = isBigScreen();
+        }
+    })
+    function isBigScreen(){
+        return window.matchMedia("(min-width: 768px)").matches
+    }
+    
+}]);
+
+app.controller('examplesCtrl',['$scope',function($scope){
+    $scope.visible = false;
+    $scope.toggle = function() {
+        $scope.visible = !$scope.visible
+    }
 }]);
 
 // **************************************************

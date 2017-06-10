@@ -1,0 +1,42 @@
+{
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "VariableToggle",
+                    "settings": {
+                        "description": "Toggle Switch:\nA toggle switch is a boolean variable (true/false). Toggles can be used to control the  visibility of multiple graphics objects at once.\n\nThis toggle has the silly name \"dragon\".",
+                        "name": "dragon"
+                    }
+                },
+                {
+                    "type": "Point",
+                    "settings": {
+                        "description": "Point\nTo control visibility with a toggle, set the value of \"calculatedVisibility\" in object settings (click the wrench).",
+                        "rawExpression": "[-2,1,3]",
+                        "calculatedVisibility": "dragon"
+                    }
+                },
+                {
+                    "type": "Point",
+                    "settings": {
+                        "color": "#C232FF",
+                        "rawExpression": "[3,-2,2]",
+                        "calculatedVisibility": "dragon"
+                    }
+                },
+                {
+                    "type": "Line",
+                    "settings": {
+                        "color": "#6E0000",
+                        "rawExpression": "[[-4,0,-2],[4,0,-2]]",
+                        "calculatedVisibility": "dragon"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Controlling Visibility with Toggles"
+}

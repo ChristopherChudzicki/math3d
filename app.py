@@ -116,6 +116,21 @@ def get_graphs():
     
     return jsonify(graphs)
 
+@app.route('/api/graph/load', methods=["POST"])
+def load_graph():
+    short_url = request.json.get("short_url")
+    meta = Metadata.query.filter_by(short_url=short_url).first()
+    
+    # Increment times accessed
+    meta.times_accessed += 1
+    db.session.commit()
+    
+    settings = json.dumps(meta.graph.serialize().get("settings"))
+    return jsonify({
+        "result": "Success",
+        "settings": settings
+    })
+
 @app.route('/api/login/validate', methods=["POST"])
 def validate():
     username = request.form.get("username")

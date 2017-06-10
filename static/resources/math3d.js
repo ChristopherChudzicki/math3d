@@ -24,7 +24,7 @@
 
 class Math3D {
     constructor(containerId, settings) {
-        this.mathbox = this.initializeMathBox();
+        this.mathbox = this.initializeMathBox(containerId);
         
         if (settings !== undefined){
             this.load(settings)
@@ -2444,12 +2444,13 @@ class WrappedMathFieldMain extends WrappedMathField {
         .on('focusout', function(){
             _this.onFocusOut();
         })
-        .on('mouseenter', function(){
-            $("div.math3d-controller").resizable('disable');
-        })
-        .on('mouseleave', function(){
-            $("div.math3d-controller").resizable('enable');
-        })
+        // Because angular-pageslide requires a set width, it doesn't play well with resizable. TODO: fix this one day
+        // .on('mouseenter', function(){
+        //     $("div.math3d-controller").resizable('disable');
+        // })
+        // .on('mouseleave', function(){
+        //     $("div.math3d-controller").resizable('enable');
+        // })
     }
     
     get defaultSettings() {

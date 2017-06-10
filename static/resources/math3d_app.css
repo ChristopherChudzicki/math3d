@@ -22,11 +22,11 @@ SOFTWARE.
 */
 
 /*Bootstrap monkey patch: 
-z-index on inputs was causing trouble in chrome 57. 
+z-index 20n inputs was causing trouble in chrome 57. 
 This seems to disable it. Not sure of consequences ...
 */
 .input-group .form-control:focus, .input-group .form-control{
-    z-index:initial;
+    z-index:20nitial;
 }
 
 /**************************************************/
@@ -165,7 +165,7 @@ input {
 .navbar {
     min-height:30px !important;
     border-bottom:none;
-    margin-bottom:5px;
+    margin-bottom:0pt;
 }
 
 .navbar span.navbar-brand {
@@ -182,21 +182,36 @@ input {
 /**************************************************/
 /* Main */
 /**************************************************/
+html, body {
+    height:100%;
+}
 .main {
-  position:relative;
   margin:0;
   padding:0;
+  height:100%;
+  overflow:auto !important;
+  overflow-x:hidden;
+}
+.sidepanel-toggle {
+    position:absolute;
+    top:0;
+    right:-35px;
+    width:0;
+    overflow:visible;
+    width:30px;
+    height:30px;
+    margin:none;
+    border:none;
+    padding:5px;
 }
 
 .sidepanel {
-    position:absolute;
-    left:0;
-    z-index:1;
+    z-index:20;
+    position:relative;
 }
 .math3d-controller {
-    margin-left:25px;
-    width:300px;
-    padding-left:0;
+    width:325px;
+    padding-left:25px;
     display:inline-block;
 }
 
@@ -402,16 +417,11 @@ span.label-and-description:hover span.edit-label{
 }
 
 /**************************************************/
-/* Toggle Sidebar Controller */
+/* Main */
 /**************************************************/
-.sidepanel-animation {
-    transition: left 1s;
+.examples-container{
+    background-color:#f8f8f8;
 }
-
-.menu-toggle {
-    display:inline-block;
-    vertical-align:top;
-    width:30px;
-    height:30px;
-    margin-left:5px;
+.hidden {
+    visibility:hidden;
 }

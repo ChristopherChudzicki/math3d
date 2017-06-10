@@ -1,0 +1,42 @@
+<div style="position:relative" ng-controller="loadFromDbCtrl">
+  <a style="position:absolute;top:0;left:-30px" class="btn btn-link sidepanel-toggle" href="" ng-click="toggle()">
+    <span class="glyphicon glyphicon-menu-right" ng-class="{'hidden': !visible}"></span>
+  </a>
+  <ul class="nav nav-tabs">
+    <li class="active">
+      <a data-toggle="tab" href="#features">Feature Demos</a>
+    </li>
+    <li>
+      <a data-toggle="tab" href="#advanced">Neat Examples</a>
+    </li>
+  </ul>
+
+  <div class="tab-content">
+    <div id="features" class="tab-pane fade in active">
+      <ul>
+        <li><a href="" ng-click="loadGraph('example_sliders')">Using Sliders to control Parameters</a></li>
+        <li><a href="" ng-click="loadGraph('example_sliders_and_plotrange')">Using Sliders to Animate Plot Range</a></li>
+        <li><a href="" ng-click="loadGraph('example_vector_tails')">Vectors and Vector Tails</a></li>
+        <li><a href="" ng-click="loadGraph('example_labels')">Labeling Points and Vectors</a></li>
+        <li><a href="" ng-click="loadGraph('example_functions')">Functions: Defining and Using</a></li>
+        <li><a href="" ng-click="loadGraph('example_diff')">Diff: Calculating Derivatives</a></li>
+        <li><a href="" ng-click="loadGraph('example_toggle_visibility')">Toggling Visibility for Multiple Objects</a></li>
+        <li><a href="" ng-click="loadGraph('example_zbias')">Fine-tuning Visibility with zBias</a></li>
+        <li><a href="" ng-click="loadGraph('example_tnb')">The TNB Vectors</a></li>
+      </ul>
+    </div>
+    <div id="advanced" class="tab-pane fade">
+      <ul>
+        <li><a href="" ng-click="loadGraph('example_motion')" >Motion: Velocity and Acceleration Vectors</a></li>
+        <li><a href="" ng-click="loadGraph('example_revolution_surface_H_washers')" >Surface of Revolution (Washer Method, Horizontal Axis)</a></li>
+        <li><a href="" ng-click="loadGraph('example_revolution_surface_H_shells')" >Surface of Revolution (Shell Method, Horizontal Axis)</a></li>
+        <li><a href="" ng-click="loadGraph('example_ruled_hyperbola')" >A Ruled Hyperbola</a></li>
+        <li><a href="" ng-click="loadGraph('example_3d_integration_rectangular_coords')" >3D Integration in Rectangular Coordinates</a></li>
+        <!-- Angular momentum and velocity vector? -->
+        <!-- 3D integration in cylindrical coordinates? -->
+        <!-- Partial Derivatives? -->
+      </ul>
+    </div>
+  </div>
+</div>
+

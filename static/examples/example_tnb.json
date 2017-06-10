@@ -1,0 +1,75 @@
+{
+    "scale": {
+        "z": 1
+    },
+    "camera": {
+        "position": [
+            -0.824,
+            -1.383,
+            0.532
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "name": "f",
+                        "rawExpression": "[t^3,t^2,t]"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "value": "0.819999936968088",
+                        "min": "-2",
+                        "max": "2",
+                        "name": "T",
+                        "animationRunning": true
+                    }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "rawExpression": "f(t)",
+                        "range": "[-2,2]"
+                    }
+                },
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "color": "#FF0000",
+                        "description": "Vector:\n\"unitT\" is an operator that calculates the unit tangent vector for a curve using the syntax below.",
+                        "rawExpression": "[f(T),f(T)+unitT(f)(T)]",
+                        "tail": "f(T)",
+                        "components": "unitT(f)(T)"
+                    }
+                },
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "color": "#AF37FF",
+                        "description": "Vector:\n\"unitN\" is similar, but for unit normal.",
+                        "rawExpression": "[f(T),f(T)+unitN(f)(T)]",
+                        "tail": "f(T)",
+                        "components": "unitN(f)(T)"
+                    }
+                },
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "color": "#F3B25E",
+                        "description": "Vector:\n...and the unit binormal",
+                        "rawExpression": "[f(T),f(T)+unitB(f)(T)]",
+                        "tail": "f(T)",
+                        "components": "unitB(f)(T)"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "The TNB Vectors for Parametric Curves"
+}

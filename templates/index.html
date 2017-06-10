@@ -29,8 +29,6 @@
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular-cookies.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.3.1/ui-bootstrap-tpls.js"></script>
 
-  <script src="/static/vendors/autosize.js"></script>
-
   <link rel="stylesheet" href="/static/vendors/bootstrap/css/bootstrap.css">
   
   <script src="/static/resources/utility.js"></script>
@@ -62,6 +60,9 @@
   <link  href="/static/vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.css" rel="stylesheet">
   <script src="/static/vendors/angular-bootstrap-toggle/angular-bootstrap-toggle.min.js"></script>
   
+  <script src="/static/vendors/angular-pageslide-directive.js"></script>
+  <script src="/static/vendors/elastic.js"></script>
+  
   <script src="/static/vendors/mathquill/mathquill.js"></script>
   <link rel="stylesheet" href="/static/vendors/mathquill/mathquill.css"/>
   
@@ -86,6 +87,15 @@
         </div>
         <div class="collapse navbar-collapse" id="myNavbar">
           <ul class="nav navbar-nav navbar-right">
+            <li id="examples-toggle" ng-controller="examplesCtrl" >
+              <a href="" ng-click="toggle()"><i class="fa fa-lightbulb-o" aria-hidden="true"></i> Examples</a>
+              <div class="examples-container" pageslide ps-open="visible" ps-side="right" ps-container="main">
+                <div ng-include="'/static/resources/templates/examples.html'">
+                </div>
+                <!-- pageslide breaks if its contents are empty -->
+                <span></span>
+              </div>
+            </li>
             <li modalpop modalpop-content-url="'/static/resources/templates/share_popover.html'">
               <a class="modalpop-trigger" href="">
                 <span class="glyphicon glyphicon-share"></span>Share
@@ -102,77 +112,79 @@
     </nav>
   </header>
 
-  <div class="container main" ng-controller="checkLoginCtrl">
-    <div class="sidepanel menu-visible sidepanel-animation">
-      <div class="math3d-controller">
+  <div id="main" class="main" ng-controller="checkLoginCtrl">
+    
+    <div id="sidepanel-container" ng-controller="controlsCtrl">
+      <div class="sidepanel" pageslide ps-open="visible" ps-side="left" ps-click-outside="false" ps-size="325px" ps-zindex="10" ps-container="main">
+        <div class="math3d-controller">
       
-        <div class="math3d-controller-header">
-          <ul class="nav nav-tabs nav-justified">
-            <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
-            <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
-          </ul>
-        </div>
+          <div class="math3d-controller-header">
+            <ul class="nav nav-tabs nav-justified">
+              <li class="active"><a data-toggle='tab' href="#controller-objects">Objects</a></li>
+              <li><a data-toggle='tab' href="#controller-axes">Axes</a></li>
+            </ul>
+          </div>
       
-        <div class="tab-content">
-          <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
-            <div class="math3d-controller-header">
-              <ul class="nav nav-pills xs">
-                <li class="dropdown">
-                  <a class="dropdown-toggle btn btn-link" id="dropdownAddObject" data-toggle="dropdown">
-                    <span class="glyphicon glyphicon-plus"></span>
-                    New Object
-                    <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu">
-                    <li ng-click="createNewObject('Point')" ><a href="">Point</a></li>
-                    <li ng-click="createNewObject('Line')" ><a href="">Line</a></li>
-                    <li ng-click="createNewObject('Vector')" ><a href="">Vector</a></li>
-                    <li ng-click="createNewObject('ParametricCurve')" ><a href="">Parametric Curve</a></li>
-                    <li ng-click="createNewObject('ParametricSurface')" ><a href="">Parametric Surface</a></li>
-                    <li ng-click="createNewObject('ExplicitSurface')"><a href="">Explicit Surface</a></li>
-                    <li ng-click="createNewObject('ExplicitSurfacePolar')"><a href="">Explicit Surface (Polar)</a></li>
-                    <li role="separator" class="divider"></li>
-                    <li ng-click="createNewFolder()"><a href="">Folder</a></li>
-                    <li ng-click="createNewObject('VariableSlider')"><a href="">Variable Slider</a></li>
-                    <li ng-click="createNewObject('Variable')">
-                      <a href="">Variable or Function</a>
-                    </li>
-                    <li ng-click="createNewObject('VariableToggle')">
-                      <a href="">Toggle Switch</a>
-                    </li>
-                  </ul>
-                </li>
-              </ul>
+          <div class="tab-content">
+            <div ng-controller="addObjectCtrl" id="controller-objects" class="tab-pane fade in active">
+              <div class="math3d-controller-header">
+                <ul class="nav nav-pills xs">
+                  <li class="dropdown">
+                    <a class="dropdown-toggle btn btn-link" id="dropdownAddObject" data-toggle="dropdown">
+                      <span class="glyphicon glyphicon-plus"></span>
+                      New Object
+                      <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li ng-click="createNewObject('Point')" ><a href="">Point</a></li>
+                      <li ng-click="createNewObject('Line')" ><a href="">Line</a></li>
+                      <li ng-click="createNewObject('Vector')" ><a href="">Vector</a></li>
+                      <li ng-click="createNewObject('ParametricCurve')" ><a href="">Parametric Curve</a></li>
+                      <li ng-click="createNewObject('ParametricSurface')" ><a href="">Parametric Surface</a></li>
+                      <li ng-click="createNewObject('ExplicitSurface')"><a href="">Explicit Surface</a></li>
+                      <li ng-click="createNewObject('ExplicitSurfacePolar')"><a href="">Explicit Surface (Polar)</a></li>
+                      <li role="separator" class="divider"></li>
+                      <li ng-click="createNewFolder()"><a href="">Folder</a></li>
+                      <li ng-click="createNewObject('VariableSlider')"><a href="">Variable Slider</a></li>
+                      <li ng-click="createNewObject('Variable')">
+                        <a href="">Variable or Function</a>
+                      </li>
+                      <li ng-click="createNewObject('VariableToggle')">
+                        <a href="">Toggle Switch</a>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <div ui-tree="treeOptions" id='tree-root' ng-controller="treeCtrl">
+                <div class="list-group" ui-tree-nodes ng-model="math3d.mathTree">
+                  <div class="list-group-item" ui-tree-node ng-repeat="branch in math3d.mathTree" data-collapsed="branch.collapsed">
+                    <div ng-include="'/static/resources/templates/folder.html'">
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div ui-tree="treeOptions" id='tree-root' ng-controller="treeCtrl">
-              <div class="list-group" ui-tree-nodes ng-model="math3d.mathTree">
-                <div class="list-group-item" ui-tree-node ng-repeat="branch in math3d.mathTree" data-collapsed="branch.collapsed">
-                  <div ng-include="'/static/resources/templates/folder.html'">
+            <div id="controller-axes" class="tab-pane fade">
+              <div class="math3d-controller-header">
+              </div>
+              <div class="list-group">
+                <div class="list-group-item">
+                  <div ng-include="'/static/resources/templates/axes_settings.html'">
                   </div>
                 </div>
               </div>
             </div>
           </div>
-          <div id="controller-axes" class="tab-pane fade">
-            <div class="math3d-controller-header">
-            </div>
-            <div class="list-group">
-              <div class="list-group-item">
-                <div ng-include="'/static/resources/templates/axes_settings.html'">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
       
+        </div>
+        <a class="btn btn-link sidepanel-toggle" href="" ng-click="toggle()">
+          <span class="glyphicon" ng-class="{'glyphicon-menu-right': !visible, 'glyphicon-menu-left': visible}"></span>
+        </a>
       </div>
-      <div class="menu-toggle">
-          <a class="btn btn-sm btn-link" id="menu-toggle">
-            <span class="glyphicon glyphicon-menu-left"></span>
-          </a>
-      </div>
-    </div>
 
+    </div>
+    
     <div id="my-math-box">
     </div>
 
@@ -245,63 +257,14 @@ math3d.load(settings)
 <script src="/static/resources/math3d_app.js"></script>
 
 <script>
-ele = $("div.sidepanel");
-button = $('#menu-toggle span.glyphicon');
-$("div.math3d-controller").resizable({
-  handles: "e",
-  minWidth: 225
-}).on('resize', function(){
-  $(":focus").blur();
-});
-
-
-function hideMnu(){
-  var width = ele[0].offsetWidth;
-  ele[0].style.width=`${width}px`;
-  ele[0].style.left = `${-width+40}px`;
-  ele.removeClass('menu-visible');
-  button.removeClass('glyphicon-menu-left');
-  button.addClass('glyphicon-menu-right');
-};
-function showMenu(){
-  ele[0].style.width = "";
-  ele[0].style.left = "0%";
-  ele.addClass('menu-visible');
-  button.removeClass('glyphicon-menu-right');
-  button.addClass('glyphicon-menu-left');
-};
-function toggleMenu(){
-  ele.addClass('manually-toggled')
-  if (ele.hasClass('menu-visible')){
-    hideMnu();
-  } else {
-    showMenu()
-  }
-};
-
-function hideSidepanelForSmallWindow(){
-  if ($(ele).hasClass('manually-toggled')){
-    return
-  }
-  if (! window.matchMedia("(min-width: 768px)").matches) {
-    hideMnu();
-  }
-}
-function showSidepanelForSmallWindow(ele){
-  if (window.matchMedia("(min-width: 768px)").matches) {
-    showMenu();
-  }
-}
-
-// hideSidepanelForSmallWindow(ele);
-// ele.addClass("sidepanel-animation")
-$(window).resize(function(e){
-  if ($(ele).hasClass('menu-visible')){
-    hideSidepanelForSmallWindow();
-  } else {
-    showSidepanelForSmallWindow();
-  }
-})
+// Because angular-pageslide requires a set width, it doesn't play well with resizable. TODO: fix this one day
+// $("div.math3d-controller").resizable({
+//   handles: "e",
+//   minWidth: 225
+// }).on('resize', function(){
+//   $(":focus").blur();
+// });
+  
 $(window).resize(function(e){
   if (! window.matchMedia("(min-width: 768px)").matches) {
     $('[modalpop]').removeClass('modalpop-popover-mode')
@@ -311,10 +274,6 @@ $(window).resize(function(e){
   }
 })
 $(window).trigger('resize')
-
-$("#menu-toggle").click(function(e) {
-  toggleMenu(e);
-});
 
 </script>
 
