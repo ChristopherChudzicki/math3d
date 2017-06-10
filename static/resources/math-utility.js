@@ -92,11 +92,14 @@ class MathUtility {
             {tex: '\\cdot', math: ' * '},
             {tex: '\\left', math: ''},
             {tex: '\\right',math: ''},
+            {tex: '^{ }', math: ''}, // prevents mq cursor leaving supscripts**
+            {tex: '/{ }', math: ''}, // prevents mq cursor leaving denoms**
             {tex: '{', math: '('},
             {tex: '}', math: ')'},
             {tex: '~', math:' '},
             {tex: '\\', math: ' '},
         ]
+        //** I believe this works because it prevents ephemeral syntax errors in the mathjs parser. I think these syntax errors were messing witht he mathquill cursor. But I do not 100% understand why this worked.
 
         for (let j = 0; j < replacements.length; j++) {
             tex = Utility.replaceAll(tex, replacements[j]['tex'], replacements[j]['math'])
