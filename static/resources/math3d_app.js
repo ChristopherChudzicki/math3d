@@ -175,27 +175,54 @@ app.controller('checkLoginCtrl', ['$scope', '$cookies', '$rootScope', function($
 app.controller('saveCtrl', ['$scope', function($scope){
 }])
 
-app.controller('saveToDBCtrl', ['$scope', '$http', function($scope, $http) {
-  
-  $scope.displayUrl = function() {
-      saveToDB()
-  }
-  
-  
-  function saveToDB(){
-    var settings = JSON.parse(math3d.serialize());
+app.service("saveManager", function(){
+    _this = this;
+    console.log("saveManager is running")
+    this.pageJustLoaded = true;
+    setTimeout(function(){
+        _this.pageJustLoaded = false;
+    },3000)
     
-    $http.post("/api/graph/save", {
-        title: math3d.settings.title,
-        settings: settings,
-    }).then(function(response) {
-        if (response.data.result == "Success") {
-            
-            var graph_url = window.location.host + "/graph/" + response.data.url;
-            
-            $('#share-url').val(graph_url)
+    
+    this.saveDisabled = false;
+    this.disableSaveTemporarily = function disableSaveTemporarily(){
+        _this.saveDisabled = true;
+        setTimeout( function(){
+            _this.saveDisabled = false;
+        }, 3000)
+    }
+})
+app.run(['saveManager',function(saveManager){
+    
+}])
+
+app.controller('saveToDBCtrl', ['$scope', '$http','saveManager', function($scope, $http, saveManager) {
+  
+    $scope.displayUrl = function() {
+        saveToDB()
+    }
+
+    function saveToDB(){
+        if (saveManager.pageJustLoaded){
+            $('#share-url').val("Please wait a few seconds beteween page load and saving a graph.")
+            return
         }
-    });
+        else if (saveManager.saveDisabled){
+            $('#share-url').val("Please wait a few seconds between saving graphs")
+            return
+        }
+        var settings = JSON.parse(math3d.serialize());
+    
+        $http.post("/api/graph/save", {
+            title: math3d.settings.title,
+            settings: settings,
+        }).then(function(response) {
+            if (response.data.result == "Success") {
+                var graph_url = window.location.host + "/graph/" + response.data.url;
+                $('#share-url').val(graph_url)
+                saveManager.disableSaveTemporarily()
+            }
+        });
     }
 }]);
 
