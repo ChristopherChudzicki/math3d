@@ -1,0 +1,55 @@
+{
+    "camera": {
+        "position": [
+            0.843,
+            -0.792,
+            0.253
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "f(x,y)",
+                        "name": "f",
+                        "rawExpression": "(1)/(2)y^2-x^2"
+                    }
+                },
+                {
+                    "type": "ExplicitSurface",
+                    "settings": {
+                        "color": "#A1E0FF",
+                        "opacity": 1,
+                        "shaded": true,
+                        "rawExpression": "[x,y,f(x,y)]",
+                        "rangeU": "[-3,3]",
+                        "rangeV": "[-3,3]",
+                        "range": "[[-3,3],[-3,3]]",
+                        "rawExpressionZ": "f(x,y)"
+                    }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "color": "#FF0000",
+                        "description": "ParametricCurve\nThis red curve is hard to see because it has the same 3D-position as the blue surface. The renderer can't decide which object to draw on top.",
+                        "rawExpression": "[t,2,f(t,2)]"
+                    }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "description": "ParametricCurve\nSetting the zBias in object settings (click the wrench) is a nice way to solve this problem. Try viewing the blue line from different angles---it will always appear closer to the camera.",
+                        "rawExpression": "[t,1,f(t,1)]",
+                        "zBias": 1
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Fine-tuning Visibility with zBias"
+}

@@ -1,0 +1,67 @@
+{
+    "camera": {
+        "position": [
+            -0.757,
+            -1.497,
+            0.25
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "name": "f",
+                        "rawExpression": "[t^2,t,t^3]"
+                    }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "opacity": 0.66,
+                        "rawExpression": "f(t)",
+                        "range": "[-2,2]"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Function:\n\"diff\" is an operator that differentiates functions using the syntax below.\nIn general, \"diff\" returns the total derivative and may be scalar-valued, vector-valued, or matrix-valued.",
+                        "rawName": "g(t)",
+                        "name": "g",
+                        "rawExpression": "diff(f)(t)"
+                    }
+                },
+                {
+                    "type": "Vector",
+                    "settings": {
+                        "color": "#FF0000",
+                        "rawExpression": "[f(T),f(T)+g(T)]",
+                        "tail": "f(T)",
+                        "components": "g(T)"
+                    }
+                },
+                {
+                    "type": "Point",
+                    "settings": {
+                        "color": "#000000",
+                        "rawExpression": "f(T)"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "value": "-1.12000001966953",
+                        "min": "-2",
+                        "max": "2",
+                        "name": "T"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Diff: Calculating Derivatives"
+}
