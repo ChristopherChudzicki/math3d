@@ -168,13 +168,6 @@ app.controller('treeCtrl', function($scope)  {
     }
 });
 
-app.controller('checkLoginCtrl', ['$scope', '$cookies', '$rootScope', function($scope, $cookies, $rootScope) {
-}]);
-
-// TODO: Should this be removed?
-app.controller('saveCtrl', ['$scope', function($scope){
-}])
-
 app.service("saveManager", function(){
     _this = this;
     console.log("saveManager is running")
