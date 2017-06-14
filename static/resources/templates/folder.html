@@ -2,7 +2,9 @@
   <div class="folder-sidebar" ui-tree-handle>
     <span class="grippy"></span>
   </div>
-  <div class="folder-main">
+
+  <!-- Add folder-selected class if the index matches the selected folder index. -->
+  <div class="folder-main" ng-class="{'folder-selected': $index == folderIdx}">
     <!-- Folder Header -->
     <div class="folder-header">
       <div class="folder-header-left">
