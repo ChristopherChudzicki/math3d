@@ -128,7 +128,7 @@ app.directive('onShortPress', function($timeout) {
 	};
 })
 
-app.controller('treeCtrl', function($scope)  {
+app.controller('treeCtrl', ['$scope', '$rootScope', function($scope, $rootScope)  {
     $scope.treeOptions = {
         accept: function(sourceNodeScope, destNodesScope, destIndex) {
             return sourceNodeScope.depth() - 1 === destNodesScope.depth()
@@ -166,7 +166,12 @@ app.controller('treeCtrl', function($scope)  {
         
         return failures;
     }
-});
+
+    // Select branch with a certain index
+    $scope.onSelect = function(index) {
+        $rootScope.folderIdx = index;
+    }
+}]);
 
 app.service("saveManager", function(){
     _this = this;
