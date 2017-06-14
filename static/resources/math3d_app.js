@@ -277,7 +277,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
         $scope.math3d.mathTree.push({name:'Untitled', objects:[], collapsed:false});
     }
     
-    $scope.addOjbectToUi = function(obj){
+    $scope.addObjectToUi = function(obj){
         var content = `
             <div id="object-${obj.id}" ng-include="'/static/resources/templates/${obj.type.toLowerCase()}.html'">
             </div>`;

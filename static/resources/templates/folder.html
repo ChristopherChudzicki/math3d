@@ -27,7 +27,7 @@
     </div>
     <!-- Folder items -->
     <div class="list-group folder-contents" ui-tree-nodes='' ng-class="{hidden: collapsed}" ng-model="branch.objects">
-      <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addOjbectToUi(obj)" ng-show="obj.settings.showInUI">
+      <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addObjectToUi(obj)" ng-show="obj.settings.showInUI">
       </div>
     </div>
   </div>
