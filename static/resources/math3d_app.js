@@ -268,14 +268,14 @@ app.controller('settingsCtrl', ['$scope', function($scope){
     $scope.math3d = math3d;
 }])
 
-app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
+app.controller('addObjectCtrl',['$scope', '$sce', '$rootScope', function($scope, $sce, $rootScope) {
     $scope.debug = arg => console.log(arg);
     
     $scope.math3d = math3d;
     
     $scope.createNewObject = function(type){
         var metaMathObj = {type:type, settings:{}};
-        var mathObj = MathObject.renderNewObject(math3d, metaMathObj);
+        var mathObj = MathObject.renderNewObject(math3d, metaMathObj, $rootScope.folderIdx);
     }
     
     $scope.createNewFolder = function(){
