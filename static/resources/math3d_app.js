@@ -170,12 +170,10 @@ app.controller('treeCtrl', function($scope)  {
 
 app.service("saveManager", function(){
     _this = this;
-    console.log("saveManager is running")
     this.pageJustLoaded = true;
     setTimeout(function(){
         _this.pageJustLoaded = false;
     },3000)
-    
     
     this.saveDisabled = false;
     this.disableSaveTemporarily = function disableSaveTemporarily(){
