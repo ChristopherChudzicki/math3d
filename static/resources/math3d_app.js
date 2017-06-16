@@ -168,8 +168,13 @@ app.controller('treeCtrl', ['$scope', '$rootScope', function($scope, $rootScope)
     }
 
     // Select branch with a certain index
-    $scope.onSelect = function(index) {
+    $scope.onFolderSelect = function(index) {
         $rootScope.folderIdx = index;
+    }
+
+    // Select element with a certain index
+    $scope.onEleSelect = function(index) {
+        $rootScope.eleIdx = index;
     }
 }]);
 
@@ -275,7 +280,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', '$rootScope', function($scope,
     
     $scope.createNewObject = function(type){
         var metaMathObj = {type:type, settings:{}};
-        var mathObj = MathObject.renderNewObject(math3d, metaMathObj, $rootScope.folderIdx);
+        var mathObj = MathObject.renderNewObject(math3d, metaMathObj, $rootScope.folderIdx, $rootScope.eleIdx);
     }
     
     $scope.createNewFolder = function(){
