@@ -279,7 +279,7 @@ span.folder-name-editable{
     padding-left:0px;
 }
 
-.folder-selected {
+.item-selected {
     outline: none;
     border-color: #4e3fbc;
     box-shadow: 0 0 5px #4e3fbc;
