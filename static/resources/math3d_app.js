@@ -185,9 +185,6 @@ app.service("saveManager", function(){
         }, 3000)
     }
 })
-app.run(['saveManager',function(saveManager){
-    
-}])
 
 app.controller('saveToDBCtrl', ['$scope', '$http','saveManager', function($scope, $http, saveManager) {
   
