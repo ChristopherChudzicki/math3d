@@ -1,4 +1,4 @@
-<div class="tree-node tree-node-content folder-container grippy-trigger" ng-click="onFolderSelect($index)">
+<div class="tree-node tree-node-content folder-container grippy-trigger">
   <div class="folder-sidebar" ui-tree-handle>
     <span class="grippy"></span>
   </div>
@@ -30,7 +30,7 @@
     <!-- Folder items -->
     <div class="list-group folder-contents" ui-tree-nodes='' ng-class="{hidden: collapsed}" ng-model="branch.objects">
       <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addObjectToUi(obj)" ng-show="obj.settings.showInUI"
-      ng-click="onEleSelect($index)" ng-class="{'item-selected': $parent.$index == folderIdx && $index == eleIdx}">
+      ng-click="selectItem(obj)" ng-class="{'item-selected': obj === math3d.selected}">
       </div>
     </div>
   </div>

@@ -167,14 +167,9 @@ app.controller('treeCtrl', ['$scope', function($scope)  {
         return failures;
     }
 
-    // Select branch with a certain index
-    $scope.onFolderSelect = function(index) {
-        $rootScope.folderIdx = index;
-    }
-
-    // Select element with a certain index
-    $scope.onEleSelect = function(index) {
-        $rootScope.eleIdx = index;
+    // Attach the selected object to math3d
+    $scope.selectItem = function(item) {
+        math3d.selected = item;
     }
 }]);
 
@@ -273,14 +268,18 @@ app.controller('settingsCtrl', ['$scope', function($scope){
     $scope.math3d = math3d;
 }])
 
-app.controller('addObjectCtrl',['$scope', '$sce', '$rootScope', function($scope, $sce, $rootScope) {
+app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     $scope.debug = arg => console.log(arg);
     
     $scope.math3d = math3d;
     
     $scope.createNewObject = function(type){
         var metaMathObj = {type:type, settings:{}};
-        var mathObj = MathObject.renderNewObject(math3d, metaMathObj, $rootScope.folderIdx, $rootScope.eleIdx);
+
+        if (math3d.selected !== undefined) {
+            var insertionPoint = math3d.selected.getMathtreePosition();
+        }
+        var mathObj = MathObject.renderNewObject(math3d, metaMathObj, insertionPoint);
     }
     
     $scope.createNewFolder = function(){
