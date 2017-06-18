@@ -128,7 +128,7 @@ app.directive('onShortPress', function($timeout) {
 	};
 })
 
-app.controller('treeCtrl', ['$scope', '$rootScope', function($scope, $rootScope)  {
+app.controller('treeCtrl', ['$scope', function($scope)  {
     $scope.treeOptions = {
         accept: function(sourceNodeScope, destNodesScope, destIndex) {
             return sourceNodeScope.depth() - 1 === destNodesScope.depth()
