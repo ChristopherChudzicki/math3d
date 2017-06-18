@@ -179,6 +179,11 @@ input {
   color: #bfbfbf;
 }
 
+/*Prevent fixed navbar from covering content*/
+body {
+    padding-top: 40px;
+}
+
 /**************************************************/
 /* Main */
 /**************************************************/
