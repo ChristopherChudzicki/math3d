@@ -169,7 +169,7 @@ app.controller('treeCtrl', ['$scope', function($scope)  {
 
     // Attach the selected object to math3d
     $scope.selectItem = function(item) {
-        math3d.settings.selected = item;
+        math3d.selected = item;
     }
 }]);
 
@@ -276,8 +276,8 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     $scope.createNewObject = function(type){
         var metaMathObj = {type:type, settings:{}};
 
-        if (math3d.settings.selected !== undefined) {
-            var insertionPoint = math3d.settings.selected.getMathtreePosition();
+        if (math3d.selected !== undefined) {
+            var insertionPoint = math3d.selected.getMathtreePosition();
         }
         var mathObj = MathObject.renderNewObject(math3d, metaMathObj, insertionPoint);
     }
