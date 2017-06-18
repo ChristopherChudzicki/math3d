@@ -983,6 +983,22 @@ class MathObject {
         this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);
     }
 
+    // Return the position of the MathObject in mathTree in a format used by the
+    // MathObject constructor for inserting after the selected item.
+    getMathtreePosition() {
+        for (let i = 0; i < math3d.mathTree.length; i++) {
+            let branch = math3d.mathTree[i].objects;
+            for (let j = 0; j < branch.length; j++) {
+                if (branch[j] === this) {
+                    return {
+                        folderIdx: i,
+                        afterPosition: j,
+                    }
+                }
+            }
+        }
+    }
+
     static renderNewObject(math3d, metaObj, insertionPoint) {
         if (metaObj.type === 'MathObject') {
             return new MathObject(math3d, metaObj.settings, insertionPoint)
