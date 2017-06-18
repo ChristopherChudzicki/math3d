@@ -921,7 +921,7 @@ class MathExpression {
 
 // Abstract
 class MathObject {
-    constructor(math3d, settings, folderIdx, eleIdx) {
+    constructor(math3d, settings, insertionPoint) {
         /*Guidelines:
             this.settings: 
                 should only contain information intended for serialization.
@@ -930,18 +930,15 @@ class MathObject {
         this.math3d = math3d;
         this.id = _.uniqueId();
 
-        // If folderIdx doesn't exist, push to the newest mathTree branch
-        if (folderIdx === undefined) {
-            folderIdx = math3d.mathTree.length - 1;
-        }
-
-        // If eleIdx doesn't exist, push to the end of the branch
-        if (eleIdx === undefined) {
-            eleIdx = math3d.mathTree[folderIdx].objects.length - 1;
+        // If insertionPoint isn't given, push to the last mathTree branch
+        if (insertionPoint === undefined) {
+            var insertionPoint = {};
+            insertionPoint.folderIdx = math3d.mathTree.length - 1;
+            insertionPoint.afterPosition = math3d.mathTree[insertionPoint.folderIdx].objects.length - 1;
         }
 
         // Insert new object after the selected object.
-        math3d.mathTree[folderIdx].objects.splice(eleIdx + 1, 0, this);
+        math3d.mathTree[insertionPoint.folderIdx].objects.splice(insertionPoint.afterPosition + 1, 0, this);
 
         this.type = this.constructor.name;
         
@@ -986,47 +983,47 @@ class MathObject {
         this.math3d.mathTree[branchIdx].objects.splice(objIdx, 1);
     }
 
-    static renderNewObject(math3d, metaObj, folderIdx, eleIdx) {
+    static renderNewObject(math3d, metaObj, insertionPoint) {
         if (metaObj.type === 'MathObject') {
-            return new MathObject(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new MathObject(math3d, metaObj.settings, insertionPoint)
         };
         if (metaObj.type === 'Variable') {
-            return new Variable(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new Variable(math3d, metaObj.settings, insertionPoint)
         };
         if (metaObj.type === 'VariableSlider') {
-            return new VariableSlider(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new VariableSlider(math3d, metaObj.settings, insertionPoint)
         };
 
         if (metaObj.type === 'Point') {
-            return new Point(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new Point(math3d, metaObj.settings, insertionPoint)
         };
         if (metaObj.type === 'Line') {
-            return new Line(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new Line(math3d, metaObj.settings, insertionPoint)
         };
         if (metaObj.type === 'Vector') {
-            return new Vector(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new Vector(math3d, metaObj.settings, insertionPoint)
         };
         if (metaObj.type === 'ParametricCurve') {
-            return new ParametricCurve(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new ParametricCurve(math3d, metaObj.settings, insertionPoint)
         };
         if (metaObj.type === 'ParametricSurface') {
-            return new ParametricSurface(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new ParametricSurface(math3d, metaObj.settings, insertionPoint)
         };
         if (metaObj.type === 'ExplicitSurface') {
-            return new ExplicitSurface(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new ExplicitSurface(math3d, metaObj.settings, insertionPoint)
         };
         if (metaObj.type === 'ExplicitSurfacePolar') {
-            return new ExplicitSurfacePolar(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new ExplicitSurfacePolar(math3d, metaObj.settings, insertionPoint)
         };
         if (metaObj.type === 'VariableToggle') {
-            return new VariableToggle(math3d, metaObj.settings, folderIdx, eleIdx)
+            return new VariableToggle(math3d, metaObj.settings, insertionPoint)
         };
     }
 }
 
 class AbstractVariable extends MathObject {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
         
         this.scope = null; // to be set as math3d.mathScope or math3d.toggleScope by subclasses.
 
@@ -1095,8 +1092,8 @@ class AbstractVariable extends MathObject {
 }
 
 class Variable extends AbstractVariable {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
         this.scope = math3d.mathScope;
         
         this.parsed.expression = new MathExpression();
@@ -1204,8 +1201,8 @@ class Variable extends AbstractVariable {
 }
 
 class VariableSlider extends AbstractVariable {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
         this.scope = math3d.mathScope;
         
         this.parsed.min = new MathExpression();
@@ -1337,8 +1334,8 @@ class VariableSlider extends AbstractVariable {
 }
 
 class VariableToggle extends AbstractVariable {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
         this.scope = math3d.toggleScope;
         
         var _this = this;
@@ -1383,9 +1380,9 @@ class VariableToggle extends AbstractVariable {
 
 // All classes below are used for rendering graphics with MathBox
 class MathGraphic extends MathObject {
-    constructor(math3d, settings, folderIdx, eleIdx) {
+    constructor(math3d, settings, insertionPoint) {
         //Every sublcass should define these
-        super(math3d, settings, folderIdx, eleIdx);
+        super(math3d, settings, insertionPoint);
         this.mathboxGroup = null;
         this.mathboxDataType = null; // e.g., 'array'
         this.mathboxRenderTypes = null; // e.g., 'point'
@@ -1703,8 +1700,8 @@ class MathGraphic extends MathObject {
 }
 
 class Point extends MathGraphic {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
         this.mathboxDataType = 'array';
         this.mathboxRenderTypes = 'point';
 
@@ -1797,8 +1794,8 @@ class Point extends MathGraphic {
 }
 
 class AbstractCurve extends MathGraphic {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
         this.mathboxDataType = 'interval';
         this.mathboxRenderTypes = 'line';
 
@@ -1815,8 +1812,8 @@ class AbstractCurve extends MathGraphic {
 }
 
 class AbstractCurveFromData extends AbstractCurve {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
         this.mathboxDataType = 'array';
 
         this.userSettings = this.userSettings.concat([{
@@ -1868,8 +1865,8 @@ class AbstractCurveFromData extends AbstractCurve {
 }
 
 class Line extends AbstractCurveFromData {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
 
         this.settings = this.setDefaults(settings);
 
@@ -1887,8 +1884,8 @@ class Line extends AbstractCurveFromData {
 }
 
 class Vector extends AbstractCurveFromData {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
 
         var _this = this;
         Object.defineProperties(this.settings, {
@@ -1983,8 +1980,8 @@ class Vector extends AbstractCurveFromData {
 }
 
 class ParametricCurve extends AbstractCurve {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
 
         this.settings = this.setDefaults(settings);
         this.userSettings = this.userSettings.concat([{
@@ -2068,8 +2065,8 @@ class ParametricCurve extends AbstractCurve {
 }
 
 class AbstractSurface extends MathGraphic {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
         this.mathboxDataType = 'area';
         this.mathboxRenderTypes = 'surface, line';
         this.userSettings = this.userSettings.concat([{
@@ -2153,8 +2150,8 @@ class AbstractSurface extends MathGraphic {
 }
 
 class ParametricSurface extends AbstractSurface {
-    constructor(math3d, settings, folderIdx, eleIdx) {
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint) {
+        super(math3d, settings, insertionPoint);
 
         var _this = this;
         Object.defineProperties(this.settings, {
@@ -2317,8 +2314,8 @@ class ParametricSurface extends AbstractSurface {
 }
 
 class ExplicitSurface extends ParametricSurface {
-    constructor(math3d, settings, folderIdx, eleIdx){
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint){
+        super(math3d, settings, insertionPoint);
         
         var _this = this;
         delete this.settings.rawExpressionZ; // rawExpressionZ was previously set. Adding the getter/setter for it now messes up Utility.deepCopyValuesOnly unless we explicity delete the key.
@@ -2351,8 +2348,8 @@ class ExplicitSurface extends ParametricSurface {
 }
 
 class ExplicitSurfacePolar extends ParametricSurface {
-    constructor(math3d, settings, folderIdx, eleIdx){
-        super(math3d, settings, folderIdx, eleIdx);
+    constructor(math3d, settings, insertionPoint){
+        super(math3d, settings, insertionPoint);
         
         var _this = this;
         delete this.settings.rawExpressionZ;
