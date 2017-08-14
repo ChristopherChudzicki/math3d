@@ -28,6 +28,7 @@ from flask import (Flask, render_template, redirect, request, abort, url_for,
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_wtf.csrf import CSRFProtect, generate_csrf
+from flask_sslify import SSLify
 
 app = Flask(__name__)
 
@@ -44,6 +45,10 @@ app.config.update(
 
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
+
+# Redirect to HTTPS if on Heroku
+if "DYNO" in os.environ:
+    sslify = SSLify(app)
 
 # Must import after db is defined, not pretty
 from models import User, Graph, Metadata
