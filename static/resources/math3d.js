@@ -1749,7 +1749,10 @@ class Point extends MathGraphic {
     }
 
     render() {
-        var group = this.math3d.scene.group().set('classes', ['point']);
+        var group = this.math3d.scene.group().set({
+          visible: this.settings.visible,
+          'classes': ['point']
+        });
 
         var point = group.array({
                 data: this.data,
@@ -1761,7 +1764,6 @@ class Point extends MathGraphic {
             }).point({
                 color: this.settings.color,
                 size: this.settings.size,
-                visible: this.settings.visible,
                 zIndex: this.settings.zIndex,
                 zBias:this.settings.zBias
             })
@@ -1825,7 +1827,10 @@ class AbstractCurveFromData extends AbstractCurve {
     }
 
     render() {
-        var group = this.math3d.scene.group().set('classes', ['curve']);
+        var group = this.math3d.scene.group().set({
+          visible: this.settings.visible,
+          'classes': ['curve']
+        });
 
         group.array({
                 data: this.data,
@@ -1837,7 +1842,6 @@ class AbstractCurveFromData extends AbstractCurve {
             }).line({
                 color: this.settings.color,
                 width: this.settings.width,
-                visible: this.settings.visible,
                 start: this.settings.start,
                 end: this.settings.end,
                 size: this.settings.size,
@@ -2015,7 +2019,10 @@ class ParametricCurve extends AbstractCurve {
 
     render() {
         // NOTE: Updating an <interval>'s range does not work. However, it does work to make interval a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
-        var group = this.math3d.scene.group().set('classes', ['curve', 'parametric']);
+        var group = this.math3d.scene.group().set({
+          visible: this.settings.visible,
+          'classes': ['curve', 'parametric']
+        });
         var expr = this.parsed.expression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         var param = this.settings.parameter[0];
@@ -2043,7 +2050,6 @@ class ParametricCurve extends AbstractCurve {
             color: this.settings.color,
             opacity: this.settings.opacity,
             width: this.settings.width,
-            visible: this.settings.visible,
             start: this.settings.start,
             end: this.settings.end,
             size: this.settings.size,
