@@ -2423,7 +2423,7 @@ class WrappedMathField {
         var defaults = {
             autoCommands: 'pi theta sqrt',
             charsThatBreakOutOfSupSub: '+-',
-            autoOperatorNames: 'diff unitT unitN unitB cos sin tan sec csc cot log ln exp'
+            autoOperatorNames: 'diff unitT unitN unitB cos sin tan sec csc cot log ln exp norm'
         }
         return defaults
     }
