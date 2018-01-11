@@ -31,7 +31,7 @@ app = angular.module('math3dApp', ['ui.tree', 'ngAnimate', 'ngCookies', 'ui.boot
 app.config(function($interpolateProvider, $httpProvider) {
     $interpolateProvider.startSymbol('[[');
     $interpolateProvider.endSymbol(']]');
-    
+
     // Include csrf_token in every request
     $httpProvider.defaults.xsrfCookieName = "csrf_token";
     $httpProvider.defaults.xsrfHeaderName = "X-CSRFToken";
@@ -46,7 +46,7 @@ app.directive('compileTemplate', ["$compile", "$parse", function($compile, $pars
             function value() { return (parse($scope) || '').toString(); }
 
             $scope.$watch(value, function() {
-                $compile(element, null, -9999)($scope); 
+                $compile(element, null, -9999)($scope);
             });
         }
     }
@@ -56,7 +56,7 @@ app.directive('compileTemplate', ["$compile", "$parse", function($compile, $pars
 app.directive( 'elemReady', function( $parse ) {
    return {
        restrict: 'A',
-       link: function( $scope, elem, attrs ) {    
+       link: function( $scope, elem, attrs ) {
           elem.ready(function(){
             $scope.$apply(function(){
                 var func = $parse(attrs.elemReady);
@@ -74,7 +74,7 @@ app.directive('onLongPress', function($timeout) {
 		restrict: 'A',
         link: function(scope, elem, attrs) {
             var timeoutHandler;
-            
+
             elem.bind('mousedown touchstart', function() {
                 timeoutHandler = $timeout(function() {
                     scope.$eval(attrs.onLongPress);
@@ -91,7 +91,7 @@ app.directive('onShortPress', function($timeout) {
 	return {
 		restrict: 'A',
 		link: function($scope, $elm, $attrs) {
-			$elm.bind('mousedown touchstart', function(evt) {                
+			$elm.bind('mousedown touchstart', function(evt) {
                 // Locally scoped variable that will keep track of the short press
 				$scope.shortPress = true;
 
@@ -143,14 +143,14 @@ app.controller('treeCtrl', function($scope)  {
             }, 100);
         }
     };
-    
+
     function reflowBranch(branch){
         // If folders are collapsed on page load, mathquill as are initialized in zero-height spans. We need to reflow each of them when the folder is expanded.
         // Reflow only really needs to be done once, has the mq-reflow tracking class.
         var failures = 0;
         _.forEach(branch.objects, function(obj){
             _.forEach(obj.wrappedMathFields, function(wmf){
-                
+
                 var mf = wmf.mathfield;
                 var el = $(mf.el());
                 if (el.css('height')==='0px'){
@@ -160,21 +160,22 @@ app.controller('treeCtrl', function($scope)  {
                     mf.reflow();
                     el.addClass('mq-reflowed');
                 }
-                
+
             })
         })
-        
+
         return failures;
     }
 });
 
 app.service("saveManager", function(){
+
     _this = this;
-    this.pageJustLoaded = true;
-    setTimeout(function(){
-        _this.pageJustLoaded = false;
-    },3000)
-    
+    // this.pageJustLoaded = true;
+    // setTimeout(function(){
+    //     _this.pageJustLoaded = false;
+    // },3000)
+
     this.saveDisabled = false;
     this.disableSaveTemporarily = function disableSaveTemporarily(){
         _this.saveDisabled = true;
@@ -185,7 +186,7 @@ app.service("saveManager", function(){
 })
 
 app.controller('saveToDBCtrl', ['$scope', '$http','saveManager', function($scope, $http, saveManager) {
-  
+
     $scope.displayUrl = function() {
         saveToDB()
     }
@@ -200,7 +201,7 @@ app.controller('saveToDBCtrl', ['$scope', '$http','saveManager', function($scope
             return
         }
         var settings = JSON.parse(math3d.serialize());
-    
+
         $http.post("/api/graph/save", {
             title: math3d.settings.title,
             settings: settings,
@@ -215,11 +216,11 @@ app.controller('saveToDBCtrl', ['$scope', '$http','saveManager', function($scope
 }]);
 
 app.controller('loadFromDbCtrl', ['$scope', '$http', function($scope, $http) {
-  
+
   $scope.loadGraph = function(short_url) {
       loadGraphFromDB(short_url)
   }
-  
+
   function loadGraphFromDB(short_url){
     $http.post("/api/graph/load", {
         short_url: short_url
@@ -244,12 +245,12 @@ app.controller('graphListCtrl', ['$rootScope', '$scope', '$http', function($root
             $rootScope.graphs = [];
         }
     }
-    
+
     $scope.loadGraph = function(serialized_string) {
         math3d.clear()
         math3d.load(Math3D.decodeSettingsAsURL64(serialized_string));
     }
-    
+
     $rootScope.updateGraphs();
 
 }]);
@@ -258,38 +259,38 @@ app.controller('settingsCtrl', ['$scope', function($scope){
     $scope.math3d = math3d;
 }])
 
-app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {    
+app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
     $scope.debug = arg => console.log(arg);
-    
+
     $scope.math3d = math3d;
-    
+
     $scope.createNewObject = function(type){
         var metaMathObj = {type:type, settings:{}};
         var mathObj = MathObject.renderNewObject(math3d, metaMathObj);
     }
-    
+
     $scope.createNewFolder = function(){
         $scope.math3d.mathTree.push({name:'Untitled', objects:[], collapsed:false});
     }
-    
+
     $scope.addOjbectToUi = function(obj){
         var content = `
             <div id="object-${obj.id}" ng-include="'/static/resources/templates/${obj.type.toLowerCase()}.html'">
             </div>`;
-        
+
         //Re-initialize jscolor palletes. This seems hacky.
         setTimeout(function(){ jscolor.installByClassName("jscolor"); }, 0);
-        
+
         return $sce.trustAsHtml(content)
     };
-    
+
     $scope.removeFolder = function(branch){
         // Should only be used if branch is empty
         if (branch.objects.length===0){
             _.remove(math3d.mathTree, function(arg){return arg===branch;});
         }
     }
-    
+
     $scope.setupMathGraphicMF = function(obj){
         var el = $(`#object-${obj.id} span.mathquill-large`)
         if (!el.hasClass('has-mq')){
@@ -302,14 +303,14 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             if (key === undefined){ key = 'rawExpression' };
             var mf = new WrappedMathFieldMain(el[0],obj, key, $scope);
         }
-        
+
     }
-    
+
     $scope.setupVariableMF = function(obj){
         var elName = $(`#object-${obj.id} span.mathquill-large .variable-rawName`);
         var elEqual = $(`#object-${obj.id} span.mathquill-large .variable-equal`);
         var elExpression = $(`#object-${obj.id} span.mathquill-large .variable-rawExpression`);
-        
+
         if (!elName.hasClass('has-mq')){
             new WrappedMathFieldMain(elName[0], obj, 'rawName', $scope);
             new MathQuill.getInterface(2).StaticMath(elEqual[0]);
@@ -318,28 +319,28 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             new WrappedMathFieldMain(elExpression[0], obj, 'rawExpression', $scope);
         }
     }
-    
+
 }]);
 
 app.controller('mathObjectCtrl',['$scope','$timeout', function($scope, $timeout){
     $scope.debug = arg => console.log(arg)
-    
+
     initialize($scope.obj);
-     
+
     $scope.setColor = function(obj){
         document.getElementById(`jscolor-${obj.id}`).jscolor.show()
     }
     $scope.getStyle = function(obj){
         if (obj.settings.visible){
             var backgroundColor = obj.settings.color;
-            var borderColor = Utility.lightenColor(obj.settings.color,-0.5);       
+            var borderColor = Utility.lightenColor(obj.settings.color,-0.5);
         } else {
             var backgroundColor = 'lightgray';
             var borderColor = 'darkgray';
         }
         return `background-color:${backgroundColor}; border-color:${borderColor}`
     }
-    
+
     function initialize(obj){
         if (obj instanceof MathGraphic){
             Utility.extendSetter(obj.settings, 'visible', function(){
@@ -367,7 +368,7 @@ app.controller('sliderCtrl', ['$scope', function($scope){
         obj.settings.animationRunning = true;
         var ele = document.getElementById("slider-"+obj.id);
         ele.step = ((ele.max-ele.min)/200) * obj.speeds[obj.settings.speedIdx].value;
-        
+
         // Use a less complex representation to avoid getting the slider stuck
         ele.step = Math.fround(ele.step);
         $scope.intervalID = setInterval(function(){
@@ -382,14 +383,14 @@ app.controller('sliderCtrl', ['$scope', function($scope){
         obj.settings.animationRunning = false;
         clearInterval($scope.intervalID);
     }
-    
+
     $scope.incrementSpeed = function(obj, incr){
         obj.settings.speedIdx += incr;
         obj.settings.speedIdx = MathUtility.clamp(0, obj.settings.speedIdx, obj.speeds.length - 1);
         $scope.toggleAnimate(obj);
         $scope.toggleAnimate(obj);
     }
-    
+
     $scope.initSlider = function(obj){
         var ele = document.getElementById("slider-"+obj.id);
         ele.step = ((ele.max-ele.min)/200) * obj.speeds[obj.settings.speedIdx].value;
@@ -398,7 +399,7 @@ app.controller('sliderCtrl', ['$scope', function($scope){
             obj.animationStarted = true;
         }
     }
-    
+
 }])
 
 //http://stackoverflow.com/a/32366115/2747370
@@ -421,12 +422,12 @@ app.controller('popoverCtrl', ['$scope', function($scope) {
 app.controller('controlsCtrl',['$scope', function($scope, $elem){
     $scope.visible = isBigScreen();
     $scope.manuallyTroggled = false;
-    
+
     $scope.toggle = function() {
         $scope.manuallyToggled = true;
         $scope.visible = !$scope.visible;
     }
-    
+
     $(window).on("resize", function(){
         if (! $scope.manuallyToggled){
             $scope.visible = isBigScreen();
@@ -435,7 +436,7 @@ app.controller('controlsCtrl',['$scope', function($scope, $elem){
     function isBigScreen(){
         return window.matchMedia("(min-width: 768px)").matches
     }
-    
+
 }]);
 
 app.controller('examplesCtrl',['$scope',function($scope){
@@ -456,7 +457,7 @@ app.controller('examplesCtrl',['$scope',function($scope){
 // USAGE:
 //  1. Give parent element attribute modalpop
 //  2. Give parent element attribute modalpop-contentUrl with content URL
-//  3. Give child trigger element class .modalpop-trigger 
+//  3. Give child trigger element class .modalpop-trigger
 // REQUIRES:
 // 'pathgather.popeye'
 
@@ -544,7 +545,7 @@ app.directive('modalpop', function() {
           $elem.removeClass('modalpop-popover-open')
         }
         if ($elem.hasClass('modalpop-modal-open')) {
-          $scope.$close() //Popeye's close function 
+          $scope.$close() //Popeye's close function
           $elem.removeClass('modalpop-modal-open')
         }
       }
