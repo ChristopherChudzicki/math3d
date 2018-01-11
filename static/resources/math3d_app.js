@@ -276,6 +276,7 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
             var insertionPoint = math3d.selected.getMathtreePosition();
         }
         var mathObj = MathObject.renderNewObject(math3d, metaMathObj, insertionPoint);
+        math3d.selected = mathObj;
     }
 
     $scope.createNewFolder = function(){
