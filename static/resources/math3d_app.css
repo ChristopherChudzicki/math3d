@@ -431,3 +431,10 @@ span.label-and-description:hover span.edit-label{
 .hidden {
     visibility:hidden;
 }
+
+/**************************************************/
+/* Popeye modal monkey patch */
+/**************************************************/
+.popeye-modal-container {
+  z-index:25; /*Just needs to be larger than .sidepanel*/
+}

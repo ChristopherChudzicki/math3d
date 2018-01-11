@@ -25,7 +25,7 @@
 class Math3D {
     constructor(containerId, settings) {
         this.mathbox = this.initializeMathBox(containerId);
-        
+
         if (settings !== undefined){
             this.load(settings)
         }
@@ -49,7 +49,7 @@ class Math3D {
             let val = defaultMathScope[key];
             this.mathScope.addVariable(key, val, onVariableChange)
         }
-        
+
         this.toggleScope = new WatchedScope(this.settings.toggleScope);
     }
 
@@ -417,16 +417,16 @@ class Math3D {
             controls: controls,
             element: this.container[0]
         });
-        
+
         mathbox.three.renderer.setClearColor(new THREE.Color(0xFFFFFF), 1.0);
 
         return mathbox;
     }
-    
+
     load(settings){
         this.swizzleOrder = Utility.defaultVal(settings.swizzleOrder, 'yzx');
         this.settings = this.setDefaults(settings);
-        
+
         this.setCamera();
         this.scene = this.setupScene();
         this.updateRange();
@@ -441,11 +441,11 @@ class Math3D {
         // create mathScope and toggleScope
         this.mathTree = [] //onVariableChange checks mathTree, so define it as empty for now.
         this.setDefaultScopes();
-        
+
         //Render math objects; this will update this.mathTree
         this.renderMathObjects();
     }
-    
+
     clear(){
         // Remove objects before re-assigning mathTree. I'm not entirely sure if this is necessary.
         _.forEach(this.mathTree, function(branch, idx) {
@@ -458,7 +458,7 @@ class Math3D {
         // wipe mathbox
         this.mathbox.remove('*');
     }
-    
+
     setCamera(){
         // setup camera
         this.mathbox.camera({
@@ -607,7 +607,7 @@ class Math3D {
 
     renderMathObjects() {
         var _this = this;
-        // Variable Objects needs to be added to mathTree first because other objects might reference them. 
+        // Variable Objects needs to be added to mathTree first because other objects might reference them.
         // The following seems a bit hacky, but works well.
         // 1. Add only Variable objects to the mathTree. This will expand mathScope
         // 2. redefine mathTree as []
@@ -665,7 +665,7 @@ class Math3D {
             })
         })
     }
-    
+
     onToggleVariableChange(varName) {
         // update objects where the variables have changed
         _.forEach(this.mathTree, function(branch, idx) {
@@ -694,7 +694,7 @@ class Math3D {
             return Math.round(x * 1000) / 1000;
         });
         rawSettings.camera.position = this.swizzle(this.swizzle(rawSettings.camera.position));
-        
+
         // add math objects
         _.forEach(this.mathTree, function(branch) {
             rawSettings.wrappedMathTree.push({
@@ -709,7 +709,7 @@ class Math3D {
         });
         return JSON.stringify(Utility.deepObjectDiff(rawSettings, this.defaultSettings));
     }
-    
+
     saveSettingsAsString(settings) {
         settings = Utility.defaultVal(settings, this.settings);
         return window.btoa(this.serialize(settings));
@@ -773,7 +773,7 @@ class MathExpression {
         this.expression = expression;
         this.err = null;
     }
-    
+
     get expression(){
         return this._expression;
     }
@@ -783,7 +783,7 @@ class MathExpression {
             this.update();
         }
     }
-    
+
     update(){
         try {
             this.parsed = this.parse();
@@ -793,13 +793,13 @@ class MathExpression {
             throw (err)
             return
         }
-        
+
         this.updateVars();
-        
+
         this.assignEval();
 
     }
-    
+
     updateVars(){
         this.variables = []
         this.functions = []
@@ -816,14 +816,14 @@ class MathExpression {
 
     assignEval(){
         var compiled = this.parsed.compile();
-        
-        if (this.expression[0] == "[") {
+
+        if (this.expression.includes("[") ) {
             this.eval = function(scope) {
                 try {
                     var val = compiled.eval(scope).toArray();
                     this.err = null;
                     return val;
-                } 
+                }
                 catch (err) {
                     this.err = err;
                 }
@@ -834,7 +834,7 @@ class MathExpression {
                     var val = compiled.eval(scope);
                     this.err = null;
                     return val;
-                } 
+                }
                 catch (err) {
                     this.err=err;
                 }
@@ -846,39 +846,39 @@ class MathExpression {
         // Cross and dot products are not built into mathjs express. Let's replace "cross" and "dot" by mathjs operators that we probably won't use. Then we'll reassign functionality to these operators.
         expression = expression.replace(/dot/g, '|');
         expression = expression.replace(/cross/g, '&');
-        
+
         expression = functionOperatorParser(expression, 'diff');
         expression = functionOperatorParser(expression, 'unitT');
         expression = functionOperatorParser(expression, 'unitN');
         expression = functionOperatorParser(expression, 'unitB');
-        
+
         return expression
-        
+
         function functionOperatorParser(string, opName){
-            // MathJS's parse function does not deal well with functions that return functions. 
+            // MathJS's parse function does not deal well with functions that return functions.
             // Math3D supports functions that have two related syntax. diff is one example:
             //      diff(f) ... returns a function
             //      diff(f,args) ... returns value of derivative evaluated at args
             // Mathematically, we prefer the function operator syntax followed by evaluation: diff(f)(args), but MathJS parser can't handle this. (It thinks multiplication)
             // functionOperatorParser converts between the two syntaxes
-    
+
             // Examples:
             // diff(f1)(u,v) --> diff(f1,u,v)
             // diff(diff(f1))(u,v) --> diff( diff(f1), u, v )
-    
+
             // Note that diff(f) w/o a subsequent evaluation needs to remain unchanged. This could show up in second+ derivatives.
-    
+
             // Remove whitespace preceeding or following parentheses
             string = string.replace(/\s+\)/g, '\)').replace(/\s+\(/g, '\(');
             string = string.replace(/\)\s+/g, '\)').replace(/\(\s+/g, '\(');
 
             var opStart = string.indexOf(opName);
-                
+
             if (opStart < 0) {return string;}
 
             var funcStart = opStart + opName.length,
                 funcClose = Utility.findClosingBrace(string, funcStart);
-    
+
             // 'PLACEHOLDER' marks a opName as finished.
             if (string[funcClose+1] !== '('){
                 string = string.slice(0, opStart) + "PLACEHOLDER" + string.slice(funcStart,string.length);
@@ -888,7 +888,7 @@ class MathExpression {
                 var argClose = Utility.findClosingBrace(string, argStart);
                 string = string.slice(0, opStart) + "PLACEHOLDER" + string.slice(funcStart,funcClose) + ',' + string.slice(argStart+1,string.length);
             }
-    
+
             // Test if diffs remain
             funcStart = string.indexOf(opName)
             if (funcStart < 0){
@@ -900,10 +900,10 @@ class MathExpression {
 
         }
     }
-    
+
     parse() {
         var expression = this.parsePreProcess(this.expression);
-        
+
         var parsed = math.parse(expression);
 
         parsed.traverse(function(node) {
@@ -923,7 +923,7 @@ class MathExpression {
 class MathObject {
     constructor(math3d, settings, insertionPoint) {
         /*Guidelines:
-            this.settings: 
+            this.settings:
                 should only contain information intended for serialization.
                 if MEOW is a getter/setter, store associated value in _MEOW
         */
@@ -941,10 +941,10 @@ class MathObject {
         math3d.mathTree[insertionPoint.folderIdx].objects.splice(insertionPoint.afterPosition + 1, 0, this);
 
         this.type = this.constructor.name;
-        
+
         // storage math expressions
         this.parsed = {}
-        
+
         // Record all MathQuill mathfields associated with with this object for the UI
         this.wrappedMathFields = [];
     }
@@ -1040,7 +1040,7 @@ class MathObject {
 class AbstractVariable extends MathObject {
     constructor(math3d, settings, insertionPoint) {
         super(math3d, settings, insertionPoint);
-        
+
         this.scope = null; // to be set as math3d.mathScope or math3d.toggleScope by subclasses.
 
         this.name = null;
@@ -1111,7 +1111,7 @@ class Variable extends AbstractVariable {
     constructor(math3d, settings, insertionPoint) {
         super(math3d, settings, insertionPoint);
         this.scope = math3d.mathScope;
-        
+
         this.parsed.expression = new MathExpression();
         this.parsed.name = new MathExpression();
         this.argNames = null;
@@ -1203,7 +1203,7 @@ class Variable extends AbstractVariable {
         }
         this.scope[this.name] = this.value;
     }
-    
+
     updateVariablesList() {
         this.variables = []
         if (this.parsed.expression !== null) {
@@ -1220,7 +1220,7 @@ class VariableSlider extends AbstractVariable {
     constructor(math3d, settings, insertionPoint) {
         super(math3d, settings, insertionPoint);
         this.scope = math3d.mathScope;
-        
+
         this.parsed.min = new MathExpression();
         this.parsed.max = new MathExpression();
 
@@ -1311,11 +1311,11 @@ class VariableSlider extends AbstractVariable {
 
     updateVariablesList() {
         this.variables = []
-        
+
         // TODO: Replace with a loop, combine & think about inheriting from MathObject. (Right now there are two copies of this method)
         this.variables = this.variables.concat(this.parsed.min.variables);
         this.variables = this.variables.concat(this.parsed.min.functions);
-        
+
         this.variables = this.variables.concat(this.parsed.max.variables);
         this.variables = this.variables.concat(this.parsed.max.functions);
     }
@@ -1353,7 +1353,7 @@ class VariableToggle extends AbstractVariable {
     constructor(math3d, settings, insertionPoint) {
         super(math3d, settings, insertionPoint);
         this.scope = math3d.toggleScope;
-        
+
         var _this = this;
         Object.defineProperties(this.settings, {
             value: {
@@ -1371,7 +1371,7 @@ class VariableToggle extends AbstractVariable {
         var onToggleVariableChange = math3d.onToggleVariableChange.bind(math3d);
         this.scope.addVariable(this.settings.name, this.settings.value, onToggleVariableChange);
     }
-    
+
     get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
             name:'toggle',
@@ -1380,14 +1380,14 @@ class VariableToggle extends AbstractVariable {
         });
         return defaults
     }
-    
+
     setValue(val) {
         if (!this.valid) {
             return
         }
         this.scope[this.name] = val;
     }
-    
+
     addVarToScope(newName) {
         var onToggleVariableChange = this.math3d.onToggleVariableChange.bind(this.math3d);
         return this.scope.addVariable(newName, this.value, onToggleVariableChange);
@@ -1406,7 +1406,7 @@ class MathGraphic extends MathObject {
         this.parsed.expression = new MathExpression;
         this.parsed.range = new MathExpression;
         this.variables = [];
-        
+
         this.parsed.visibility = new MathExpression;
         this.toggleVariables = [];
 
@@ -1613,15 +1613,15 @@ class MathGraphic extends MathObject {
 
     updateVariablesList() {
         this.variables = []
-        
+
         //TODO replace this with a loop over this.parsed object
-        
+
         this.variables = this.variables.concat(this.parsed.expression.variables);
         this.variables = this.variables.concat(this.parsed.expression.functions);
 
         this.variables = this.variables.concat(this.parsed.range.variables);
         this.variables = this.variables.concat(this.parsed.range.functions);
-        
+
         this.toggleVariables = this.toggleVariables.concat(this.parsed.visibility.variables);
     }
 
@@ -1654,7 +1654,7 @@ class MathGraphic extends MathObject {
     setZIndex(val) {
         this.mathboxGroup.select(this.mathboxRenderTypes).set("zIndex", val);
     }
-    
+
     setZBias(val) {
         this.mathboxGroup.select(this.mathboxRenderTypes).set("zBias", val);
     }
@@ -1672,11 +1672,11 @@ class MathGraphic extends MathObject {
         this.updateVariablesList();
         this.recalculateVisibility();
     }
-    
+
     recalculateVisibility(){
         try {
             this.settings.visible = this.parsed.visibility.eval(this.math3d.toggleScope);
-        } 
+        }
         catch (e) {
             console.log(e.message);
         }
@@ -1773,7 +1773,10 @@ class Point extends MathGraphic {
     }
 
     render() {
-        var group = this.math3d.scene.group().set('classes', ['point']);
+        var group = this.math3d.scene.group().set({
+          visible: this.settings.visible,
+          'classes': ['point']
+        });
 
         var point = group.array({
                 data: this.data,
@@ -1785,7 +1788,6 @@ class Point extends MathGraphic {
             }).point({
                 color: this.settings.color,
                 size: this.settings.size,
-                visible: this.settings.visible,
                 zIndex: this.settings.zIndex,
                 zBias:this.settings.zBias
             })
@@ -1849,7 +1851,10 @@ class AbstractCurveFromData extends AbstractCurve {
     }
 
     render() {
-        var group = this.math3d.scene.group().set('classes', ['curve']);
+        var group = this.math3d.scene.group().set({
+          visible: this.settings.visible,
+          'classes': ['curve']
+        });
 
         group.array({
                 data: this.data,
@@ -1861,7 +1866,6 @@ class AbstractCurveFromData extends AbstractCurve {
             }).line({
                 color: this.settings.color,
                 width: this.settings.width,
-                visible: this.settings.visible,
                 start: this.settings.start,
                 end: this.settings.end,
                 size: this.settings.size,
@@ -2039,7 +2043,10 @@ class ParametricCurve extends AbstractCurve {
 
     render() {
         // NOTE: Updating an <interval>'s range does not work. However, it does work to make interval a child of its own <cartesian>, inherit range from cartesian, and update <cartesian>'s range. See https://groups.google.com/forum/?fromgroups#!topic/mathbox/zLX6WJjTDZk
-        var group = this.math3d.scene.group().set('classes', ['curve', 'parametric']);
+        var group = this.math3d.scene.group().set({
+          visible: this.settings.visible,
+          'classes': ['curve', 'parametric']
+        });
         var expr = this.parsed.expression;
         var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
         var param = this.settings.parameter[0];
@@ -2067,7 +2074,6 @@ class ParametricCurve extends AbstractCurve {
             color: this.settings.color,
             opacity: this.settings.opacity,
             width: this.settings.width,
-            visible: this.settings.visible,
             start: this.settings.start,
             end: this.settings.end,
             size: this.settings.size,
@@ -2162,7 +2168,7 @@ class AbstractSurface extends MathGraphic {
         var gridColor = Utility.lightenColor(val, -0.5);
         this.mathboxGroup.select('line').set('color', gridColor);
     }
-    
+
 }
 
 class ParametricSurface extends AbstractSurface {
@@ -2247,7 +2253,7 @@ class ParametricSurface extends AbstractSurface {
             var localMathScope = Utility.deepCopyValuesOnly(this.math3d.mathScope);
             var param0 = this.settings.parameters[0];
             var param1 = this.settings.parameters[1];
-            
+
             this.range = this.parsed.range.eval(this.math3d.mathScope);
             this.mathboxGroup.select("cartesian").set("range", this.range);
 
@@ -2332,7 +2338,7 @@ class ParametricSurface extends AbstractSurface {
 class ExplicitSurface extends ParametricSurface {
     constructor(math3d, settings, insertionPoint){
         super(math3d, settings, insertionPoint);
-        
+
         var _this = this;
         delete this.settings.rawExpressionZ; // rawExpressionZ was previously set. Adding the getter/setter for it now messes up Utility.deepCopyValuesOnly unless we explicity delete the key.
         Object.defineProperties(this.settings, {
@@ -2346,11 +2352,11 @@ class ExplicitSurface extends ParametricSurface {
                 },
             },
         })
-        
+
         // Need to set defaults again, since Object.defineProperties just overrode rawExpressionZ
         this.settings = this.setDefaults(settings);
     }
-    
+
     get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
             parameters:['x','y'],
@@ -2366,7 +2372,7 @@ class ExplicitSurface extends ParametricSurface {
 class ExplicitSurfacePolar extends ParametricSurface {
     constructor(math3d, settings, insertionPoint){
         super(math3d, settings, insertionPoint);
-        
+
         var _this = this;
         delete this.settings.rawExpressionZ;
         Object.defineProperties(this.settings, {
@@ -2380,11 +2386,11 @@ class ExplicitSurfacePolar extends ParametricSurface {
                 },
             },
         })
-        
+
         // Need to set defaults again, since Object.defineProperties just overrode rawExpressionZ
         this.settings = this.setDefaults(settings);
     }
-    
+
     get defaultSettings() {
         var defaults = _.merge(super.defaultSettings, {
             parameters:['r','theta'],
@@ -2412,15 +2418,15 @@ class ExplicitSurfacePolar extends ParametricSurface {
 class WrappedMathField {
     constructor(el, mathObj, mathObjKey, $scope, settings) {
         this.$scope = $scope; //angular scope. We need to $scope.$apply() during mathquill edit events
-        
+
         this.settings = {};
         this.settings = this.setDefaults(settings);
-        
+
         //Set the inner HTML
         var expression = math.parse(mathObj.settings[mathObjKey]).toTex({handler:MathUtility.toTexHandler});
         expression = Utility.replaceAll(expression,'~','');
         el.innerHTML = expression;
-        
+
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
         if (this.mathfield){
             $(el).addClass("has-mq");
@@ -2430,13 +2436,13 @@ class WrappedMathField {
         this.mathObjKey = mathObjKey;
 
     }
-    
+
     setDefaults(settings) {
         settings = _.merge({}, this.defaultSettings, settings);
         _.merge(this.settings, settings);
         return this.settings;
     }
-    
+
     get defaultSettings() {
         var defaults = {
             autoCommands: 'pi theta sqrt',
@@ -2445,21 +2451,21 @@ class WrappedMathField {
         }
         return defaults
     }
-    
+
     updateMathObj(key){
         this.mathObj.settings[key] = MathUtility.texToMathJS(this.mathfield.latex());
         this.$scope.$apply(); // for variables, changing the name can change object description from between variable and function. Propagating this change requires an apply().
     }
-    
+
 }
 
 class WrappedMathFieldMain extends WrappedMathField {
     constructor(el, mathObj, mathObjKey, $scope, settings){
         super(el, mathObj, mathObjKey, $scope, settings);
-        
+
         this.cellMain = $(`#object-${mathObj.id} .object-cell-main`);
         this.item = $(el).closest('.list-group-item')[0];
-        
+
         var _this=this;
         $(this.cellMain).unbind().on('focusin', function(e){
             if ( !$(e.target).hasClass('btn')){
@@ -2477,7 +2483,7 @@ class WrappedMathFieldMain extends WrappedMathField {
         //     $("div.math3d-controller").resizable('enable');
         // })
     }
-    
+
     get defaultSettings() {
         var _this = this;
         var defaults = _.merge(super.defaultSettings, {
@@ -2489,13 +2495,13 @@ class WrappedMathFieldMain extends WrappedMathField {
         });
         return defaults
     }
-    
+
     updateItemWidth(){
         this.item.style.width = `${this.cellMain[0].offsetWidth+25}px`;
     }
     restoreItemWidth(){
         this.item.style.width = 'auto';
-    }    
+    }
     onFocusIn(){
         this.cellMain.addClass('focused');
         this.updateItemWidth();

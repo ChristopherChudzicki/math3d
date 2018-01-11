@@ -18,7 +18,7 @@
         </a>
       </div>
       <div class="folder-header-center">
-        <textarea rows="1" style="width:{{branch.name.length+2}}ch;" class="object-description form-control input-quiet input-xs" type='text' ng-model="branch.name"> </textarea>
+        <textarea rows="1" style="width:[[branch.name.length+2]]ch;" class="object-description form-control input-quiet input-xs" type='text' ng-model="branch.name"> </textarea>
       </div>
       <div class="folder-header-right pull-right">
         <a class="pull-right btn btn-link btn-xs btn-quiet" data-nodrag ng-class="{disabled: branch.objects.length>0 || math3d.mathTree.length === 1}" ng-click="removeFolder(branch);">
