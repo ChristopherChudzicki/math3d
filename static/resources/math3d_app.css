@@ -279,6 +279,12 @@ span.folder-name-editable{
     padding-left:0px;
 }
 
+.item-selected {
+    outline: none;
+    border-color: #4e3fbc;
+    box-shadow: 0 0 5px #4e3fbc;
+}
+
 .has-error.has-feedback, .has-error.has-feedback:focus,
 .mq-editable-field.has-error.has-feedback,
 .mq-editable-field.mq-focused.has-error.has-feedback {

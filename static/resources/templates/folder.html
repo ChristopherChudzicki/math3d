@@ -2,6 +2,8 @@
   <div class="folder-sidebar" ui-tree-handle>
     <span class="grippy"></span>
   </div>
+
+  <!-- Add folder-selected class if the index matches the selected folder index. -->
   <div class="folder-main">
     <!-- Folder Header -->
     <div class="folder-header">
@@ -27,7 +29,8 @@
     </div>
     <!-- Folder items -->
     <div class="list-group folder-contents" ui-tree-nodes='' ng-class="{hidden: collapsed}" ng-model="branch.objects">
-      <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addOjbectToUi(obj)" ng-show="obj.settings.showInUI">
+      <div compile-template ui-tree-node class="list-group-item tree-node tree-node-content" ng-repeat="obj in branch.objects" ng-bind-html="$parent.addObjectToUi(obj)" ng-show="obj.settings.showInUI"
+      ng-click="selectItem(obj)" ng-class="{'item-selected': obj === math3d.selected}">
       </div>
     </div>
   </div>

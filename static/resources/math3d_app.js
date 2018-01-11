@@ -128,7 +128,7 @@ app.directive('onShortPress', function($timeout) {
 	};
 })
 
-app.controller('treeCtrl', function($scope)  {
+app.controller('treeCtrl', ['$scope', function($scope)  {
     $scope.treeOptions = {
         accept: function(sourceNodeScope, destNodesScope, destIndex) {
             return sourceNodeScope.depth() - 1 === destNodesScope.depth()
@@ -166,7 +166,12 @@ app.controller('treeCtrl', function($scope)  {
 
         return failures;
     }
-});
+
+    // Attach the selected object to math3d
+    $scope.selectItem = function(item) {
+        math3d.selected = item;
+    }
+}]);
 
 app.service("saveManager", function(){
 
@@ -266,7 +271,11 @@ app.controller('addObjectCtrl',['$scope', '$sce', function($scope, $sce) {
 
     $scope.createNewObject = function(type){
         var metaMathObj = {type:type, settings:{}};
-        var mathObj = MathObject.renderNewObject(math3d, metaMathObj);
+
+        if (math3d.selected !== undefined) {
+            var insertionPoint = math3d.selected.getMathtreePosition();
+        }
+        var mathObj = MathObject.renderNewObject(math3d, metaMathObj, insertionPoint);
     }
 
     $scope.createNewFolder = function(){
