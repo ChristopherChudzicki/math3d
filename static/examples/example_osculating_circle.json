@@ -1,0 +1,98 @@
+{
+    "camera": {
+        "position": [
+            0.069,
+            -0.997,
+            1.37
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "r(t)",
+                        "name": "r",
+                        "rawExpression": "[2 cos(t),   sin(t),  (t)/(2)]"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "Osculating Circle Tangency Point",
+                        "value": "-3.20442434797157",
+                        "min": "-2pi",
+                        "max": "2pi",
+                        "name": "s",
+                        "speedIdx": 2,
+                        "animationRunning": true
+                    }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "rawExpression": "r(t)"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Helper functions",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Unit Tangent Vector",
+                        "rawName": "T(t)",
+                        "name": "T",
+                        "rawExpression": "unitT(r)(t)"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "Radius of curvature ... Admittedly, syntax here could be more user-friendly. A bug also causes some unnecessary parentheses to be added upon saving.",
+                        "rawName": "rad(t)",
+                        "name": "rad",
+                        "rawExpression": " sqrt((diff(r)(t)dotdiff(r)(t))/(diff(T)(t)dotdiff(T)(t)))"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "The Osculating Circle;  u is point of tangency, t is parameter",
+                        "rawName": "f(t,u)",
+                        "name": "f",
+                        "rawExpression": "r(u)+rad(u) * ( cos(t)unitT(r)(u)+(1+ sin(t))unitN(r)(u))"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Helper Graphics",
+            "collapsed": true,
+            "objects": [
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "color": "#F5CA3D",
+                        "rawExpression": "f(t,s)",
+                        "range": "[0,2pi]"
+                    }
+                },
+                {
+                    "type": "Point",
+                    "settings": {
+                        "description": "Tangency Point",
+                        "rawExpression": "r(s)"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Osculating Circle"
+}
