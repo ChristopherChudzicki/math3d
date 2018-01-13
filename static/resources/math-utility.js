@@ -53,7 +53,7 @@ class MathUtility {
             return derivative
         }
     }
-    
+
     static normalize(array1d) {
         var norm = Math.sqrt( array1d.reduce( (acc, val) => acc+val*val, 0 ) );
         return array1d.map( x => x/norm );
@@ -72,18 +72,18 @@ class MathUtility {
         t = Number(t);
         var T = MathUtility.unitT(f,t);
         var N = MathUtility.unitN(f,t);
-        
+
         return [ N[2]*T[1]-N[1]*T[2], N[0]*T[2]-N[2]*T[0], N[1]*T[0] - N[0]*T[1]  ]
     }
-    
+
     static clamp(min, val, max) {
         return Math.min(Math.max(min, val), max)
     }
-    
+
     // This is a parser for converting from mathquill's latex to expressions mathjs can parse.
     static texToMathJS(tex) {
         tex = fracToDivision(tex);
-        
+
         var replacements = [
             {tex:'\\operatorname{diff}',math:'diff'},
             {tex:'\\operatorname{unitT}',math:'unitT'},
@@ -104,18 +104,18 @@ class MathUtility {
         for (let j = 0; j < replacements.length; j++) {
             tex = Utility.replaceAll(tex, replacements[j]['tex'], replacements[j]['math'])
         }
-        
+
         return tex;
-        
+
         function fracToDivision(string){
             var frac = "\\frac",
-            fracStart = string.indexOf(frac), 
+            fracStart = string.indexOf(frac),
             numStart = fracStart + frac.length; // numerator start
-            
+
             if (fracStart < 0) { return string;}
-            
+
             var divIdx = Utility.findClosingBrace(string,numStart)
-    
+
             // Remove frac, and add "/"
             string = string.slice(0,fracStart) + string.slice(numStart,divIdx+1) + "/" + string.slice(divIdx+1);
 
@@ -131,7 +131,7 @@ class MathUtility {
             return string
         }
     }
-    
+
     // A latex handle for mathjs that:
     // converts ArrayNode to [,,,] rather than \begin{array}...\end{array}
     // puts most function names and symbols in italic
@@ -151,7 +151,7 @@ class MathUtility {
         else {
             return; //returning nothing falls back to default behavior
         }
-        
+
         function arrayNodeHandler(node, options){
             var items = [];
             for (let j=0; j<node.items.length; j++){
@@ -165,7 +165,7 @@ class MathUtility {
                 pi: "\\pi",
                 theta: "\\theta"
             }
-            
+
             if (symbolNames[node.name] !== undefined){
                 toTex = ` ${symbolNames[node.name]}`;
             }
@@ -200,7 +200,7 @@ class MathUtility {
             else {
                 toTex = ` ${node.name}\\left(${args}\\right) `;
             }
-            
+
             return replacements(toTex);
         }
         function argsHandler(node, options){
@@ -215,6 +215,18 @@ class MathUtility {
             // e^(-t) --> e^{-t} not e^{(-t)}.
             if (node.op === '^' && node.args[1].type === 'ParenthesisNode'){
                 return `${node.args[0].toTex(options)}^{${node.args[1].content.toTex(options)}}`;
+            }
+            // adjust handling of fractions
+            // e^((a+b)/(c+d)) --> e^{-\frac{a+b}{c+d}} not e^{-\frac{(a+b)}{(c+d)}}
+            if (node.op === '/'){
+              var numer = node.args[0]
+              var denom = node.args[1]
+              if (numer.type==='ParenthesisNode' && denom.type==='ParenthesisNode') {
+                return `\\frac{${numer.content.toTex(options)}}{${denom.content.toTex(options)}}`
+              }
+              if (numer.type==='OperatorNode' && denom.type==='ParenthesisNode' && numer.args[0].type === 'ParenthesisNode') {
+                return `-\\frac{${numer.args[0].content.toTex(options)}}{${denom.content.toTex(options)}}`
+              }
             }
             else {
                 return ;
