@@ -1,0 +1,143 @@
+{
+    "range": {
+        "zMin": "-150",
+        "zMax": "150"
+    },
+    "axes": {
+        "x": {
+            "ticksVisible": false
+        },
+        "y": {
+            "ticksVisible": false
+        },
+        "z": {
+            "ticksVisible": false
+        }
+    },
+    "camera": {
+        "position": [
+            0.314,
+            -1.466,
+            0.589
+        ]
+    },
+    "wrappedMathTree": [
+        {
+            "name": "Folder 1",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "f(x,y)",
+                        "name": "f",
+                        "rawExpression": "y^3-3x^2y"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Controls",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "VariableToggle",
+                    "settings": {
+                        "name": "tangent"
+                    }
+                },
+                {
+                    "type": "VariableToggle",
+                    "settings": {
+                        "name": "curve",
+                        "value": false
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "Point X Position",
+                        "value": "-1.6",
+                        "min": "-4",
+                        "max": "4"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "Point Y Position",
+                        "value": "-2.04",
+                        "min": "-4",
+                        "max": "4",
+                        "name": "Y"
+                    }
+                },
+                {
+                    "type": "VariableSlider",
+                    "settings": {
+                        "description": "Direction",
+                        "value": "0",
+                        "max": "pi/2",
+                        "name": "Q"
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Graphics",
+            "collapsed": false,
+            "objects": [
+                {
+                    "type": "Point",
+                    "settings": {
+                        "color": "#FF6A34",
+                        "rawExpression": "[  X,  Y,  f(X,Y)]",
+                        "zBias": 51
+                    }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "visible": false,
+                        "color": "#FFB83E",
+                        "description": "Mesh Line",
+                        "rawExpression": "[  X+t *  cos(Q),  Y+t *  sin(Q),  f(X+t *  cos(Q),Y+t *  sin(Q))]",
+                        "range": "[-1,1]",
+                        "zBias": 1,
+                        "calculatedVisibility": "curve"
+                    }
+                },
+                {
+                    "type": "ParametricCurve",
+                    "settings": {
+                        "color": "#FFDC51",
+                        "rawExpression": "[X,Y,f(X,Y)]+[t *  cos(Q),t *  sin(Q),t *  d(Q) * diff(f)(X,Y)]",
+                        "range": "[-0.5,0.5]",
+                        "zBias": 5
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "rawName": "d(Q)",
+                        "name": "d",
+                        "rawExpression": "[   cos(Q),   sin(Q)]"
+                    }
+                },
+                {
+                    "type": "ExplicitSurface",
+                    "settings": {
+                        "opacity": 0.75,
+                        "shaded": true,
+                        "rawExpression": "[x,y,f(x,y)]",
+                        "rangeU": "[-4,4]",
+                        "rangeV": "[-4,4]",
+                        "range": "[[-4,4],[-4,4]]",
+                        "rawExpressionZ": "f(x,y)"
+                    }
+                }
+            ]
+        }
+    ],
+    "title": "Partial Derivatives"
+}
