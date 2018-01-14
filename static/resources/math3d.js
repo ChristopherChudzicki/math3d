@@ -2423,9 +2423,10 @@ class WrappedMathField {
         this.settings = this.setDefaults(settings);
 
         //Set the inner HTML
-        var expression = math.parse(mathObj.settings[mathObjKey]).toTex({handler:MathUtility.toTexHandler});
-        expression = Utility.replaceAll(expression,'~','');
-        el.innerHTML = expression;
+        var expression = new MathExpression(mathObj.settings[mathObjKey])
+        var latex = expression.parsed.toTex({handler:MathUtility.toTexHandler});
+        latex = Utility.replaceAll(latex,'~','');
+        el.innerHTML = latex;
 
         this.mathfield = MathQuill.getInterface(2).MathField(el, this.settings);
         if (this.mathfield){
