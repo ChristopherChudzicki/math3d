@@ -113,7 +113,7 @@
                     "type": "ParametricCurve",
                     "settings": {
                         "color": "#FFDC51",
-                        "rawExpression": "[X,Y,f(X,Y)]+[t *  cos(Q),t *  sin(Q),t *  d(Q) * diff(f)(X,Y)]",
+                        "rawExpression": "[  X,  Y,  f(X,Y)]+t *  d3(Q)",
                         "range": "[-0.5,0.5]",
                         "zBias": 5,
                         "calculatedVisibility": "tangent"
@@ -122,9 +122,19 @@
                 {
                     "type": "Variable",
                     "settings": {
-                        "rawName": "d(Q)",
-                        "name": "d",
+                        "description": "2d direction vector",
+                        "rawName": "d2(Q)",
+                        "name": "d2",
                         "rawExpression": "[   cos(Q),   sin(Q)]"
+                    }
+                },
+                {
+                    "type": "Variable",
+                    "settings": {
+                        "description": "3d direction vector",
+                        "rawName": "d3(Q)",
+                        "name": "d3",
+                        "rawExpression": "[ cos(Q),   sin(Q),  d2(Q) * diff(f,X,Y)]"
                     }
                 },
                 {
